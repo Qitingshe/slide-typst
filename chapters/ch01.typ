@@ -1,10 +1,29 @@
 // chapters/ch01.typ - 第 1 章 AI Agent 入门
-// 强调色：framableu（继承自 tour-map）；结尾交给 ch02 为 framavert。
+//
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [1], title: [AI Agent 入门], subtitle: [...], color: framableu)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 1 章 · AI Agent 入门」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 1 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framableu（继承）----------
+// ---------- 第 1 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [1],
+  title: [AI Agent 入门],
+  subtitle: [Agent = LLM + 上下文 + 工具，Harness 是竞争力],
+  color: framableu,
+)
 
-== 第 1 章 · 产品实证
+// ---------- 第 1 页 · 强调色 framableu ----------
+
+== 产品实证
 
 #keyline[五个代表产品，共享同一副 Agent 骨架]
 
@@ -28,7 +47,7 @@
 
 // ---------- 第 2 页 · 强调色 framableu ----------
 
-== 第 1 章 · 观察与动作空间
+== 观察与动作空间
 
 #keyline[模型与世界之间，隔着观察与动作两个接口]
 
@@ -44,7 +63,7 @@
 
 // ---------- 第 3 页 · 强调色 framableu ----------
 
-== 第 1 章 · 构建原则与全书路线
+== 构建原则与全书路线
 
 #keyline[保持简单 · 保持透明 · 防呆式 ACI]
 
@@ -58,5 +77,4 @@
 
 #note[全书路线：上下文（§2–3）→ 工具（§4–5）→ 交互（§6）→ 评估（§7）→ 后训练（§8）→ 进化（§9）→ 协作（§10）]
 
-// 下一页强调色：本页末尾收尾声明（衔接 ch02）
-#slide-accent(framavert)
+// 下一章强调色由 ch02 的 section-open 自行声明，这里不再交接。

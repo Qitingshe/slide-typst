@@ -1,10 +1,29 @@
-// chapters/ch09.typ - 第 9 章 Agent 的持续进化
-// 强调色：全章 framamarron（承接 §8 交接），结尾交接 framaviolet
+// chapters/ch09.typ - 第 9 章 持续进化
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framamarron（承接 §8，无需声明）----------
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [9], title: [持续进化], subtitle: [...], color: framamarron)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 9 章 · 持续进化」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 N 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 
-== 第 9 章 · 四层更新
+// ---------- 第 9 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [9],
+  title: [持续进化],
+  subtitle: [从运行轨迹获得学习信号，四层更新],
+  color: framamarron,
+)
+
+// ---------- 第 1 页 · 强调色 framamarron ----------
+
+== 四层更新
 
 #keyline[知识 · 指令 · 程序 · 参数 —— 分层进化]
 
@@ -21,7 +40,7 @@
 
 // ---------- 第 2 页 · 强调色 framamarron ----------
 
-== 第 9 章 · 三个时间尺度
+== 三个时间尺度
 
 #keyline[临场适应 → 产物积累 → 参数内化，三层速率协同]
 
@@ -45,5 +64,4 @@
 
 #boitefilled[持续进化，是 Agent 越用越好的原因]
 
-// 下一页强调色：本页末尾收尾声明（交接 §10 framaviolet）
-#slide-accent(framaviolet)
+// 下一章强调色由 ch10 的 section-open 自行声明，这里不再交接。

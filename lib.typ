@@ -82,6 +82,11 @@
 /// ⚠ 请写在「上一页末尾」；写在 `==` 标题前会多出一页空页。
 #let slide-accent(color) = accent-state.update(color)
 
+/// 面包屑状态：内页右上角显示的「当前章 / 分段」短标签。
+/// 由 `section-open(...)` 开场页写入（如「第 2 章 · 上下文工程」），
+/// 普通内页的 header-right 只读取；未设置时（none）不渲染任何东西。
+#let breadcrumb-state = state("breadcrumb", none)
+
 /// keyline —— 金句行：大号、加粗、居中的主结论。
 /// - body (content): 结论文本。
 /// - color (color, auto): 文字色；默认 auto = 跟随当前强调色。
@@ -155,9 +160,13 @@
   // 收到 0.75em 补偿（页脚色块固定占底部 12.8pt，0.75em≈15.9pt 仍留有余量），
   // 保证全册页数不变。x 保持不变。
   config-page(margin: (top: 2.7em, bottom: 0.75em, x: 2em)),
-  // 页标题：Touying 把每页的 `==` 标题移到页眉（header）渲染，正文里不出现，
-  // 因此标题样式要在这里定制。1.5em 放大 + 当前页强调色 + 短粗强调条，
-  // 与 0.85em 正文拉开层级；强调色跟随 slide-accent（见上文）。
+  // 关闭 `=` 自动生成的章节分隔页：改由内容里显式调用的 section-open(...) 接管，
+  // 这样开场页样式、序号与面包屑都由我们控制（详见 section-open）。
+  config-common(new-section-slide-fn: none),
+  // 内页标题（Touying 把 `==` 标题移到页眉 header 渲染，正文里不出现）。
+  // v2：由「1.5em 大横幅」收敛为紧凑的「主题标签」——1.1em 粗体 + 0.9pt 短基线，
+  // 让每页主题读起来是安静的小标签，而不是重复的标题条。强调色跟随 accent-state。
+  // 注：主题页眉把左侧内容包在 text(size: 1.2em) 里，故此处 1.1em ≈ 28pt。
   header: utils.display-current-heading(
     level: 2,
     style: (setting: none, numbered: true, current-heading) => {
@@ -165,13 +174,22 @@
         let c = accent-state.get()
         let c-head = c.darken(4%) // 加深一档，保证白底对比
         block(breakable: false)[
-          #text(size: 1.5em, weight: "bold", fill: c-head)[#current-heading.body]
-          #v(0.14em)
-          #line(length: 4.6em, stroke: (paint: c, thickness: 2.4pt))
+          #text(size: 1.1em, weight: "bold", fill: c-head)[#current-heading.body]
+          #v(0.12em)
+          #line(length: 2.8em, stroke: (paint: c.lighten(8%), thickness: 0.9pt))
         ]
       }
     },
   ),
+  // 右上角面包屑：读取 section-open 写入的当前章/分段标签（小灰字）。
+  // 为 none 时整段不渲染，不留空位、不画线。
+  header-right: self => context {
+    let crumb = breadcrumb-state.get()
+    if crumb != none {
+      h(0.4em)
+      text(size: 0.7em, fill: framagris)[#crumb]
+    }
+  },
   config-colors(
     primary: framableu,
     primary-light: framableulight,
@@ -216,6 +234,77 @@
   ))
   touying-slide(self: self, body)
 })
+
+// ==== 章节 / 分段开场页（opener，v2）====
+// 每个「大章」或「分段」前的一张独立干净页：大标题 + 可选序号 + 副标题。
+// 与封面同法，用 touying-slide-wrapper 独立成页，隐藏主题页眉/页脚；
+// 视觉上用「左侧强调竖条 + 右下角超淡序号/色块 + 顶部细线」，
+// 与封面的左侧渐变大面板明显区分。放在任何位置都会自成一张 slide。
+#let _opener-page(body) = touying-slide-wrapper(self => {
+  self = utils.merge-dicts(self, config-page(
+    header: none,
+    footer: none,
+    fill: rgb("#FFFFFF"),
+    margin: (x: 2.4em, y: 1.8em),
+  ))
+  touying-slide(self: self, body)
+})
+
+/// section-open —— 章节/分段开场页。
+/// - title (content): 大标题（章名或分段名，如 [上下文工程] / [核心公式]）。
+/// - subtitle (content, none): 灰色副标题一行。
+/// - index (content, none): 大号序号；书章节传 [2]，内容分段省略（none）。
+/// - color (color, auto): 强调色；默认 auto = 沿用当前 accent-state。
+///
+/// 副作用（关键）：开场页会把本段强调色写入 accent-state，并把面包屑
+/// （章节=「第 N 章 · 标题」，分段=标题）写入 breadcrumb-state，
+/// 供后续内页的紧凑标题与右上角面包屑自动沿用。
+///
+/// 用法：
+///   书章节： #section-open(index: [2], title: [上下文工程], subtitle: [...], color: framavert)
+///   内容段： #section-open(title: [核心公式], subtitle: [...], color: framableu)
+/// ⚠ 开场页须紧跟在 `=` 标题之后、该段第一个 `==` 之前；它自成一张 slide。
+// 注：Typst 中无默认值的参数只能按位置传；为支持 section-open(title: ...) 的
+// 具名调用，title 给默认 none 并在缺失时报错。
+#let section-open(title: none, subtitle: none, index: none, color: auto) = {
+  assert(title != none, message: "section-open 需要一个 title")
+  let use-accent = color == auto
+  let crumb = if index != none { [第 #index 章 · #title] } else { title }
+  // ⚠ touying-slide-wrapper 不能放在 context 内；故 context 只包在 body 内。
+  _opener-page(context {
+    let c = if use-accent { accent-state.get() } else { color }
+    accent-state.update(c)
+    breadcrumb-state.update(crumb)
+    [
+      // 左侧强调竖条（贯穿内容区）
+      #place(left, block(width: 5pt, height: 100%, fill: c))
+      // 顶部细线
+      #place(top + left, dx: 0pt, dy: 0pt, line(length: 100%, stroke: (paint: c.lighten(68%), thickness: 0.8pt)))
+      // 右下角装饰：章节用超淡大号序号；分段用超淡圆角色块 + 小实色方块
+      #if index != none {
+        place(bottom + right, dx: 0.1em, dy: 0.2em,
+          text(size: 170pt, weight: "bold", fill: c.lighten(80%))[#index])
+      } else {
+        place(bottom + right, dx: 0.2em, dy: 0.3em,
+          rect(width: 4.6em, height: 4.6em, radius: 0.5em, fill: c.lighten(87%), stroke: none))
+        place(bottom + right, dx: 1.5em, dy: 1.6em,
+          rect(width: 0.7em, height: 0.7em, radius: 1pt, fill: c, stroke: none))
+      }
+      // 文本块：kicker 面包屑 / 大标题 / 副标题 / 短色条
+      #place(left + horizon, dx: 1.8em, dy: 0pt, block(width: 70%)[
+        #text(size: 10pt, weight: "medium", fill: c, tracking: 0.2em)[#crumb]
+        #v(0.7em)
+        #text(size: 32pt, weight: "bold", fill: c.darken(6%))[#title]
+        #if subtitle != none [
+          #v(0.7em)
+          #text(size: 13.5pt, fill: framagris)[#subtitle]
+        ]
+        #v(0.9em)
+        #line(length: 3.4em, stroke: (paint: c, thickness: 2pt))
+      ])
+    ]
+  })
+}
 
 // 封面共享小工具：大标题 / meta 行 / meta 区块（含细分隔线）
 #let _cover-title(title, subtitle, size: 32pt, color: framagrisdark) = [

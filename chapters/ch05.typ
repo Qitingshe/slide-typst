@@ -1,10 +1,29 @@
 // chapters/ch05.typ - 第 5 章 Coding Agent 与通用 Agent
-// 强调色：framableu（继承自 ch04）；结尾交给 §6 为 framavert。
+//
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [5], title: [Coding Agent 与通用 Agent], subtitle: [...], color: framableu)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 5 章 · Coding Agent 与通用 Agent」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 5 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framableu（继承）----------
+// ---------- 第 5 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [5],
+  title: [Coding Agent 与通用 Agent],
+  subtitle: [代码是「能创造新工具的工具」],
+  color: framableu,
+)
 
-== 第 5 章 · 增量开发循环
+// ---------- 第 1 页 · 强调色 framableu ----------
+
+== 增量开发循环
 
 #keyline[小步快跑：每次只改一点，立刻验证]
 
@@ -20,7 +39,7 @@
 
 // ---------- 第 2 页 · 强调色 framableu ----------
 
-== 第 5 章 · 通用 Agent 与基准
+== 通用 Agent 与基准
 
 #keyline[专用 ∪ 通用：Agent 能力的并集]
 
@@ -30,5 +49,4 @@
 - 基准：SWE-bench、Terminal Bench 等，量化「会不会修代码」
 - 权衡：通用性 vs 深度；工具越多决策空间越大（衔接 §7 评估）
 
-// 下一页强调色：本页末尾收尾声明（衔接 §6）
-#slide-accent(framavert)
+// 下一章强调色由 ch06 的 section-open 自行声明，这里不再交接。

@@ -1,10 +1,29 @@
 // chapters/ch03.typ - 第 3 章 记忆与知识库
-// 强调色：framaviolet（继承自 ch02）；结尾交给 ch04 为 framaorange。
+//
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [3], title: [记忆与知识库], subtitle: [...], color: framaviolet)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 3 章 · 记忆与知识库」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 3 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framaviolet（继承）----------
+// ---------- 第 3 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [3],
+  title: [记忆与知识库],
+  subtitle: [跨会话记住用户、接入外部知识],
+  color: framaviolet,
+)
 
-== 第 3 章 · 用户记忆
+// ---------- 第 1 页 · 强调色 framaviolet ----------
+
+== 用户记忆
 
 #keyline[记住用户，是 Agent 聪明的第一步]
 
@@ -21,7 +40,7 @@
 
 // ---------- 第 2 页 · 强调色 framaviolet ----------
 
-== 第 3 章 · 知识库与检索增强
+== 知识库与检索增强
 
 #keyline[外部知识：补上训练截止与领域私域的空白]
 
@@ -36,5 +55,4 @@
 
 #note[记忆管用户，知识库管世界——二者共同构成观察通道]
 
-// 下一页强调色：本页末尾收尾声明（衔接 ch04）
-#slide-accent(framaorange)
+// 下一章强调色由 ch04 的 section-open 自行声明，这里不再交接。

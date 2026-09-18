@@ -1,10 +1,29 @@
-// chapters/ch06.typ - 第 6 章 交互：观察与动作空间的扩展
-// 强调色：全章 framavert（承接 §5 交接），结尾交接 framaviolet
+// chapters/ch06.typ - 第 6 章 交互扩展
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framavert（承接 §5，无需声明）----------
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [6], title: [交互扩展], subtitle: [...], color: framavert)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 6 章 · 交互扩展」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 N 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 
-== 第 6 章 · 模态与时序
+// ---------- 第 6 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [6],
+  title: [交互扩展],
+  subtitle: [从模态与时序两个维度扩展观察与动作空间],
+  color: framavert,
+)
+
+// ---------- 第 1 页 · 强调色 framavert ----------
+
+== 模态与时序
 
 #keyline[观察与动作沿「模态 × 时序」两个维度扩展]
 
@@ -20,7 +39,7 @@
 
 // ---------- 第 2 页 · 强调色 framavert ----------
 
-== 第 6 章 · 语音与 Computer Use
+== 语音与 Computer Use
 
 #keyline[会听会说，还能「看着屏幕操作」]
 
@@ -32,7 +51,7 @@
 
 // ---------- 第 3 页 · 强调色 framavert ----------
 
-== 第 6 章 · 机器人操作
+== 机器人操作
 
 #keyline[从数字世界走进物理世界]
 
@@ -46,5 +65,4 @@
 
 #boitefilled[观察与动作空间有多大，Agent 的世界就有多大]
 
-// 下一页强调色：本页末尾收尾声明（交接 §7 framaviolet）
-#slide-accent(framaviolet)
+// 下一章强调色由 ch07 的 section-open 自行声明，这里不再交接。

@@ -1,10 +1,29 @@
 // chapters/ch08.typ - 第 8 章 模型后训练
-// 强调色：全章 framaorange（承接 §7 交接），结尾交接 framamarron
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framaorange（承接 §7，无需声明）----------
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [8], title: [模型后训练], subtitle: [...], color: framaorange)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 8 章 · 模型后训练」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 N 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 
-== 第 8 章 · 三阶段训练
+// ---------- 第 8 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [8],
+  title: [模型后训练],
+  subtitle: [预训练 / SFT / RL，把决策策略内化为参数],
+  color: framaorange,
+)
+
+// ---------- 第 1 页 · 强调色 framaorange ----------
+
+== 三阶段训练
 
 #keyline[知识靠预训练，行为靠后训练]
 
@@ -20,7 +39,7 @@
 
 // ---------- 第 2 页 · 强调色 framaorange ----------
 
-== 第 8 章 · SFT vs RL
+== SFT vs RL
 
 #keyline[模仿已知答案，还是探索最优策略]
 
@@ -54,7 +73,7 @@
 
 // ---------- 第 3 页 · 强调色 framaorange ----------
 
-== 第 8 章 · 工具调用内化
+== 工具调用内化
 
 #keyline[当调用成为本能：模型即 Agent]
 
@@ -64,5 +83,4 @@
 - 从「外挂提示」到「原生能力」：参数里长出调用习惯
 - 实验栈：MiniMind 预训练、SFTvsRL、verl / ReTool、RLVP、SimpleVLA-RL（共 19 个实验）
 
-// 下一页强调色：本页末尾收尾声明（交接 §9 framamarron）
-#slide-accent(framamarron)
+// 下一章强调色由 ch09 的 section-open 自行声明，这里不再交接。

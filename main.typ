@@ -33,6 +33,11 @@
 
 = 目标
 
+// v2：分段开场页（无自动分隔页，需显式 section-open 接管）+ 显式主题标题
+#section-open(title: [目标], subtitle: [演示目标与内容主线])
+
+== 演示目标
+
 #boitebleue[
   *演示目标*
   - 基于《深入理解 AI Agent —— 设计原理与工程实践》中文内容，用本模板构建一份「全书概览」讲解。
@@ -41,6 +46,10 @@
 ]
 
 = 目录
+
+#section-open(title: [目录], subtitle: [内容地图])
+
+== 内容地图
 
 #outline(title: none, indent: 1em, depth: 1)
 

@@ -1,10 +1,29 @@
 // chapters/ch04.typ - 第 4 章 工具
-// 强调色：framaorange（继承自 ch03）；结尾交还 framableu 给 ch05。
+//
+// ==== v2 章节约定（其他章节照此改写）====
+// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
+//      #section-open(index: [4], title: [工具], subtitle: [...], color: framaorange)
+//    - index 为书章节序号（内容分段省略 index）。
+//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
+//      boitefilled、页眉紧凑标题都自动沿用该色。
+//    - 面包屑自动生成为「第 4 章 · 工具」，显示在内页右上角。
+// 2. `==` 标题只写「主题」，不再重复「第 4 章 ·」前缀（前缀已进开场页与面包屑）。
+// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
+// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
+//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
 #import "../lib.typ": *
 
-// ---------- 第 1 页 · 强调色 framaorange（继承）----------
+// ---------- 第 4 章 开场页（独立干净页，无页眉/页脚）----------
+#section-open(
+  index: [4],
+  title: [工具],
+  subtitle: [工具是 Agent 的双手：五类工具与 MCP 接入],
+  color: framaorange,
+)
 
-== 第 4 章 · 五类工具
+// ---------- 第 1 页 · 强调色 framaorange ----------
+
+== 五类工具
 
 #keyline[工具是 Agent 改变世界的双手]
 
@@ -27,7 +46,7 @@
 
 // ---------- 第 2 页 · 强调色 framaorange ----------
 
-== 第 4 章 · 工具调用流程
+== 工具调用流程
 
 #keyline[声明 → 决策 → 执行 → 回传，四步一个闭环]
 
@@ -44,7 +63,7 @@
 
 // ---------- 第 3 页 · 强调色 framaorange ----------
 
-== 第 4 章 · MCP 与工具设计
+== MCP 与工具设计
 
 #keyline[统一协议 + 明确职责 = 可扩展的工具生态]
 
@@ -58,5 +77,4 @@
 
 #boitefilled[通用工具好探索，专用工具保安全]
 
-// 下一页强调色：本页末尾收尾声明（衔接 ch05）
-#slide-accent(framableu)
+// 下一章强调色由 ch05 的 section-open 自行声明，这里不再交接。
