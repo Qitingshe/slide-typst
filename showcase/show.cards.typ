@@ -34,19 +34,20 @@
   boitegrise(stretch: true)[#align(center)[*grise* \ #text(size: 0.72em)[弱化 · 置灰]]],
 )
 
-// 用法: #boitefilled(content, color: framableu) —— 实色卡片（色底 + 白字）
-// 改这里: color 只传真正够深的底色：framableu / framarouge / framaviolet 直接可用，
+// 用法: #boitefilled(color: X, stretch: true) 交给 stretch-grid —— 实色卡片（色底 + 白字）
+// 改这里: 并排时每张加 stretch: true 让三栏等高（内容一行两行不齐，等高补齐底边）；
+//         color 只传真正够深的底色：framableu / framarouge / framaviolet 直接可用，
 //         framaorange 这类中明度色须 darken(25~30%) 垫深后再配白字。
 // ⚠ 坑: 白字对比由底色的明度决定，与饱和度无关——framavert / framaorange /
 //        framajaune / framamarron 裸用会发虚，务必 darken 或换深原色。
 == 实色卡片 · boitefilled
 
-#grid(
+#stretch-grid(
   columns: 3,
   gutter: 0.6em,
-  boitefilled(color: framableu)[*蓝底结论* 高反差，一眼抓住],
-  boitefilled(color: framarouge)[*红底结论* 放风险提醒],
-  boitefilled(color: framaorange.darken(28%))[*橙底结论* 垫深后才配白字],
+  boitefilled(color: framableu, stretch: true)[*蓝底结论* 高反差，一眼抓住],
+  boitefilled(color: framarouge, stretch: true)[*红底结论* 放风险提醒],
+  boitefilled(color: framaorange.darken(28%), stretch: true)[*橙底结论* 垫深后才配白字],
 )
 
 // 用法: #stretch-grid(columns: 3, gutter: 1em, boiteXXX(stretch: true)[...], ...)

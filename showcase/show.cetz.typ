@@ -10,10 +10,12 @@
 // ⚠ cetz-canvas 直接当函数调用即可；不要再 #import cetz（lib.typ 已导出）。
 #import "../lib.typ": *
 
-// 用法: #cetz-canvas({ import cetz.draw: *; rect/circle/line/content(...) })
-// 改这里: 箭头函数体内用 cetz.draw 原语作画；坐标与页宽成比例缩放。
-// ⚠ 坑: 本页强调色为 framarouge，示意图里的色值请手动跟随当前 accent-state；
-//        中明度底（vert / orange / jaune / marron）配深字，深底才配白字。
+// 用法: #cetz-canvas({ import cetz.draw: *; rect/circle/line/content(...) }) —— 坐标即厘米（1 单位 = 1cm）
+// 改这里: 箭头函数体内用 cetz.draw 原语作画；框内黑文字统一字号（正文 0.62em / 标题 0.78em）、
+//         行距统一 0.52、框内上下留白约 0.2~0.3；CJK 一字宽 ≈ 字号，框宽按最长行留够余量。
+// ⚠ 坑: 中明度底（vert/orange/jaune/marron）配深字，深底才配白字；文字按自然尺寸渲染不随
+//        坐标缩放，圆/框必须装得下文字（"Model"≈1.2cm 宽，圆半径给 0.8）；箭头标签放
+//        走廊空闲侧，别压线别压文字。
 == CeTZ · 闭环示意图
 
 #body-slide(
@@ -33,32 +35,34 @@
         #cetz-canvas({
           import cetz.draw: *
 
-          // Agent 边界（左）—— 浅底 + 深字标题
-          rect((0.3, 0.6), (4.4, 5.8), fill: framarouge.lighten(80%), stroke: framarouge)
-          content((2.35, 5.4), text(fill: framarouge, weight: "bold")[*Agent*])
+          // 统一规格：框内黑字 0.62em / 标题 0.78em，行距 0.52，坐标单位 = 厘米
+          // Agent 边界（左）—— 浅红底 + 深红标题
+          rect((0.25, 0.5), (4.2, 5.9), fill: framarouge.lighten(80%), stroke: framarouge)
+          content((2.22, 5.45), text(size: 0.78em, weight: "bold", fill: framarouge)[*Agent*])
 
-          // Model 实底深蓝 + 白字（浅底白字会发虚）；Harness 白底深框
-          circle((2.35, 3.9), radius: 0.65, fill: framableu, stroke: none)
-          content((2.35, 3.9), text(size: 0.85em, weight: "bold", fill: white)[*Model*])
+          // Model 实底深蓝圆 + 白字；半径 0.8 装得下 "Model"（≈1.2cm 宽）
+          circle((2.22, 4.3), radius: 0.8, fill: framableu, stroke: none)
+          content((2.22, 4.3), text(size: 0.78em, weight: "bold", fill: white)[*Model*])
 
-          rect((0.9, 0.8), (3.8, 2.9), fill: white, stroke: framagris)
-          content((2.35, 2.45), text(size: 0.8em, weight: "bold")[*Harness*])
-          content((2.35, 2.0), text(size: 0.62em)[上下文构造])
-          content((2.35, 1.63), text(size: 0.62em)[工具接口 · 状态])
-          content((2.35, 1.26), text(size: 0.62em)[约束 · 验证 · 纠正])
+          // Harness 白底灰框 —— 标题 + 三行统一黑字（0.62em / 行距 0.52 / 上下留白对称）
+          rect((0.52, 1.05), (3.92, 3.6), fill: white, stroke: framagris)
+          content((2.22, 3.12), text(size: 0.78em, weight: "bold", fill: framagrisdark)[*Harness*])
+          content((2.22, 2.6), text(size: 0.62em, fill: framagrisdark)[上下文构造])
+          content((2.22, 2.08), text(size: 0.62em, fill: framagrisdark)[工具接口 · 状态])
+          content((2.22, 1.56), text(size: 0.62em, fill: framagrisdark)[约束 · 验证 · 纠正])
 
-          // Environment 边界（右）—— 浅底 + 深字
-          rect((5.4, 0.6), (10.6, 5.8), fill: framableu.lighten(88%), stroke: framableu)
-          content((8.0, 5.4), text(fill: framableu, weight: "bold")[*Environment*])
-          content((8.0, 3.7), text(size: 0.68em)[文件 · 数据库 · 网页])
-          content((8.0, 3.25), text(size: 0.68em)[用户 · 其他 Agent])
-          content((8.0, 2.8), text(size: 0.68em)[物理 / 仿真世界])
+          // Environment 边界（右）—— 浅蓝底 + 深蓝标题，三行黑字与 Harness 同规格
+          rect((7.5, 0.5), (11.7, 5.9), fill: framableu.lighten(88%), stroke: framableu)
+          content((9.6, 5.45), text(size: 0.78em, weight: "bold", fill: framableu)[*Environment*])
+          content((9.6, 4.3), text(size: 0.62em, fill: framagrisdark)[文件 · 数据库 · 网页])
+          content((9.6, 3.78), text(size: 0.62em, fill: framagrisdark)[用户 · 其他 Agent])
+          content((9.6, 3.26), text(size: 0.62em, fill: framagrisdark)[物理 / 仿真世界])
 
-          // 行动与观察：标签锚在箭头中点旁的空白侧，与矩形边界保持间距
-          line((4.4, 4.3), (5.4, 4.3), mark: (end: "stealth"))
-          content((4.9, 4.7), text(size: 0.68em)[行动])
-          line((5.4, 1.5), (4.4, 1.5), mark: (end: "stealth"))
-          content((4.9, 1.05), text(size: 0.68em)[观察])
+          // 行动 / 观察：箭头横贯框间走廊，标签在箭头空侧、与线和框边留白
+          line((4.2, 4.75), (7.5, 4.75), mark: (end: "stealth"))
+          content((5.85, 5.25), text(size: 0.62em, fill: framagrisdark)[行动])
+          line((7.5, 1.85), (4.2, 1.85), mark: (end: "stealth"))
+          content((5.85, 1.3), text(size: 0.62em, fill: framagrisdark)[观察])
         })
       ],
     )
