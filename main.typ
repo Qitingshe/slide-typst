@@ -6,6 +6,13 @@
 // 章节编号
 #set heading(numbering: none)
 
+// 图注与脚注：更小、更柔和的灰，让正文呼吸（正文字号不变）
+#show figure.caption: set text(size: 0.85em, fill: rgb("#767676"))
+#show footnote: set text(size: 0.78em, fill: rgb("#767676"))
+
+// 封面
+#cover()
+
 // == 内容结构 ==
 // 顶层 "=" 为 section，生成章节分隔页
 // 二级 "==" 为 single slide（对应 \frame{}）

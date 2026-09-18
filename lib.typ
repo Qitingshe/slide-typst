@@ -7,6 +7,11 @@
 #import "@preview/numbly:0.1.0": numbly
 
 // ==== Framasoft 配色 ====
+// 浅色现代基调：每种「原色」都配有同族浅色。
+// 深色槽位：primary / secondary / tertiary / neutral / neutral-dark / neutral-darkest
+// 浅色槽位：primary-light / secondary-light / tertiary-light / neutral-light / neutral-lightest
+// 全部接入下方 config-colors(...)。
+
 #let framableu = rgb("#0C5B7A")
 #let framableulight = rgb("#1290B0")
 #let framavert = rgb("#8E9C48")
@@ -23,17 +28,23 @@
 #let framamarronlight = rgb("#D7CCC8")
 #let framagris = rgb("#616161")
 #let framagrislight = rgb("#F5F5F5")
+#let framagrisdark = rgb("#3E3E3E")
+#let framagrisdarkest = rgb("#000000")
 
-// ==== 强调文本（对应 \emph，Framaorange 加粗）====
+// ==== 强调文本（Framaorange 加粗；刻意保持「稀有、可选」）====
+// frameEmph 与 alert 同源同色，alert 同时通过 config-methods 绑定。
 #let frameEmph(body) = text(fill: framaorange, weight: "bold", body)
+#let alert(body) = text(fill: framaorange, weight: "bold", body)
 
-// ==== 彩色盒子（对应 \boiteXXX）====
+// ==== 浅色强调卡片（对应 \boiteXXX）====
+// 左竖条(3pt) + 约 5%–8% 的极浅底色 + 无重边框 + 圆角 + 舒适内边距。
+// 保留原有公共函数名与「单内容参数」签名。
 #let _boite(content, color: framableu) = {
   block(
-    inset: 10pt,
-    radius: 3pt,
-    fill: color.lighten(85%),
-    stroke: (paint: color, thickness: 1pt),
+    inset: (x: 12pt, y: 9pt),
+    radius: 4pt,
+    fill: color.lighten(93%),
+    stroke: (left: (paint: color, thickness: 3pt)),
   )[#content]
 }
 
@@ -57,8 +68,13 @@
     tertiary: framaorange,
     tertiary-light: framaorangelight,
     neutral: framagris,
-    neutral-lightest: rgb("#ffffff"),
-    neutral-darkest: rgb("#000000"),
+    neutral-light: framagrislight,
+    neutral-lightest: rgb("#FFFFFF"),
+    neutral-dark: framagrisdark,
+    neutral-darkest: framagrisdarkest,
+  ),
+  config-methods(
+    alert: (self: none, it) => text(fill: framaorange, weight: "bold", it),
   ),
   config-info(
     title: [Title],
@@ -76,3 +92,76 @@
   reduce: cetz.canvas,
   cover: cetz.draw.hide.with(bounds: true),
 )
+
+// ==== 封面（title slide）====
+// 共享包装：封面页隐藏主题的 header/footer，并给出独立的白色画布。
+#let _cover-page(body) = touying-slide-wrapper(self => {
+  self = utils.merge-dicts(self, config-page(
+    header: none,
+    footer: none,
+    fill: rgb("#FFFFFF"),
+    margin: (x: 2.4em, y: 1.8em),
+  ))
+  touying-slide(self: self, body)
+})
+
+// 封面共享小工具：大标题 / meta 行 / meta 区块（含细分隔线）
+#let _cover-title(title, subtitle, size: 32pt, color: framagrisdark) = [
+  #text(size: size, weight: "bold", fill: color)[#title]
+  #if subtitle != none [
+    #v(0.8em)
+    #text(size: 13.5pt, fill: framagris)[#subtitle]
+  ]
+]
+
+#let _cover-meta(author, institution, date) = text(size: 9.5pt, fill: framagris)[#author · #institution · #date]
+
+#let _cover-meta-block(author, institution, date) = [
+  #line(length: 100%, stroke: (paint: framagris.lighten(60%), thickness: 0.5pt))
+  #v(0.7em)
+  #_cover-meta(author, institution, date)
+]
+
+// ---- cover：分栏色块（层叠大图形左面板）----
+// 左面板：横向渐变底色；浅蓝大圆 / 圆弧 / 细圆环层叠出抽象编辑海报感；
+// 超淡大号年份数字作背景字；唯一强调是一个 Framaorange 小方块。
+#let cover(
+  title: [Title],
+  subtitle: none,
+  author: [QITINGSHE],
+  institution: [USTC],
+  date: datetime.today().display(),
+) = _cover-page([
+  #place(left, block(
+    width: 38%,
+    height: 100%,
+    fill: gradient.linear(angle: 0deg, framableu.lighten(4%), framableu.darken(14%)),
+  )[
+    #place(top + left, dx: 1.2em, dy: 1em, cetz.canvas({
+      import cetz.draw: *
+
+      let year = datetime.today().display("[year]")
+
+      // 层叠大圆（浅蓝，高透明）
+      circle((2.1, 5.2), radius: 2.2, fill: framableu.lighten(22%).transparentize(86%), stroke: none)
+      circle((3.8, 4.3), radius: 1.8, fill: framableu.lighten(33%).transparentize(88%), stroke: none)
+      circle((1.5, 3.4), radius: 1.6, fill: framableu.lighten(45%).transparentize(90%), stroke: none)
+      // 大圆弧与细圆环
+      circle((6.0, 6.0), radius: 2.3, stroke: white.transparentize(90%), fill: none)
+      circle((3.3, 3.4), radius: 2.9, stroke: white.transparentize(93%), fill: none)
+      // 超淡大号年份（背景字）
+      content((2.6, 5.2), text(size: 84pt, weight: "bold", fill: framableu.lighten(50%).transparentize(78%))[#year])
+      // 唯一橙色小方块
+      rect((5.4, 0.7), (6.1, 1.4), fill: framaorange, stroke: none)
+    }))
+    #place(bottom + left, dx: 1.6em, dy: -0.55em, line(length: 3.2em, stroke: (paint: white.transparentize(82%), thickness: 1pt)))
+    #place(bottom + left, dx: 1.6em, dy: -1.5em, text(size: 11pt, weight: "medium", fill: white, tracking: 0.24em)[#institution])
+  ])
+  #place(top + right, dx: -1.8em, dy: 2.6em, block(width: 55%)[
+    #_cover-title(title, subtitle, size: 30pt, color: framableu)
+  ])
+  #place(bottom + right, dx: -1.8em, dy: -2.4em, block(width: 55%)[
+    #_cover-meta-block(author, institution, date)
+  ])
+])
+
