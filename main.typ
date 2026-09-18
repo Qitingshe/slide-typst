@@ -15,6 +15,10 @@
 #show figure.caption: set text(size: 0.85em, fill: rgb("#767676"))
 #show footnote: set text(size: 0.78em, fill: rgb("#767676"))
 
+// 页标题（每页 slide 的标题）的样式在 lib.typ 的 slide-theme → header 中定义。
+// 注意：Touying 会把 `==` 标题从正文移到页眉（header）渲染，在正文里对
+// `#show heading.where(level: 2)` 写 show 规则不会生效。
+
 // 封面
 #cover(
   title: [深入理解 AI Agent],
@@ -44,7 +48,17 @@
 #include "chapters/core.typ"
 
 = 十章速览
-#include "chapters/tour.typ"
+#include "chapters/tour-map.typ"
+#include "chapters/ch01.typ"
+#include "chapters/ch02.typ"
+#include "chapters/ch03.typ"
+#include "chapters/ch04.typ"
+#include "chapters/ch05.typ"
+#include "chapters/ch06.typ"
+#include "chapters/ch07.typ"
+#include "chapters/ch08.typ"
+#include "chapters/ch09.typ"
+#include "chapters/ch10.typ"
 
 = 工程要点
 #include "chapters/engineering.typ"

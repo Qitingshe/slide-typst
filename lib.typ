@@ -57,9 +57,114 @@
 #let boitemarron(content) = _boite(content, color: framamarron)
 #let boitegrise(content) = _boite(content, color: framagris)
 
+// ==== 排版层级 ====
+// 在 0.85em 正文（≈21pt）之上叠加可复用层级：
+//   二级标题（heading level 2，show 规则见 main.typ）≈ 1.5em —— 每页大标题
+//   keyline（金句行）      24pt   —— 每页主结论
+//   stat（大数字）         amount-size —— 数据可视化数字
+//   note（附注）           0.75em 灰色  —— 澄清 / 出处
+//
+// 每页强调色：用 #slide-accent(色值) 声明；之后本页的二级标题、keyline、
+// stat、boitefilled 会自动沿用该色，也可用 color: 参数逐处覆盖。
+//
+// ⚠ 放置位置（Touying 分页注意）：请把 #slide-accent(...) 写在「上一页内容的
+//   末尾」作为收尾声明。若把它放在某页 `==` 标题之前（包括 section 标题之后），
+//   Touying 会在两页之间凭空多插一页空页。每章第一页可省略声明——直接沿用
+//   上一章末尾留下的颜色（全书默认 framableu）。
+
+/// 全局强调色状态（默认 framableu）。
+/// 仅供内部使用；页面请调用 slide-accent 声明强调色。
+#let accent-state = state("slide-accent", framableu)
+
+/// 设置当前页/当前章强调色。
+/// - color (color): 强调色色值，如 framaorange / framaviolet。
+///   声明后，后续 keyline、stat、boitefilled 与二级标题自动采用该色。
+/// ⚠ 请写在「上一页末尾」；写在 `==` 标题前会多出一页空页。
+#let slide-accent(color) = accent-state.update(color)
+
+/// keyline —— 金句行：大号、加粗、居中的主结论。
+/// - body (content): 结论文本。
+/// - color (color, auto): 文字色；默认 auto = 跟随当前强调色。
+/// - size (length): 字号，默认 24pt。
+/// 示例：#keyline[上下文决定能力上限]
+#let keyline(body, color: auto, size: 24pt) = {
+  let use-accent = color == auto
+  context {
+    let c = if use-accent { accent-state.get() } else { color }
+    block(breakable: false)[
+      #align(center, text(size: size, weight: "bold", fill: c)[#body])
+    ]
+  }
+}
+
+/// note —— 附注行：小号灰字，用于澄清、出处与补充说明。
+/// - body (content): 附注文本。
+/// - color (color): 文字色，默认 framagris。
+/// 示例：#note[细节见第 8 章]
+#let note(body, color: framagris) = text(size: 0.75em, fill: color)[#body]
+
+/// stat —— 大数字：超大强调色数字 + 灰色小标签。
+/// - amount (content): 大数字本体，可传字符串或数学内容。
+/// - label (content): 数字下方的灰色解释。
+/// - amount-size (length): 数字字号，默认 34pt。
+/// - color (color, auto): 数字色；默认 auto = 跟随当前强调色。
+/// 示例：#stat[10][正文章节]
+/// 带定制：#stat(amount-size: 40pt, color: framaviolet, [10], [正文章节])
+#let stat(amount, label, amount-size: 34pt, color: auto) = {
+  let use-accent = color == auto
+  context {
+    let c = if use-accent { accent-state.get() } else { color }
+    block(breakable: false)[
+      #align(center)[
+        #text(size: amount-size, weight: "bold", fill: c)[#amount]
+        #v(0.14em)
+        #text(size: 0.8em, fill: framagris)[#label]
+      ]
+    ]
+  }
+}
+
+/// boitefilled —— 实色填充卡片（boite 系列的对偶变体）：
+/// 底色为强调色、内容为白字，适合放「结论 / 高反差」信息。
+/// 建议搭配深色原色（framableu / framavert / framaviolet / framaorange），
+/// 以保证白字对比度。
+/// - content (content): 卡片内容。
+/// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
+/// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
+#let boitefilled(content, color: auto) = {
+  let use-accent = color == auto
+  context {
+    let c = if use-accent { accent-state.get() } else { color }
+    block(
+      inset: (x: 12pt, y: 9pt),
+      radius: 4pt,
+      fill: c,
+    )[
+      #text(fill: rgb("#FFFFFF"))[#content]
+    ]
+  }
+}
+
 // ==== 主题配置 ====
 #let slide-theme = university-theme.with(
   aspect-ratio: "16-9",
+  // 页标题：Touying 把每页的 `==` 标题移到页眉（header）渲染，正文里不出现，
+  // 因此标题样式要在这里定制。1.5em 放大 + 当前页强调色 + 短粗强调条，
+  // 与 0.85em 正文拉开层级；强调色跟随 slide-accent（见上文）。
+  header: utils.display-current-heading(
+    level: 2,
+    style: (setting: none, numbered: true, current-heading) => {
+      context {
+        let c = accent-state.get()
+        let c-head = c.darken(4%) // 加深一档，保证白底对比
+        block(breakable: false)[
+          #text(size: 1.5em, weight: "bold", fill: c-head)[#current-heading.body]
+          #v(0.14em)
+          #line(length: 4.6em, stroke: (paint: c, thickness: 2.4pt))
+        ]
+      }
+    },
+  ),
   config-colors(
     primary: framableu,
     primary-light: framableulight,
