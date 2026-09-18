@@ -77,11 +77,11 @@
     alert: (self: none, it) => text(fill: framaorange, weight: "bold", it),
   ),
   config-info(
-    title: [Title],
+    title: [深入理解 AI Agent],
     subtitle: none,
     author: [QITINGSHE],
     date: datetime.today(),
-    institution: [USTC],
+    institution: [bojieli/ai-agent-book],
     contact: none,
     logo: none,
   ),
