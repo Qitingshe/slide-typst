@@ -73,6 +73,7 @@
 // 在 0.85em 正文（≈21pt）之上叠加可复用层级：
 //   二级标题（heading level 2，show 规则见 main.typ）≈ 1.5em —— 每页大标题
 //   keyline（金句行）      24pt   —— 每页主结论
+//   正文页骨架：body-slide —— keyline 结论 → 主体 → 收尾，间距统一收口
 //   stat（大数字）         amount-size —— 数据可视化数字
 //   note（附注）           0.75em 灰色  —— 澄清 / 出处
 //
@@ -119,6 +120,36 @@
 /// - color (color): 文字色，默认 framagris。
 /// 示例：#note[细节见第 8 章]
 #let note(body, color: framagris) = text(size: 0.75em, fill: color)[#body]
+
+// ==== 正文页骨架模板 + 节奏间距 ====
+// 页面级留白只有两种节奏源：gap-primary（主节奏：keyline 后 / 收尾前）与
+// gap-secondary（次级节奏：主体内段间，如公式↔网格、网格↔列表）。
+#let gap-primary = 0.3em
+#let gap-secondary = 0.4em
+
+/// body-slide —— 标准正文页骨架：keyline 结论 → 主体 → 收尾。
+/// - kicker (content, none): 页面主结论行，交给 keyline 渲染；省略则无结论行。
+/// - inner (content): 主体内容（stretch-grid / 列表 / 双栏网格 / 公式块…）。
+/// - closing (content, none): 收尾块（note / boitefilled / boiteXXX / 自定义内容），省略则无。
+/// - gap (length): keyline 与主体之间的留白，默认 gap-primary；刻意紧凑的整页可传 0pt。
+/// - closing-gap (length): 收尾块前的留白，默认同 gap-primary。
+/// 用法：
+///   #body-slide(
+///     kicker: [结论],
+///     inner: [#stretch-grid(columns: 3, gutter: 1em, …)],
+///     closing: note[附注],
+///   )
+#let body-slide(
+  kicker: none,
+  inner: none,
+  closing: none,
+  gap: gap-primary,
+  closing-gap: gap-primary,
+) = [
+  #if kicker != none [#keyline[#kicker] #v(gap)]
+  #inner
+  #if closing != none [#v(closing-gap) #closing]
+]
 
 /// stat —— 大数字：超大强调色数字 + 灰色小标签。
 /// - amount (content): 大数字本体，可传字符串或数学内容。

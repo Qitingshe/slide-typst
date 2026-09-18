@@ -25,28 +25,27 @@
 
 == 增量开发循环
 
-#keyline[小步快跑：每次只改一点，立刻验证]
-
-#v(0.3em)
-
-- 增量开发循环：理解需求 → 搜索相关代码 → 编辑 → 测试 → 调试修复
-- 代码解释器：受限 Python 沙盒，读表 / 清洗 / 统计 / 绘图一站式
-- 沙盒安全：默认无网络、路径受限、时间 / CPU / 内存 / 输出上限
-
-#v(0.4em)
-
-#note[代码是「能创造新工具的工具」——编码能力是 Agent 的杠杆]
+#body-slide(
+  kicker: [小步快跑：每次只改一点，立刻验证],
+  inner: [
+    - 增量开发循环：理解需求 → 搜索相关代码 → 编辑 → 测试 → 调试修复
+    - 代码解释器：受限 Python 沙盒，读表 / 清洗 / 统计 / 绘图一站式
+    - 沙盒安全：默认无网络、路径受限、时间 / CPU / 内存 / 输出上限
+  ],
+  closing: note[代码是「能创造新工具的工具」——编码能力是 Agent 的杠杆],
+)
 
 // ---------- 第 2 页 · 强调色 framableu ----------
 
 == 通用 Agent 与基准
 
-#keyline[专用 ∪ 通用：Agent 能力的并集]
-
-#v(0.3em)
-
-- 通用 Agent = Coding + Deep Research + Computer Use 观察 / 动作空间的并集
-- 基准：SWE-bench、Terminal Bench 等，量化「会不会修代码」
-- 权衡：通用性 vs 深度；工具越多决策空间越大（衔接 §7 评估）
+#body-slide(
+  kicker: [专用 ∪ 通用：Agent 能力的并集],
+  inner: [
+    - 通用 Agent = Coding + Deep Research + Computer Use 观察 / 动作空间的并集
+    - 基准：SWE-bench、Terminal Bench 等，量化「会不会修代码」
+    - 权衡：通用性 vs 深度；工具越多决策空间越大（衔接 §7 评估）
+  ],
+)
 
 // 下一章强调色由 ch06 的 section-open 自行声明，这里不再交接。
