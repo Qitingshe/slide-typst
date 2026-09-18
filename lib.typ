@@ -391,15 +391,8 @@
   config-methods(
     alert: (self: none, it) => text(fill: framaorange, weight: "bold", it),
   ),
-  config-info(
-    title: [深入理解 AI Agent],
-    subtitle: none,
-    author: [QITINGSHE],
-    date: datetime.today(),
-    institution: [bojieli/ai-agent-book],
-    contact: none,
-    logo: none,
-  ),
+  // 注：deck 专属元数据（书名/作者/日期）不属于设计系统，已移出 lib——
+  // 由每份 deck 的 main.typ 通过 slide-theme.with(config-info(...)) 自行声明。
 )
 
 // ==== CeTZ 与 Touying 的动画绑定 ====

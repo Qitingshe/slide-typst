@@ -2,7 +2,17 @@
 // 结构：封面 + 目标 + 目录 + 四个分段（核心公式 / 十章速览 / 工程要点 / 小结）
 #import "lib.typ": *
 
-#show: slide-theme
+// 设计系统（lib.typ）只含通用配置；本 deck 的身份元数据在此声明，
+// 渲染进页脚三格。借阅者改这几行即可换成自己的 deck。
+#show: slide-theme.with(config-info(
+  title: [Slide 模板画廊],
+  subtitle: none,
+  author: [QITINGSHE],
+  date: datetime.today(),
+  institution: [slide-typst],
+  contact: none,
+  logo: none,
+))
 
 // 中文字体回退：西文使用模板默认衬线，中文回退到系统字体 Heiti SC
 // 全局字号 0.85em：在单帧高度内容纳更充分的内容（约 15-16 行容量）
