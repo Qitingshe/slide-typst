@@ -45,13 +45,44 @@
   - 内容主线：核心公式 → 十章速览 → 工程要点 → 小结。
 ]
 
-= 目录
+// 「目录」自身也是 level-1 标题，但不应出现在目录里（避免「目录 → 目录」怪行）；
+// 用 outlined: false 把它从 outline 中排除，其余结构/开场页行为不变。
+// 注：`=` 速记生成的标题字段名为 depth（Touying 0.7.4 按 it.depth 识别），
+// 故这里显式写 depth: 1 以保持与 `=` 完全一致的元素形态。
+#heading(depth: 1, outlined: false)[目录]
 
 #section-open(title: [目录], subtitle: [内容地图])
 
 == 内容地图
 
-#outline(title: none, indent: 1em, depth: 1)
+// 目录页 · 自动目录：条目由各 `=` 分段标题自动生成（outline, depth 1），删改
+// 正文章节时目录自动跟随；每条天然链接到对应页（it.element.location()），
+// 点击即跳转。「= 目录」自身已以 outlined: false 排除。
+// 样式沿用安静语言：2.5pt framableu 细竖条 + 加粗条目名 + 灰字页码靠右。
+#show outline.entry: it => {
+  link(
+    it.element.location(),
+    grid(
+      columns: (0.55em, auto, 1fr, auto),
+      column-gutter: (0.85em, 1.4em, 1em),
+      align(horizon + left)[#rect(width: 2.5pt, height: 1.05em, radius: 1.25pt, fill: framableu, stroke: none)],
+      text(size: 1.08em, weight: "bold", fill: framagrisdark)[#it.body()],
+      [],
+      text(size: 0.75em, fill: framagris)[#it.page()],
+    ),
+  ) + v(0.85em) // 条目行距：在 outline 自带间距上再补一口气，清单更透气
+}
+
+#body-slide(
+  kicker: none,
+  inner: [
+    #v(1.8em) // 页顶留白：让清单在页眉细线下方安静落下
+    #outline(title: none, depth: 1)
+  ],
+  // 页尾收束：一行安静的小字，十章只留一条路径，细节交给「十章地图」页
+  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[正文十章 · 入门 → 协作]]],
+  closing-gap: 1.2em,
+)
 
 = 核心公式
 #include "chapters/core.typ"
