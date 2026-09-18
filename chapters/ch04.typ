@@ -31,13 +31,14 @@
 
 #grid(
   columns: (1fr, 1fr),
+  rows: (62.6pt, 63.4pt, 63.4pt),
   row-gutter: 0.6em,
   column-gutter: 0.8em,
-  boitebleue[*感知* 搜索 / 文件 / API / 数据库 —— 访问信息],
-  boiteverte[*执行* 代码 / 文件操作 / 系统命令 —— 决策变行动],
-  boiteviolette[*协作* 委托子 Agent / 请求人工确认 / 多 Agent 协调],
-  boitejaune[*事件* 邮件 / 定时 / Webhook —— 外部输入驱动启动],
-  boitegrise[*沟通* 文字 / 语音 / 邮件 —— 与用户互动],
+  boitebleue(stretch: true)[*感知* 搜索 / 文件 / API / 数据库 —— 访问信息],
+  boiteverte(stretch: true)[*执行* 代码 / 文件操作 / 系统命令 —— 决策变行动],
+  boiteviolette(stretch: true)[*协作* 委托子 Agent / 请求人工确认 / 多 Agent 协调],
+  boitejaune(stretch: true)[*事件* 邮件 / 定时 / Webhook —— 外部输入驱动启动],
+  boitegrise(stretch: true)[*沟通* 文字 / 语音 / 邮件 —— 与用户互动],
 )
 
 #v(0.3em)

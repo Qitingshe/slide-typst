@@ -31,20 +31,17 @@
 
 #grid(
   columns: (1fr, 1fr),
+  rows: (149.8pt,),
   gutter: 1em,
-  [
-    #boiteverte[
-      #align(center)[*静态前缀*]
-      - 系统提示词：身份 / 权限 / 行为准则
-      - 工具定义：名称 / 描述 / 参数格式
-    ],
+  boiteverte(stretch: true)[
+    #align(center)[*静态前缀*]
+    - 系统提示词：身份 / 权限 / 行为准则
+    - 工具定义：名称 / 描述 / 参数格式
   ],
-  [
-    #boiteorange[
-      #align(center)[*动态轨迹*]
-      - 用户消息（可注入 RAG 知识）
-      - 模型回复 + 工具执行结果
-    ],
+  boiteorange(stretch: true)[
+    #align(center)[*动态轨迹*]
+    - 用户消息（可注入 RAG 知识）
+    - 模型回复 + 工具执行结果
   ],
 )
 

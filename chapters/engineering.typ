@@ -27,13 +27,14 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr),
+  rows: (92.2pt, 92.2pt),
   row-gutter: 0.5em,
   column-gutter: 0.7em,
-  boitebleue[*Context 上下文* —— 信息要充分：提示词、知识库、Sidecar],
-  boiteverte[*Tools 工具接口* —— 命名直观、参数有例（MCP）],
-  boiterouge[*Constrain 约束* —— 故障安全默认值，显式开放],
-  boiteorange[*Verify 验证* —— 只看结构化数据，防提示注入],
-  boitejaune[*Correct 纠正* —— 静默重试、熔断、回退人工],
+  boitebleue(stretch: true)[*Context 上下文* —— 信息要充分：提示词、知识库、Sidecar],
+  boiteverte(stretch: true)[*Tools 工具接口* —— 命名直观、参数有例（MCP）],
+  boiterouge(stretch: true)[*Constrain 约束* —— 故障安全默认值，显式开放],
+  boiteorange(stretch: true)[*Verify 验证* —— 只看结构化数据，防提示注入],
+  boitejaune(stretch: true)[*Correct 纠正* —— 静默重试、熔断、回退人工],
 )
 
 #v(0.3em)
@@ -74,11 +75,12 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr, 1fr),
+  rows: (79.9pt,),
   gutter: 0.6em,
-  stat[10][正文章节],
-  stat[109][配套实验],
-  stat[15][语言版本],
-  stat(amount-size: 26pt)[48.3k][GitHub ★],
+  stat(stretch: true)[10][正文章节],
+  stat(stretch: true)[109][配套实验],
+  stat(stretch: true)[15][语言版本],
+  stat(amount-size: 26pt, stretch: true)[48.3k][GitHub ★],
 )
 
 #v(0.3em)

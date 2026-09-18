@@ -47,22 +47,19 @@
 
 #grid(
   columns: (1fr, 1fr),
+  rows: (120.2pt,),
   gutter: 1em,
-  [
-    #boiteverte[
-      #align(center)[*SFT*]
-      - 监督学习，模仿示范
-      - 快而稳、成本低
-      - 依赖高质量标注数据
-    ],
+  boiteverte(stretch: true)[
+    #align(center)[*SFT*]
+    - 监督学习，模仿示范
+    - 快而稳、成本低
+    - 依赖高质量标注数据
   ],
-  [
-    #boiteorange[
-      #align(center)[*RL*]
-      - 奖励信号驱动试错
-      - 能发现未示范的策略
-      - 训练不稳定、成本高
-    ],
+  boiteorange(stretch: true)[
+    #align(center)[*RL*]
+    - 奖励信号驱动试错
+    - 能发现未示范的策略
+    - 训练不稳定、成本高
   ],
 )
 

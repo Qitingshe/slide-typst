@@ -31,23 +31,20 @@
 
 #grid(
   columns: (1fr, 1fr),
+  rows: (208.1pt,),
   gutter: 1em,
-  [
-    #boiteverte[
-      *前沿方向*
-      - 模型即 Agent：RL 内化工具调用
-      - Agent Skills · Computer Use · 语音 Agent
-      - Graph / Loop 工程编排
-      - 多 Agent 社会的涌现行为
-    ],
+  boiteverte(stretch: true)[
+    *前沿方向*
+    - 模型即 Agent：RL 内化工具调用
+    - Agent Skills · Computer Use · 语音 Agent
+    - Graph / Loop 工程编排
+    - 多 Agent 社会的涌现行为
   ],
-  [
-    #boiteorange[
-      *动手建议*
-      - 从实验 1-1 消融开始，亲手验证上下文五要素的权重
-      - 用公式对照每个产品：它扩展了哪个观察 / 动作空间？
-      - 跑通一章实验 → 沉淀轨迹 → 形成自己的进化闭环
-    ],
+  boiteorange(stretch: true)[
+    *动手建议*
+    - 从实验 1-1 消融开始，亲手验证上下文五要素的权重
+    - 用公式对照每个产品：它扩展了哪个观察 / 动作空间？
+    - 跑通一章实验 → 沉淀轨迹 → 形成自己的进化闭环
   ],
 )
 

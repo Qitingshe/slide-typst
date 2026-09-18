@@ -24,27 +24,22 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr),
+  rows: (179.3pt,),
   gutter: 1em,
-  [
-    #boitebleue[
-      #align(center)[*大脑 · LLM*]
-      - 理解意图、思考规划、判断决策
-      - 预训练世界知识 + 后训练固化决策策略（第 8 章）
-    ],
+  boitebleue(stretch: true)[
+    #align(center)[*大脑 · LLM*]
+    - 理解意图、思考规划、判断决策
+    - 预训练世界知识 + 后训练固化决策策略（第 8 章）
   ],
-  [
-    #boiteverte[
-      #align(center)[*眼睛 · 上下文*]
-      - 每个决策点能看到的信息表示
-      - 环境观察、用户记忆、领域知识、任务进展
-    ],
+  boiteverte(stretch: true)[
+    #align(center)[*眼睛 · 上下文*]
+    - 每个决策点能看到的信息表示
+    - 环境观察、用户记忆、领域知识、任务进展
   ],
-  [
-    #boiteorange[
-      #align(center)[*手脚 · 工具*]
-      - 感知或改变世界的接口
-      - 工具定义、调用协议、适配器
-    ],
+  boiteorange(stretch: true)[
+    #align(center)[*手脚 · 工具*]
+    - 感知或改变世界的接口
+    - 工具定义、调用协议、适配器
   ],
 )
 
@@ -156,9 +151,10 @@
     #v(0.35em)
     #grid(
       columns: (1fr, 1fr),
+      rows: (72.7pt,),
       gutter: 0.7em,
-      stat(amount-size: 30pt, color: framaorange, [3], [多币种汇总 · 迭代]),
-      stat(amount-size: 30pt, color: framableu, [4], [多币种汇总 · 工具调用]),
+      stat(amount-size: 30pt, color: framaorange, stretch: true, [3], [多币种汇总 · 迭代]),
+      stat(amount-size: 30pt, color: framableu, stretch: true, [4], [多币种汇总 · 工具调用]),
     )
   ],
 )

@@ -48,10 +48,11 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr),
+  rows: (61.9pt,),
   gutter: 1em,
-  [#stat(amount-size: 24pt)[短][对话内即时]],
-  [#stat(amount-size: 24pt)[中][会话间沉淀]],
-  [#stat(amount-size: 24pt)[长][重训练内化]],
+  [#stat(amount-size: 24pt, stretch: true)[短][对话内即时]],
+  [#stat(amount-size: 24pt, stretch: true)[中][会话间沉淀]],
+  [#stat(amount-size: 24pt, stretch: true)[长][重训练内化]],
 )
 
 #v(0.3em)

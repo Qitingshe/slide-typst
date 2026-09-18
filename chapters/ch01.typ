@@ -31,14 +31,15 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr),
+  rows: (92.2pt, 63.4pt),
   row-gutter: 0.6em,
   column-gutter: 0.8em,
-  boitebleue[*Cursor* 编程助手：开放式工作流与代码操作],
-  boiteverte[*Deep Research* 长程研究：检索、综合、成文],
-  boiteorange[*Manus* 全能执行：拆解任务、调用工具],
-  boiteviolette[*豆包* 大规模智能客服],
-  boitemarron[*游戏 NPC* 嵌入式交互角色],
-  boitejaune[*Pine AI* Agent 协作：共同完成任务],
+  boitebleue(stretch: true)[*Cursor* 编程助手：开放式工作流与代码操作],
+  boiteverte(stretch: true)[*Deep Research* 长程研究：检索、综合、成文],
+  boiteorange(stretch: true)[*Manus* 全能执行：拆解任务、调用工具],
+  boiteviolette(stretch: true)[*豆包* 大规模智能客服],
+  boitemarron(stretch: true)[*游戏 NPC* 嵌入式交互角色],
+  boitejaune(stretch: true)[*Pine AI* Agent 协作：共同完成任务],
 )
 
 #v(0.3em)

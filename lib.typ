@@ -39,23 +39,40 @@
 // ==== 浅色强调卡片（对应 \boiteXXX）====
 // 左竖条(3pt) + 约 5%–8% 的极浅底色 + 无重边框 + 圆角 + 舒适内边距。
 // 保留原有公共函数名与「单内容参数」签名。
-#let _boite(content, color: framableu) = {
-  block(
-    inset: (x: 12pt, y: 9pt),
-    radius: 4pt,
-    fill: color.lighten(93%),
-    stroke: (left: (paint: color, thickness: 3pt)),
-  )[#content]
+// 网格内满格等高 + 保留圆角：用 block(height: 100%, radius: 4pt) 撑满整格。
+// 注意：height: 100% 只在「行高非 auto」时等于行高，因此 stretch 模式必须
+// 配合所在 grid 的 `rows:` 设定值行高（本册已按实测内容高逐个网格固定）。
+// 不使用 grid.cell —— grid.cell 作为直接子元素才生效，被 context 包裹会被吞掉
+// （boitefilled/stat 需要读取 accent-state，必须用 context）。
+#let _boite(content, color: framableu, stretch: false) = {
+  if stretch {
+    block(
+      width: 100%,
+      height: 100%,
+      radius: 4pt,
+      fill: color.lighten(93%),
+      stroke: (left: (paint: color, thickness: 3pt)),
+    )[
+      #block(inset: (x: 12pt, y: 9pt))[#content]
+    ]
+  } else {
+    block(
+      inset: (x: 12pt, y: 9pt),
+      radius: 4pt,
+      fill: color.lighten(93%),
+      stroke: (left: (paint: color, thickness: 3pt)),
+    )[#content]
+  }
 }
 
-#let boitebleue(content) = _boite(content, color: framableu)
-#let boiteverte(content) = _boite(content, color: framavert)
-#let boiterouge(content) = _boite(content, color: framarouge)
-#let boiteorange(content) = _boite(content, color: framaorange)
-#let boiteviolette(content) = _boite(content, color: framaviolet)
-#let boitejaune(content) = _boite(content, color: framajaune)
-#let boitemarron(content) = _boite(content, color: framamarron)
-#let boitegrise(content) = _boite(content, color: framagris)
+#let boitebleue(content, stretch: false) = _boite(content, color: framableu, stretch: stretch)
+#let boiteverte(content, stretch: false) = _boite(content, color: framavert, stretch: stretch)
+#let boiterouge(content, stretch: false) = _boite(content, color: framarouge, stretch: stretch)
+#let boiteorange(content, stretch: false) = _boite(content, color: framaorange, stretch: stretch)
+#let boiteviolette(content, stretch: false) = _boite(content, color: framaviolet, stretch: stretch)
+#let boitejaune(content, stretch: false) = _boite(content, color: framajaune, stretch: stretch)
+#let boitemarron(content, stretch: false) = _boite(content, color: framamarron, stretch: stretch)
+#let boitegrise(content, stretch: false) = _boite(content, color: framagris, stretch: stretch)
 
 // ==== 排版层级 ====
 // 在 0.85em 正文（≈21pt）之上叠加可复用层级：
@@ -115,17 +132,33 @@
 /// - color (color, auto): 数字色；默认 auto = 跟随当前强调色。
 /// 示例：#stat[10][正文章节]
 /// 带定制：#stat(amount-size: 40pt, color: framaviolet, [10], [正文章节])
-#let stat(amount, label, amount-size: 34pt, color: auto) = {
+#let stat(amount, label, amount-size: 34pt, color: auto, stretch: false) = {
   let use-accent = color == auto
   context {
     let c = if use-accent { accent-state.get() } else { color }
-    block(breakable: false)[
-      #align(center)[
-        #text(size: amount-size, weight: "bold", fill: c)[#amount]
-        #v(0.14em)
-        #text(size: 0.8em, fill: framagris)[#label]
+    if stretch {
+      // 满格等高（依赖所在 grid 的定值 rows），内容垂直+水平居中
+      block(
+        width: 100%,
+        height: 100%,
+      )[
+        #align(center + horizon)[
+          #text(size: amount-size, weight: "bold", fill: c)[#amount]
+          #v(0.14em)
+          #text(size: 0.8em, fill: framagris)[#label]
+        ]
       ]
-    ]
+    } else {
+      block(
+        breakable: false,
+      )[
+        #align(center)[
+          #text(size: amount-size, weight: "bold", fill: c)[#amount]
+          #v(0.14em)
+          #text(size: 0.8em, fill: framagris)[#label]
+        ]
+      ]
+    }
   }
 }
 
@@ -136,17 +169,31 @@
 /// - content (content): 卡片内容。
 /// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
 /// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
-#let boitefilled(content, color: auto) = {
+#let boitefilled(content, color: auto, stretch: false) = {
   let use-accent = color == auto
   context {
     let c = if use-accent { accent-state.get() } else { color }
-    block(
-      inset: (x: 12pt, y: 9pt),
-      radius: 4pt,
-      fill: c,
-    )[
-      #text(fill: rgb("#FFFFFF"))[#content]
-    ]
+    if stretch {
+      // 满格等高 + 圆角（依赖所在 grid 的定值 rows）
+      block(
+        width: 100%,
+        height: 100%,
+        radius: 4pt,
+        fill: c,
+      )[
+        #block(inset: (x: 12pt, y: 9pt))[
+          #text(fill: rgb("#FFFFFF"))[#content]
+        ]
+      ]
+    } else {
+      block(
+        inset: (x: 12pt, y: 9pt),
+        radius: 4pt,
+        fill: c,
+      )[
+        #text(fill: rgb("#FFFFFF"))[#content]
+      ]
+    }
   }
 }
 

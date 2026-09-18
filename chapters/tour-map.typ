@@ -19,18 +19,19 @@
 
 #grid(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  rows: (33.8pt, 33.8pt),
   row-gutter: 0.5em,
   column-gutter: 0.6em,
-  boitefilled(color: framableu)[1 · 入门],
-  boitefilled(color: framavert)[2 · 上下文],
-  boitefilled(color: framaviolet)[3 · 记忆],
-  boitefilled(color: framaorange)[4 · 工具],
-  boitefilled(color: framableu)[5 · Coding],
-  boitefilled(color: framavert)[6 · 交互],
-  boitefilled(color: framaviolet)[7 · 评估],
-  boitefilled(color: framaorange)[8 · 后训练],
-  boitefilled(color: framamarron)[9 · 进化],
-  boitefilled(color: framaviolet)[10 · 协作],
+  boitefilled(color: framableu, stretch: true)[1 · 入门],
+  boitefilled(color: framavert, stretch: true)[2 · 上下文],
+  boitefilled(color: framaviolet, stretch: true)[3 · 记忆],
+  boitefilled(color: framaorange, stretch: true)[4 · 工具],
+  boitefilled(color: framableu, stretch: true)[5 · Coding],
+  boitefilled(color: framavert, stretch: true)[6 · 交互],
+  boitefilled(color: framaviolet, stretch: true)[7 · 评估],
+  boitefilled(color: framaorange, stretch: true)[8 · 后训练],
+  boitefilled(color: framamarron, stretch: true)[9 · 进化],
+  boitefilled(color: framaviolet, stretch: true)[10 · 协作],
 )
 
 #v(0.4em)
