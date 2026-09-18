@@ -29,9 +29,8 @@
 
 #keyline[下一步：亲手把一个 Agent 跑起来]
 
-#grid(
-  columns: (1fr, 1fr),
-  rows: (208.1pt,),
+#stretch-grid(
+  columns: 2,
   gutter: 1em,
   boiteverte(stretch: true)[
     *前沿方向*

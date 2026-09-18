@@ -39,22 +39,17 @@
 // ==== 浅色强调卡片（对应 \boiteXXX）====
 // 左竖条(3pt) + 约 5%–8% 的极浅底色 + 无重边框 + 圆角 + 舒适内边距。
 // 保留原有公共函数名与「单内容参数」签名。
-// 网格内满格等高 + 保留圆角：用 block(height: 100%, radius: 4pt) 撑满整格。
-// 注意：height: 100% 只在「行高非 auto」时等于行高，因此 stretch 模式必须
-// 配合所在 grid 的 `rows:` 设定值行高（本册已按实测内容高逐个网格固定）。
-// 不使用 grid.cell —— grid.cell 作为直接子元素才生效，被 context 包裹会被吞掉
-// （boitefilled/stat 需要读取 accent-state，必须用 context）。
+// stretch: true 时返回「规格字典」而非内容：(cell: …, color: …, content: …)
+// 或 (cell: "stat", …, amount: …, label: …)。这些字典只交给模板级
+// stretch-grid(...) 排版 —— 它自动测量自然高度、按行取最大、生成等高网格
+// （columns 传整数，无需 rows）；stat 的「大数字」锚定行垂直中心，行高取
+// 2·T - A（T = 数字+间距+标签天然高，A = 数字行高），标签恰好以行底收口、
+// 不溢出到下方内容。不使用 grid.cell（作为直接子元素才生效，被 context 包裹
+// 会被吞掉）；boitefilled/stat 的 color: auto 在测量/渲染时按强调色解析。
 #let _boite(content, color: framableu, stretch: false) = {
   if stretch {
-    block(
-      width: 100%,
-      height: 100%,
-      radius: 4pt,
-      fill: color.lighten(93%),
-      stroke: (left: (paint: color, thickness: 3pt)),
-    )[
-      #block(inset: (x: 12pt, y: 9pt))[#content]
-    ]
+    // 交给 stretch-grid 排版：返回规格字典
+    (cell: "boite", color: color, content: content)
   } else {
     block(
       inset: (x: 12pt, y: 9pt),
@@ -133,22 +128,13 @@
 /// 示例：#stat[10][正文章节]
 /// 带定制：#stat(amount-size: 40pt, color: framaviolet, [10], [正文章节])
 #let stat(amount, label, amount-size: 34pt, color: auto, stretch: false) = {
-  let use-accent = color == auto
-  context {
-    let c = if use-accent { accent-state.get() } else { color }
-    if stretch {
-      // 满格等高（依赖所在 grid 的定值 rows），内容垂直+水平居中
-      block(
-        width: 100%,
-        height: 100%,
-      )[
-        #align(center + horizon)[
-          #text(size: amount-size, weight: "bold", fill: c)[#amount]
-          #v(0.14em)
-          #text(size: 0.8em, fill: framagris)[#label]
-        ]
-      ]
-    } else {
+  if stretch {
+    // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
+    (cell: "stat", amount-size: amount-size, color: color, amount: amount, label: label)
+  } else {
+    let use-accent = color == auto
+    context {
+      let c = if use-accent { accent-state.get() } else { color }
       block(
         breakable: false,
       )[
@@ -170,22 +156,13 @@
 /// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
 /// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
 #let boitefilled(content, color: auto, stretch: false) = {
-  let use-accent = color == auto
-  context {
-    let c = if use-accent { accent-state.get() } else { color }
-    if stretch {
-      // 满格等高 + 圆角（依赖所在 grid 的定值 rows）
-      block(
-        width: 100%,
-        height: 100%,
-        radius: 4pt,
-        fill: c,
-      )[
-        #block(inset: (x: 12pt, y: 9pt))[
-          #text(fill: rgb("#FFFFFF"))[#content]
-        ]
-      ]
-    } else {
+  if stretch {
+    // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
+    (cell: "filled", color: color, content: content)
+  } else {
+    let use-accent = color == auto
+    context {
+      let c = if use-accent { accent-state.get() } else { color }
       block(
         inset: (x: 12pt, y: 9pt),
         radius: 4pt,
@@ -196,6 +173,130 @@
     }
   }
 }
+
+// ==== stretch-grid：自动等高卡片网格模板 ====
+/// stretch-grid —— 自动等高卡片网格模板（stretch 卡片的排版器，通用格式）。
+/// - ..cells: 由 boiteXXX / boitefilled / stat（stretch: true）产生的规格字典。
+/// - columns: 列数（整数，各列等分）。
+/// - row-gutter / column-gutter: 行/列间距；传 gutter 时二者同用该值。
+/// 自动测量各格自然高度、按行取最大 → 等高网格（无需手动 rows）。
+/// stat 行高取 2·T - A（T: 数字+间距+标签天然高；A: 数字行高），使「大数字」
+/// 锚定行垂直中心、标签恰好以行底收口（零溢出，不与下方内容相碰）。
+///
+/// 用法（通用格式：stretch: true 返回规格字典 → stretch-grid 排版）：
+///   #stretch-grid(columns: 3, gutter: 1em,
+///     boitebleue(stretch: true)[…],
+///     boiteverte(stretch: true)[…],
+///     boiteorange(stretch: true)[…])
+///
+///   #stretch-grid(columns: 2, gutter: 0.7em,
+///     stat(amount-size: 30pt, stretch: true)[48k][规模],
+///     stat(amount-size: 30pt, color: framaorange, stretch: true)[4][语言])
+///
+///   #stretch-grid(columns: 5, row-gutter: 0.5em, column-gutter: 0.6em,
+///     boitefilled(color: framableu, stretch: true)[…],
+///     boitefilled(color: framaorange, stretch: true)[…], …)
+#let _spec-render(cell) = {
+  if cell.cell == "boite" {
+    block(
+      width: 100%,
+      height: 100%,
+      radius: 4pt,
+      fill: cell.color.lighten(93%),
+      stroke: (left: (paint: cell.color, thickness: 3pt)),
+    )[
+      #block(inset: (x: 12pt, y: 9pt))[#cell.content]
+    ]
+  } else if cell.cell == "filled" {
+    let c = if cell.color == auto { accent-state.get() } else { cell.color }
+    block(
+      width: 100%,
+      height: 100%,
+      radius: 4pt,
+      fill: c,
+    )[
+      #block(inset: (x: 12pt, y: 9pt))[
+        #text(fill: rgb("#FFFFFF"))[#cell.content]
+      ]
+    ]
+  } else if cell.cell == "stat" {
+    // 数字锚定行垂直中心，标签流在数字下方（行高由 stretch-grid 保证收口）
+    let c = if cell.color == auto { accent-state.get() } else { cell.color }
+    block(width: 100%, height: 100%)[
+      #context {
+        let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
+        let A = measure(amt).height
+        layout(size => [
+          #v((size.height - A) / 2)
+          #align(center)[#amt]
+          #v(0.14em)
+          #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
+        ])
+      }
+    ]
+  } else {
+    cell
+  }
+}
+
+#let stretch-grid(..cells, columns: 1, row-gutter: 0.8em, column-gutter: 0.8em, gutter: none) = layout(size => {
+  let arr = cells.pos()
+  assert(arr.len() > 0, message: "stretch-grid 需要至少一个格")
+  let ncols = columns
+  let nrows = int(calc.ceil(arr.len() / ncols))
+  context {
+    let rg = (if gutter == none { row-gutter } else { gutter}).to-absolute()
+    let cg = (if gutter == none { column-gutter } else { gutter}).to-absolute()
+    let cw = (size.width - (ncols - 1) * cg) / ncols
+    let row-heights = ()
+    for row in range(nrows) {
+      let row-max = 0pt
+      for col in range(ncols) {
+        let cell = arr.at(row * ncols + col, default: none)
+        if cell != none and type(cell) == dictionary {
+          let h = if cell.cell == "boite" {
+            measure(block(
+              width: cw,
+              inset: (x: 12pt, y: 9pt),
+              fill: cell.color.lighten(93%),
+              stroke: (left: (paint: cell.color, thickness: 3pt)),
+            )[#cell.content]).height
+          } else if cell.cell == "filled" {
+            let c = if cell.color == auto { accent-state.get() } else { cell.color }
+            measure(block(
+              width: cw,
+              inset: (x: 12pt, y: 9pt),
+              fill: c,
+            )[
+              #text(fill: rgb("#FFFFFF"))[#cell.content]
+            ]).height
+          } else if cell.cell == "stat" {
+            let c = if cell.color == auto { accent-state.get() } else { cell.color }
+            let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
+            let A = measure(amt).height
+            let T = measure(block(width: cw, breakable: false)[
+              #align(center)[#amt]
+              #v(0.14em)
+              #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
+            ]).height
+            T * 2 - A
+          } else {
+            0pt
+          }
+          row-max = calc.max(row-max, h)
+        }
+      }
+      row-heights.push(row-max)
+    }
+    grid(
+      columns: (cw,) * ncols,
+      rows: row-heights,
+      row-gutter: rg,
+      column-gutter: cg,
+      ..arr.map(cell => if type(cell) == dictionary { _spec-render(cell) } else { cell }),
+    )
+  }
+})
 
 // ==== 主题配置 ====
 #let slide-theme = university-theme.with(

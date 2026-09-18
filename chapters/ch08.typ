@@ -45,9 +45,8 @@
 
 #v(0.4em)
 
-#grid(
-  columns: (1fr, 1fr),
-  rows: (120.2pt,),
+#stretch-grid(
+  columns: 2,
   gutter: 1em,
   boiteverte(stretch: true)[
     #align(center)[*SFT*]

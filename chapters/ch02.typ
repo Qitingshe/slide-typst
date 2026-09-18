@@ -29,9 +29,8 @@
 
 #v(0.3em)
 
-#grid(
-  columns: (1fr, 1fr),
-  rows: (149.8pt,),
+#stretch-grid(
+  columns: 2,
   gutter: 1em,
   boiteverte(stretch: true)[
     #align(center)[*静态前缀*]

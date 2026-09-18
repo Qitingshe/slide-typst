@@ -22,9 +22,8 @@
 
 #v(0.4em)
 
-#grid(
-  columns: (1fr, 1fr, 1fr),
-  rows: (179.3pt,),
+#stretch-grid(
+  columns: 3,
   gutter: 1em,
   boitebleue(stretch: true)[
     #align(center)[*大脑 · LLM*]
@@ -149,9 +148,8 @@
     - *想 → 做 → 看*：思考该做什么 → 调用工具 → 观察结果，循环直至任务完成
     - 轨迹可解释、可调试，还可沉淀为知识库或 RL 训练语料（第 7–9 章）
     #v(0.35em)
-    #grid(
-      columns: (1fr, 1fr),
-      rows: (72.7pt,),
+    #stretch-grid(
+      columns: 2,
       gutter: 0.7em,
       stat(amount-size: 30pt, color: framaorange, stretch: true, [3], [多币种汇总 · 迭代]),
       stat(amount-size: 30pt, color: framableu, stretch: true, [4], [多币种汇总 · 工具调用]),

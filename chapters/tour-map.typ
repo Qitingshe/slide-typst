@@ -17,9 +17,8 @@
 
 #v(0.3em)
 
-#grid(
-  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-  rows: (33.8pt, 33.8pt),
+#stretch-grid(
+  columns: 5,
   row-gutter: 0.5em,
   column-gutter: 0.6em,
   boitefilled(color: framableu, stretch: true)[1 · 入门],

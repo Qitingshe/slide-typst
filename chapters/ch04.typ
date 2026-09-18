@@ -29,9 +29,8 @@
 
 #v(0.3em)
 
-#grid(
-  columns: (1fr, 1fr),
-  rows: (62.6pt, 63.4pt, 63.4pt),
+#stretch-grid(
+  columns: 2,
   row-gutter: 0.6em,
   column-gutter: 0.8em,
   boitebleue(stretch: true)[*感知* 搜索 / 文件 / API / 数据库 —— 访问信息],

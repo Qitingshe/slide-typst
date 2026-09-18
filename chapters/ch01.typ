@@ -29,9 +29,8 @@
 
 #v(0.3em)
 
-#grid(
-  columns: (1fr, 1fr, 1fr),
-  rows: (92.2pt, 63.4pt),
+#stretch-grid(
+  columns: 3,
   row-gutter: 0.6em,
   column-gutter: 0.8em,
   boitebleue(stretch: true)[*Cursor* 编程助手：开放式工作流与代码操作],

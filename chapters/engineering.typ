@@ -25,9 +25,8 @@
 
 #v(0.4em)
 
-#grid(
-  columns: (1fr, 1fr, 1fr),
-  rows: (92.2pt, 92.2pt),
+#stretch-grid(
+  columns: 3,
   row-gutter: 0.5em,
   column-gutter: 0.7em,
   boitebleue(stretch: true)[*Context 上下文* —— 信息要充分：提示词、知识库、Sidecar],
@@ -73,9 +72,8 @@
 
 #v(0.3em)
 
-#grid(
-  columns: (1fr, 1fr, 1fr, 1fr),
-  rows: (79.9pt,),
+#stretch-grid(
+  columns: 4,
   gutter: 0.6em,
   stat(stretch: true)[10][正文章节],
   stat(stretch: true)[109][配套实验],
