@@ -166,6 +166,9 @@
   // 内页标题（Touying 把 `==` 标题移到页眉 header 渲染，正文里不出现）。
   // v2：由「1.5em 大横幅」收敛为紧凑的「主题标签」——1.1em 粗体 + 0.9pt 短基线，
   // 让每页主题读起来是安静的小标签，而不是重复的标题条。强调色跟随 accent-state。
+  // v2.1 版式修正：删除标题下 0.9pt 短横线（曾落入右侧面包屑的文字带、彼此重叠）；
+  // 改为占满左格宽的块 + 块底边停靠的整行下沿细线（0.8pt 浅章色），面包屑始终
+  // 在这条线之上，二者不再重叠。顶部进度条（progress-bar）保持不变。
   // 注：主题页眉把左侧内容包在 text(size: 1.2em) 里，故此处 1.1em ≈ 28pt。
   header: utils.display-current-heading(
     level: 2,
@@ -173,10 +176,13 @@
       context {
         let c = accent-state.get()
         let c-head = c.darken(4%) // 加深一档，保证白底对比
+        // 左格块只承载标题文字；下方细线用「固定长度 + 锚定块左下」画出，
+        // 使其独立于网格列宽（不再因右侧面包屑而缩短）：页宽 841.89pt，页眉
+        // 左右各 0.5em=12.5pt inset → 满宽 816.9pt。这样无论当页有无面包屑，
+        // 线与线长一致，且始终整条落在「标题+面包屑」之下，二者不再重叠。
         block(breakable: false)[
           #text(size: 1.1em, weight: "bold", fill: c-head)[#current-heading.body]
-          #v(0.12em)
-          #line(length: 2.8em, stroke: (paint: c.lighten(8%), thickness: 0.9pt))
+          #place(bottom + left, dy: 0.4em, line(length: 816.9pt, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
         ]
       }
     },
