@@ -1,9 +1,15 @@
-// main.typ - 基于《深入理解 AI Agent》中文内容的幻灯片演示
-// 结构：封面 + 目标 + 目录 + 四个分段（核心公式 / 十章速览 / 工程要点 / 小结）
+// main.typ - Slide 模板画廊：用样例演示 lib.typ 设计系统的每个元件
+//
+// 结构：封面 → 快速开始 → 目录 → 八个家族。每个家族 = 一张 section-open 开场页
+// + 若干演示页（`==`）。文档流顺序即目录顺序；include 列表显式列举，禁止 glob。
+//
+// 借页：每个 showcase/*.typ 的每一页顶部都有「用法 / 改这里 / ⚠ 坑」三段注释，
+// 连同页面一起复制即可搬到自己的 deck。lib.typ 只提供通用元件，本 deck 的
+// 身份元数据（config-info）在此声明。
 #import "lib.typ": *
 
-// 设计系统（lib.typ）只含通用配置；本 deck 的身份元数据在此声明，
-// 渲染进页脚三格。借阅者改这几行即可换成自己的 deck。
+// 设计系统（lib.typ）只含通用配置；本 deck 的身份元数据在此声明，渲染进页脚三格。
+// 借阅者改这几行即可换成自己的 deck。
 #show: slide-theme.with(config-info(
   title: [Slide 模板画廊],
   subtitle: none,
@@ -14,47 +20,58 @@
   logo: none,
 ))
 
-// 中文字体回退：西文使用模板默认衬线，中文回退到系统字体 Heiti SC
-// 全局字号 0.85em：在单帧高度内容纳更充分的内容（约 15-16 行容量）
+// 中文字体回退：西文使用模板默认衬线，中文回退到系统字体 Heiti SC。
+// 全局字号 0.85em：单帧高度内容纳更充分的内容（约 15-16 行容量）。
 #show: set text(font: ("New Computer Modern", "Heiti SC"), size: 0.85em)
 
 // 章节编号
 #set heading(numbering: none)
 
-// 图注与脚注：更小、更柔和的灰，让正文呼吸（正文字号不变）
+// 图注与脚注：更小、更柔和的灰，让正文呼吸（正文字号不变）。
 #show figure.caption: set text(size: 0.85em, fill: rgb("#767676"))
 #show footnote: set text(size: 0.78em, fill: rgb("#767676"))
 
-// 页标题（每页 slide 的标题）的样式在 lib.typ 的 slide-theme → header 中定义。
+// 页标题（每页 slide 的标题）样式在 lib.typ 的 slide-theme → header 中定义。
 // 注意：Touying 会把 `==` 标题从正文移到页眉（header）渲染，在正文里对
 // `#show heading.where(level: 2)` 写 show 规则不会生效。
 
-// 封面
+// ============ 封面 ============
 #cover(
-  title: [深入理解 AI Agent],
-  subtitle: [设计原理与工程实践 —— 全书概览],
+  title: [Slide 模板画廊],
+  subtitle: [lib.typ 设计系统 · 元件样例与借页指南],
   author: [QITINGSHE],
-  institution: [bojieli/ai-agent-book],
+  institution: [slide-typst],
 )
 
-// == 内容结构 ==
-// 顶层 "=" 为 section，生成章节分隔页
-// 二级 "==" 为 single slide（对应 \frame{}）
+// ============ 快速开始 ============
+// 裸 level 2：目录以 depth 1 收录，天然不收二级标题，故它不进目录。
+== 快速开始
 
-= 目标
+#body-slide(
+  kicker: [每页都是一个可整页抄走的样例],
+  inner: [
+    #boitebleue[
+      *这是什么*：`lib.typ` 是设计系统（版式元件 + Framasoft 配色），本 deck 用样例把每个
+      元件演示一遍。看到想要的页，连同它的 `// 用法` 注释一起复制即可。
+    ]
+    #v(gap-secondary)
+    #grid(
+      columns: 2,
+      column-gutter: 1em,
+      boiteverte[
+        *怎么读* —— 每页顶部三段注释：`// 用法:` 讲这是哪个模板与关键参数；`// 改这里:`
+        指出改哪儿；`// ⚠ 坑:` 列出一定会抄错的点。
+      ],
+      boiteorange[
+        *结构* —— 封面 → 快速开始 → 目录 → 八个家族。每个家族一张 `section-open`
+        开场页，后接若干 `==` 演示页。
+      ],
+    )
+  ],
+  closing: note[八族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式。],
+)
 
-// v2：分段开场页（无自动分隔页，需显式 section-open 接管）+ 显式主题标题
-#section-open(title: [目标], subtitle: [演示目标与内容主线])
-
-== 演示目标
-
-#boitebleue[
-  *演示目标*
-  - 基于《深入理解 AI Agent —— 设计原理与工程实践》中文内容，用本模板构建一份「全书概览」讲解。
-  - 展示模板能力：封面、彩色要点卡片、CeTZ 示意图、数学公式、自动大纲与章节分隔页。
-  - 内容主线：核心公式 → 十章速览 → 工程要点 → 小结。
-]
-
+// ============ 目录 ============
 // 「目录」自身也是 level-1 标题，但不应出现在目录里（避免「目录 → 目录」怪行）；
 // 用 outlined: false 把它从 outline 中排除，其余结构/开场页行为不变。
 // 注：`=` 速记生成的标题字段名为 depth（Touying 0.7.4 按 it.depth 识别），
@@ -80,38 +97,50 @@
       [],
       text(size: 0.75em, fill: framagris)[#it.page()],
     ),
-  ) + v(0.85em) // 条目行距：在 outline 自带间距上再补一口气，清单更透气
+  ) + v(0.35em) // 条目行距：在 outline 自带间距上再补一口气；页满时优先收紧这里
 }
 
 #body-slide(
   kicker: none,
   inner: [
-    #v(1.8em) // 页顶留白：让清单在页眉细线下方安静落下
+    #v(0.5em) // 页顶留白：让清单在页眉细线下方安静落下
     #outline(title: none, depth: 1)
   ],
-  // 页尾收束：一行安静的小字，十章只留一条路径，细节交给「十章地图」页
-  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[正文十章 · 入门 → 协作]]],
-  closing-gap: 1.2em,
+  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[八个家族 · 从封面门面到示意图与公式]]],
+  closing-gap: 0.6em,
 )
 
-= 核心公式
-#include "chapters/core.typ"
+// ============ 家族 ============
+// 每个 `=` 家族紧跟一张 section-open 开场页（换一次强调色），再 include 演示文件。
 
-= 十章速览
-#include "chapters/tour-map.typ"
-#include "chapters/ch01.typ"
-#include "chapters/ch02.typ"
-#include "chapters/ch03.typ"
-#include "chapters/ch04.typ"
-#include "chapters/ch05.typ"
-#include "chapters/ch06.typ"
-#include "chapters/ch07.typ"
-#include "chapters/ch08.typ"
-#include "chapters/ch09.typ"
-#include "chapters/ch10.typ"
+= 封面与开场
+#section-open(title: [封面与开场], subtitle: [整份 deck 的头尾门面], color: framableu)
+#include "showcase/show.cover.typ"
 
-= 工程要点
-#include "chapters/engineering.typ"
+= 页面骨架
+#section-open(title: [页面骨架], subtitle: [body-slide 与节奏间距], color: framableu)
+#include "showcase/show.skeleton.typ"
 
-= 小结
-#include "chapters/wrapup.typ"
+= 卡片与网格
+#section-open(title: [卡片与网格], subtitle: [boite 家族与 stretch-grid], color: framaviolet)
+#include "showcase/show.cards.typ"
+
+= 数据元件
+#section-open(title: [数据元件], subtitle: [keyline · stat · note · 强调], color: framaorange)
+#include "showcase/show.data.typ"
+
+= 导航与目录
+#section-open(title: [导航与目录], subtitle: [自动目录与页面 chrome], color: framableu)
+#include "showcase/show.nav.typ"
+
+= 配色与强调
+#section-open(title: [配色与强调], subtitle: [frama 调色板与页级走位], color: framavert)
+#include "showcase/show.color.typ"
+
+= 常规元素
+#section-open(title: [常规元素], subtitle: [表格 · 图片 · 链接], color: framagris)
+#include "showcase/show.basic.typ"
+
+= 示意图与公式
+#section-open(title: [示意图与公式], subtitle: [CeTZ 画布与数学块], color: framarouge)
+#include "showcase/show.cetz.typ"
