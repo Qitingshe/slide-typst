@@ -654,7 +654,9 @@
     #place(bottom + left, dx: 1.6em, dy: -0.55em, line(length: 3.2em, stroke: (paint: white.transparentize(82%), thickness: 1pt)))
     #place(bottom + left, dx: 1.6em, dy: -1.5em, text(size: 11pt, weight: "medium", fill: white, tracking: 0.24em)[#institution])
   ])
-  #place(top + right, dx: -1.8em, dy: 2.6em, block(width: 55%)[
+  // 标题块下移（2.6em→5.2em）：标题上方留白与标题↔meta 间留白等高，
+  // 封面右侧不再「头顶着、脚空着」（@150ppi 实测：顶 302px ≈ 中缝 301px）。
+  #place(top + right, dx: -1.8em, dy: 5.2em, block(width: 55%)[
     #_cover-title(title, subtitle, size: 30pt, color: framableu)
   ])
   #place(bottom + right, dx: -1.8em, dy: -2.4em, block(width: 55%)[
