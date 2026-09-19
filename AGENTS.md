@@ -17,7 +17,7 @@ typst compile main.typ
 
 | 文件 | 职责 |
 |---|---|
-| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、section-open/cover、cetz-canvas、figure-block；**冻结，改动需独立评审** |
+| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、section-open/cover、cetz-canvas、figure-block、chart/plot（cetz-plot 0.1.4）；已解冻，改动需独立评审 |
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 cover（含参数变体）、开场页 section-open（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
@@ -27,11 +27,12 @@ typst compile main.typ
 | `showcase/show.color.typ` | frama 调色板总览 + slide-accent 色交接演示（节内页级走位仅此一处） |
 | `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
 | `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
+| `showcase/show.charts.typ` | 数据图表（cetz-plot 0.1.4）：饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 格式化样板；合计 4 页 |
 | `assets/` | 画廊演示资产（sample-scheme.svg / sample-chart.svg / sample-data.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
 | `typst.toml` | 项目元数据（compiler 钉 0.15.1） |
-| `gates.json` | 基线单一事实源（页数 39 / 用法 29 / 链接 42 / API 清单）——改基线只改这里 |
+| `gates.json` | 基线单一事实源（页数 / 用法 / 链接 / API 清单）——改基线只改这里 |
 | `scripts/verify.py` | 门禁唯一实现（compile 零警告 / 计数 / API / links / pages 分层）本地+CI 共用 |
 | `.github/workflows/ci.yml` | CI 门禁（ubuntu，pages=warn 因字体差异） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
@@ -52,7 +53,7 @@ typst compile main.typ
   删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
 - **防拆规则**：lib.typ 保持单体（当前 638 行）；只有当超过 ~1000 行、或出现「按节独立
   分发」的真实需求时才评审拆分，不预设 facade。
-- **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.4.2 + numbly 0.1.0；
+- **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.5.2 + cetz-plot 0.1.4 + numbly 0.1.0；
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
   全绿；③ 新 PDF 与旧 PDF **逐页对照核验**（视觉/溢出归用户）；④ 更新 CHANGELOG。
   `verify.py` 的 version 检查对主次版本偏离输出 warn。
@@ -107,4 +108,5 @@ typst compile main.typ
 - 改动先 `git status`；提交信息仓库风格（英文、祈使句）。
 - 不删除/重构他人正在工作的文件；后台任务写作用域冲突前先核对。
 - 视觉/设计改动由 designer 角色负责；agent 只做机械跟进；收尾后交用户人工核验（溢出、布局、画风）。
-- lib.typ 改动默认拒绝，需独立评审后方可进行。
+- lib.typ 已解冻（用户 2026-09 授权开放），但仍需独立评审后方可改动。charset
+- 每次新增家族/增删页后：同步 gates.json 基线 → AGENTS.md 文件地图 → README 快照 → CHANGELOG

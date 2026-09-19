@@ -1,6 +1,6 @@
 {
   "compiler": "0.15.1",
-  "baselines": { "pages": 39, "usage-comments": 29, "links": 42 },
+  "baselines": { "pages": 44, "usage-comments": 33, "links": 51 },
   "api": [
     "framableu", "framableulight", "framavert", "framavertlight", "framarouge", "framarougelight",
     "framaviolet", "framavioletlight", "framaorange", "framaorangelight", "framajaune", "framajaunelight",
@@ -11,7 +11,8 @@
     "keyline", "note", "figure-block",
     "gap-primary", "gap-secondary",
     "body-slide", "stat", "boitefilled",
-    "stretch-grid", "slide-theme", "cetz-canvas", "section-open", "cover"
+    "stretch-grid", "slide-theme", "cetz-canvas", "section-open", "cover",
+    "chart", "plot"
   ],
   "gates": { "pages": "strict-local" }
 }

@@ -2,7 +2,7 @@
 // 供 main.typ 与 showcase/* 借页使用；版本 / API / 页数基线见 gates.json（lib 冻结，改动需独立评审）
 
 // ==== API 地图 ====
-// 公开符号 44 个（无 _ 前缀），与 gates.json 的 api 清单一一对应（注释双胞胎）。
+// 公开符号 46 个（无 _ 前缀），与 gates.json 的 api 清单一一对应（注释双胞胎）。
 // 改 API 名（增删/改名）必须同步 gates.json 的 api 清单，否则 verify.py 会断言失败。
 // —— 配色 18：framableu framableulight / framavert framavertlight / framarouge framarougelight /
 //    framaviolet framavioletlight / framaorange framaorangelight / framajaune framajaunelight /
@@ -14,6 +14,7 @@
 // —— 间距体系 2：gap-primary gap-secondary
 // —— 页面/内容件 3：body-slide stat boitefilled
 // —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
+// —— 图表 2：chart plot
 
 // ==== 字号阶梯 ====
 // 绝对字号只在门面/数据件，正文一律 em 相对：
@@ -24,8 +25,18 @@
 
 #import "@preview/touying:0.7.4": *
 #import themes.university: *
-#import "@preview/cetz:0.4.2"
+#import "@preview/cetz:0.5.2"
+#import "@preview/cetz-plot:0.1.4"
 #import "@preview/numbly:0.1.0": numbly
+
+// cetz-plot 0.1.4 的两个命名空间：chart（饼图/柱状图等图表）与 plot（线性图等
+// 绘图环境）。借页者 `#import "lib.typ": *` 后直接 #chart.piechart(...) /
+// #plot.plot(...) 即可。
+// ⚠ 这里刻意用 `#let` 再导出一层，而不是 `#import "...": chart, plot` 直接引名：
+//   verify.py 的 api 门禁只认顶层 #let 导出（按 `^#let` 正则检索），直接引名会
+//   让「API 地图 ↔ gates.json api 清单」这对双胞胎断连——门禁抓不到这两个符号。
+#let chart = cetz-plot.chart
+#let plot = cetz-plot.plot
 
 // ==== Framasoft 配色 ====
 // 浅色现代基调：每种「原色」都配有同族浅色。

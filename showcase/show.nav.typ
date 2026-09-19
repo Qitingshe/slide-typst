@@ -31,13 +31,13 @@
       text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()],
       text(size: 1.02em, fill: framagrisdark)[#it.body()],
     ),
-  ) + v(0.42em)
+  ) + v(0.28em) // 条目间距：收紧（原 0.42em）让 9 行目录 + note 收尾回本页
 }
 
 #body-slide(
-  kicker: [把八个家族再列一遍，演示 recipe 可整体搬走],
+  kicker: [把九个家族再列一遍，演示 recipe 可整体搬走],
   inner: [
-    #v(0.6em)
+    #v(0.4em) // 页顶留白：与内容地图页的 0.5em 同阶，略收紧给结尾 note 腾位
     #outline(title: none, depth: 1)
   ],
   closing: note[每行都可点击跳转；条目名来自各 `=` 分段标题。],

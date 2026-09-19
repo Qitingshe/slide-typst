@@ -1,6 +1,6 @@
 // main.typ - Slide 模板画廊：用样例演示 lib.typ 设计系统的每个元件
 //
-// 结构：封面 → 快速开始 → 目录 → 八个家族。每个家族 = 一张 section-open 开场页
+// 结构：封面 → 快速开始 → 目录 → 九个家族。每个家族 = 一张 section-open 开场页
 // + 若干演示页（`==`）。文档流顺序即目录顺序；include 列表显式列举，禁止 glob。
 //
 // 借页：每个 showcase/*.typ 的每一页顶部都有「用法 / 改这里 / ⚠ 坑」三段注释，
@@ -75,12 +75,12 @@
         指出改哪儿；`// ⚠ 坑:` 列出一定会抄错的点。
       ],
       boiteorange[
-        *结构* —— 封面 → 快速开始 → 目录 → 八个家族。每个家族一张 `section-open`
+        *结构* —— 封面 → 快速开始 → 目录 → 九个家族。每个家族一张 `section-open`
         开场页，后接若干 `==` 演示页。
       ],
     )
   ],
-  closing: note[八族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式。],
+  closing: note[九族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式 · 数据图表。],
 )
 
 // ============ 目录 ============
@@ -109,7 +109,7 @@
       [],
       text(size: 0.75em, fill: framagris)[#it.page()],
     ),
-  ) + v(0.35em) // 条目行距：在 outline 自带间距上再补一口气；页满时优先收紧这里
+  ) + v(0.13em) // 条目行距：在 outline 自带间距上再补一口气；9 行目录收紧（原 0.35em→0.2em→0.13em，逐档试到收尾行回本页）
 }
 
 #body-slide(
@@ -118,8 +118,8 @@
     #v(0.5em) // 页顶留白：让清单在页眉细线下方安静落下
     #outline(title: none, depth: 1)
   ],
-  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[八个家族 · 从封面门面到示意图与公式]]],
-  closing-gap: 0.6em,
+  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[九个家族 · 从封面门面到数据图表]]],
+  closing-gap: 0.2em, // 9 行清单 + 收尾：0.6em→0.28em→0.2em 逐档收紧，配合条目行距回本页
 )
 
 // ============ 家族 ============
@@ -156,3 +156,7 @@
 = 示意图与公式
 #section-open(title: [示意图与公式], subtitle: [CeTZ 画布与数学块], color: framarouge)
 #include "showcase/show.cetz.typ"
+
+= 数据图表
+#section-open(title: [数据图表], subtitle: [饼图 · 柱状图 · 线性图], color: framaviolet)
+#include "showcase/show.charts.typ"
