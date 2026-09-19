@@ -1,21 +1,21 @@
 # Slide 模板画廊（slide-typst）
 
-Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 38 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
+Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 39 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
 
 ## 特性
 
-- **38 页全样例画廊**：八个家族（封面与开场 / 页面骨架 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 常规元素 / 示意图与公式），每页都是一个可整页抄走的自包含样例。
+- **39 页全样例画廊**：八个家族（封面与开场 / 页面骨架 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 常规元素 / 示意图与公式），每页都是一个可整页抄走的自包含样例。
 - **Frama 18 色设计系统**：8 种品牌原色 × 深浅两档（`framableu` ～ `framagris`）+ `framagrisdark` / `framagrisdarkest`，全部以 `#let` 导出、接入主题配色槽位。
 - **卡片与等高网格**：`boite` 浅色卡片 ×8 + `boitefilled` 实色白字；`stretch-grid` 自动测量自然高度、按行生成等高网格，无需手算 rows。
 - **CeTZ 示意图**：`cetz-canvas` 封装 touying 动画机制，示例含闭环架构图、ReAct 循环图。
 - **自动目录与页面 chrome**：`outline` 条目样式、页眉标题 + 细线、面包屑、页脚三格、进度条全套 recipe。
 - **工程化门禁**：编译零错误零警告、基线校验（页数 / 用法注释数 / 链接数 / API 清单）、CI 硬闸、本地 pre-commit 钩子、GitHub Pages 预览。
 
-> 基线数字（页数 38 / 用法注释 26 / 链接 22 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
+> 基线数字（页数 39 / 用法注释 29 / 链接 42 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
 
 ## 快速开始
 
-需要 [Typst](https://typst.app) **0.13.1**（钉版本见 `typst.toml`；配套 touying 0.7.4 / cetz 0.4.2 / numbly 0.1.0）。
+需要 [Typst](https://typst.app) **0.15.1**（钉版本见 `typst.toml`；配套 touying 0.7.4 / cetz 0.4.2 / numbly 0.1.0）。
 
 ```bash
 typst compile main.typ   # 生成 main.pdf（零错误零警告）
@@ -34,13 +34,13 @@ typst watch main.typ     # 开发模式：保存即增量重编
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（书名 / 作者 / 机构 / 日期）、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 `cover`（含参数变体）、开场页 `section-open`（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 `body-slide` 全套变体 + 间距体系（`gap-primary` / `gap-secondary`） |
-| `showcase/show.cards.typ` | `boite`×8 + `boitefilled` + `stretch-grid`（2/3/5 列、gutter）+ 全要素样板页 |
+| `showcase/show.cards.typ` | `boite`×8 + `boitefilled` + `stretch-grid`（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本 + 全要素样板页 |
 | `showcase/show.data.typ` | `keyline`（色/字号变体）、`stat`（默认/定制/stretch 行）、`note`、强调文本 |
 | `showcase/show.nav.typ` | 自动目录 recipe（`outline` + 条目样式）+ 页眉 / 面包屑 / 页脚 / 进度条 |
 | `showcase/show.color.typ` | frama 调色板总览 + `slide-accent` 页级换色演示 |
-| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（frama 风格表头/斑马纹）、`image` 图片、`link` 外链与内链 |
+| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（含多子图三图一线）、`link` 外链与内链 |
 | `showcase/show.cetz.typ` | CeTZ 画布示例（闭环图 / ReAct 循环）+ 公式块 |
-| `assets/` | 演示资产（`sample-scheme.svg`），借页者按需替换 |
+| `assets/` | 演示资产（`sample-scheme.svg` / `sample-chart.svg` / `sample-data.svg`），借页者按需替换 |
 | `gates.json` | **基线单一事实源**：页数 / 用法注释数 / 链接数 / API 清单 |
 | `scripts/verify.py` | 门禁唯一实现（本地 + CI + pre-commit 共用） |
 | `.github/workflows/` | `ci.yml` 门禁（ubuntu）+ `pages.yml` Pages 部署（macOS，strict 页数闸 + main.pdf 预览） |
@@ -113,11 +113,11 @@ python3 scripts/verify.py --strict-pages  # 页数升级为硬闸
 | 检查 | 含义 |
 |---|---|
 | compile | `typst compile main.typ` 零错误零警告 |
-| usage-comments | showcase 各页 `// 用法:` 注释总数 == 基线（26） |
+| usage-comments | showcase 各页 `// 用法:` 注释总数 == 基线（29） |
 | api | `gates.json` API 清单每项都必须是 `lib.typ` 的 `#let` 导出 |
-| links | main.pdf 中链接数 == 基线（22） |
-| pages | 页数 == 基线（38） |
-| version | typst 主次版本与钉版本（0.13.1）一致，偏离只告警 |
+| links | main.pdf 中链接数 == 基线（42） |
+| pages | 页数 == 基线（39） |
+| version | typst 主次版本与钉版本（0.15.1）一致，偏离只告警 |
 
 **改基线（如增删页）只改 `gates.json`**，并同步 CHANGELOG —— `verify.py` 全绿即可，其它文件不复制数字。
 

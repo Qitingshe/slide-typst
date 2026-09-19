@@ -21,17 +21,17 @@ typst compile main.typ
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 cover（含参数变体）、开场页 section-open（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
-| `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 全要素样板页（末页） |
+| `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）+ 全要素样板页（末页） |
 | `showcase/show.data.typ` | keyline（色/字号变体）、stat（默认/定制/stretch 行）、note、alert/frameEmph |
 | `showcase/show.nav.typ` | 自动目录 recipe（outline + entry 样式 + outlined:false 技巧）+ chrome（页眉标题+细线、面包屑、页脚三格、进度条） |
 | `showcase/show.color.typ` | frama 调色板总览 + slide-accent 色交接演示（节内页级走位仅此一处） |
-| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（frama 风格表头/斑马纹）、`image` 图片（assets/ 样例图）、`link` 超链接（外链 + `<label>` 内链） |
+| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
 | `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
-| `assets/` | 画廊演示资产（sample-scheme.svg）；借页者按需替换 |
+| `assets/` | 画廊演示资产（sample-scheme.svg / sample-chart.svg / sample-data.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
-| `typst.toml` | 项目元数据（compiler 钉 0.13.1） |
-| `gates.json` | 基线单一事实源（页数 38 / 用法 26 / 链接 22 / API 清单）——改基线只改这里 |
+| `typst.toml` | 项目元数据（compiler 钉 0.15.1） |
+| `gates.json` | 基线单一事实源（页数 39 / 用法 29 / 链接 42 / API 清单）——改基线只改这里 |
 | `scripts/verify.py` | 门禁唯一实现（compile 零警告 / 计数 / API / links / pages 分层）本地+CI 共用 |
 | `.github/workflows/ci.yml` | CI 门禁（ubuntu，pages=warn 因字体差异） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
@@ -49,7 +49,7 @@ typst compile main.typ
   删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
 - **防拆规则**：lib.typ 保持单体（当前 638 行）；只有当超过 ~1000 行、或出现「按节独立
   分发」的真实需求时才评审拆分，不预设 facade。
-- **升级协议（锁步）**：维持 typst 0.13.1 + touying 0.7.4 + cetz 0.4.2 + numbly 0.1.0；
+- **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.4.2 + numbly 0.1.0；
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
   全绿；③ 新 PDF 与旧 PDF **逐页对照核验**（视觉/溢出归用户）；④ 更新 CHANGELOG。
   `verify.py` 的 version 检查对主次版本偏离输出 warn。
@@ -82,7 +82,7 @@ typst compile main.typ
   - `stretch: true` 返回规格字典，只交给 stretch-grid；单元格里卡片外面**不要再包 `[]`**
   - 中明度底色（vert/orange/jaune/marron）配深字，深底色才配白字——对比看明度不看饱和度；`boitefilled` 用中明度裸色会发虚，须 `darken(25~30%)`
   - `slide-accent(色)` 放上一页末尾；`section-open` 必须紧跟 `=` 之后、段内第一个 `==` 之前
-  - outline entry 样式（Typst 0.13.1）：`it.body()`/`it.page()`/`it.element.location()`，show 规则体须用代码上下文；show 规则从声明点起全局生效，会覆盖此前的 outline 样式
+  - outline entry 样式（Typst 0.15.1）：`it.body()`/`it.page()`/`it.element.location()`，show 规则体须用代码上下文；show 规则从声明点起全局生效，会覆盖此前的 outline 样式
   - 表格用原生 `table`：表头 `table.table.header` 只负责分组/跨页重复，样式写在内部 `table.cell` 上；图片 `image()` 路径相对调用文件目录；内链 `<label>` 须挂在页面标题上，放 body-slide 的 inner 里会被 Touying 丢弃
   - `figure-block` 的 `image(...)` 调用处不要写 width（块内 `set(100%)` 接管）；原生 `figure` 与 `figure-block` 是两条 caption 路径，勿混用
 - 校验门禁：`rg -c "// 用法:" showcase/` 计数须 == gates.json 的 usage-comments 基线（CI 自动断言，verify.py）。

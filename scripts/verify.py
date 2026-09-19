@@ -121,14 +121,14 @@ def main():
     else:
         print(f"[WARN] pages ({n} != {baselines['pages']})")
 
-    # ---- 6. version：typst 主次版本与 compiler 基线（默认 0.13.1）不一致 WARN ----
+    # ---- 6. version：typst 主次版本与 compiler 基线（默认 0.15.1）不一致 WARN ----
     try:
         p = run(["typst", "--version"])
         m = re.search(r"(\d+)\.(\d+)", p.stdout or "")
         actual = f"{m.group(1)}.{m.group(2)}" if m else "?"
     except Exception:
         actual = "?"
-    expected = ".".join(gates.get("compiler", "0.13.1").split(".")[:2])
+    expected = ".".join(gates.get("compiler", "0.15.1").split(".")[:2])
     if actual != expected:
         print(f"[WARN] version ({actual} != {expected})")
     else:

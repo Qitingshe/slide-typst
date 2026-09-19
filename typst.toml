@@ -8,4 +8,4 @@ description = "Slide template gallery: lib.typ design system, one-page-borrowabl
 repository = "https://github.com/Qitingshe/slide-typst"
 keywords = ["slides", "chinese", "touying", "gallery", "template"]
 categories = ["presentation"]
-compiler = "0.13.1"
+compiler = "0.15.1"
