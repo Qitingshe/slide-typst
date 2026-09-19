@@ -47,17 +47,37 @@
 // 2·T - A（T = 数字+间距+标签天然高，A = 数字行高），标签恰好以行底收口、
 // 不溢出到下方内容。不使用 grid.cell（作为直接子元素才生效，被 context 包裹
 // 会被吞掉）；boitefilled/stat 的 color: auto 在测量/渲染时按强调色解析。
-#let _boite(content, color: framableu, stretch: false) = {
-  if stretch {
-    // 交给 stretch-grid 排版：返回规格字典
-    (cell: "boite", color: color, content: content)
+// 浅色卡片视觉盒（左竖条语言常量唯一出处）：_boite 非 stretch 路径、
+// stretch-grid（_spec-render / 测量）共用。数值红线：3pt 竖条 / lighten(93%) /
+// 4pt 圆角 / inset (x:12pt, y:9pt) 逐字保持，勿漂移。
+// - width: none → 自然宽（普通卡片）；传长度 → 定宽（stretch-grid 测量）。
+// - fill-height: true → 满高拉伸盒 + 内盒 inset（stretch-grid 单元内渲染）。
+#let _boite-box(content, color, width: none, fill-height: false) = {
+  if fill-height {
+    block(
+      radius: 4pt,
+      fill: color.lighten(93%),
+      stroke: (left: (paint: color, thickness: 3pt)),
+      width: 100%,
+      height: 100%,
+    )[#block(inset: (x: 12pt, y: 9pt))[#content]]
   } else {
     block(
+      width: if width == none { auto } else { width },
       inset: (x: 12pt, y: 9pt),
       radius: 4pt,
       fill: color.lighten(93%),
       stroke: (left: (paint: color, thickness: 3pt)),
     )[#content]
+  }
+}
+
+#let _boite(content, color: framableu, stretch: false) = {
+  if stretch {
+    // 交给 stretch-grid 排版：返回规格字典
+    (cell: "boite", color: color, content: content)
+  } else {
+    _boite-box(content, color)
   }
 }
 
@@ -181,6 +201,33 @@
   #if closing != none [#v(closing-gap) #closing]
 ]
 
+// 大数字盒（数据元件常量唯一出处）：bold 大数字 / 0.14em 数字↔标签间距 /
+// 0.8em framagris 灰标签。返回规格字典供 stat 三路径消费：
+// - amt          → 数字单行（stretch 渲染 / 测量单独 measure 数字行高 A）
+// - stack        → 双居中列（stretch 渲染的 layout 内容、测量 T 用）
+// - stack-single → 单居中列（plain 渲染：整列作为一个居中单元，与双居中视觉不同）
+// 数值红线：0.14em / 0.8em framagris 逐字保持，勿漂移。
+// ⚠ ① color 需已解析（调用方在 context 内处理 accent-state）——纯函数不能取 state；
+//   ② 测量用的 T/A 长度无法借 context/layout 表达式传出（它们只产出 content），
+//   故长度计算保留在调用方的 context 块内，_stat-box 只提供结构 dict。
+#let _stat-box(amount, label, color, amount-size: 34pt) = (
+  amt: text(size: amount-size, weight: "bold", fill: color)[#amount],
+  stack-single: [
+    #align(center)[
+      #text(size: amount-size, weight: "bold", fill: color)[#amount]
+      #v(0.14em)
+      #text(size: 0.8em, fill: framagris)[#label]
+    ]
+  ],
+  stack: [
+    #align(center)[
+      #text(size: amount-size, weight: "bold", fill: color)[#amount]
+    ]
+    #v(0.14em)
+    #align(center)[#text(size: 0.8em, fill: framagris)[#label]]
+  ],
+)
+
 /// stat —— 大数字：超大强调色数字 + 灰色小标签。
 /// - amount (content): 大数字本体，可传字符串或数学内容。
 /// - label (content): 数字下方的灰色解释。
@@ -193,17 +240,39 @@
     // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
     (cell: "stat", amount-size: amount-size, color: color, amount: amount, label: label)
   } else {
-    let use-accent = color == auto
     context {
-      let c = if use-accent { accent-state.get() } else { color }
+      let c = if color == auto { accent-state.get() } else { color }
+      let d = _stat-box(amount, label, c, amount-size: amount-size)
+      block(breakable: false)[#d.stack-single]
+    }
+  }
+}
+
+// 实色卡片视觉盒（boitefilled 非 stretch 路径、stretch-grid 渲染与测量共用）：
+// 白字 + 4pt 圆角 + inset (x:12pt, y:9pt)；color: auto 在渲染/测量时按强调色解析。
+// 数值红线：rgb("#FFFFFF") / 4pt / 12×9 逐字保持，勿漂移。
+#let _filled-box(content, color, width: none, fill-height: false) = {
+  context {
+    let c = if color == auto { accent-state.get() } else { color }
+    if fill-height {
       block(
-        breakable: false,
+        width: 100%,
+        height: 100%,
+        radius: 4pt,
+        fill: c,
       )[
-        #align(center)[
-          #text(size: amount-size, weight: "bold", fill: c)[#amount]
-          #v(0.14em)
-          #text(size: 0.8em, fill: framagris)[#label]
+        #block(inset: (x: 12pt, y: 9pt))[
+          #text(fill: rgb("#FFFFFF"))[#content]
         ]
+      ]
+    } else {
+      block(
+        width: if width == none { auto } else { width },
+        inset: (x: 12pt, y: 9pt),
+        radius: 4pt,
+        fill: c,
+      )[
+        #text(fill: rgb("#FFFFFF"))[#content]
       ]
     }
   }
@@ -221,17 +290,7 @@
     // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
     (cell: "filled", color: color, content: content)
   } else {
-    let use-accent = color == auto
-    context {
-      let c = if use-accent { accent-state.get() } else { color }
-      block(
-        inset: (x: 12pt, y: 9pt),
-        radius: 4pt,
-        fill: c,
-      )[
-        #text(fill: rgb("#FFFFFF"))[#content]
-      ]
-    }
+    _filled-box(content, color)
   }
 }
 
@@ -259,39 +318,20 @@
 ///     boitefilled(color: framaorange, stretch: true)[…], …)
 #let _spec-render(cell) = {
   if cell.cell == "boite" {
-    block(
-      width: 100%,
-      height: 100%,
-      radius: 4pt,
-      fill: cell.color.lighten(93%),
-      stroke: (left: (paint: cell.color, thickness: 3pt)),
-    )[
-      #block(inset: (x: 12pt, y: 9pt))[#cell.content]
-    ]
+    _boite-box(cell.content, cell.color, fill-height: true)
   } else if cell.cell == "filled" {
-    let c = if cell.color == auto { accent-state.get() } else { cell.color }
-    block(
-      width: 100%,
-      height: 100%,
-      radius: 4pt,
-      fill: c,
-    )[
-      #block(inset: (x: 12pt, y: 9pt))[
-        #text(fill: rgb("#FFFFFF"))[#cell.content]
-      ]
-    ]
+    _filled-box(cell.content, cell.color, fill-height: true)
   } else if cell.cell == "stat" {
     // 数字锚定行垂直中心，标签流在数字下方（行高由 stretch-grid 保证收口）
-    let c = if cell.color == auto { accent-state.get() } else { cell.color }
+    // ⚠ layout 必须处于 context 体内（block 内容位），block 在外层——反序会报 unknown variable
     block(width: 100%, height: 100%)[
       #context {
-        let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
-        let A = measure(amt).height
+        let c = if cell.color == auto { accent-state.get() } else { cell.color }
+        let d = _stat-box(cell.amount, cell.label, c, amount-size: cell.amount-size)
+        let A = measure(d.amt).height
         layout(size => [
           #v((size.height - A) / 2)
-          #align(center)[#amt]
-          #v(0.14em)
-          #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
+          #d.stack
         ])
       }
     ]
@@ -316,30 +356,14 @@
         let cell = arr.at(row * ncols + col, default: none)
         if cell != none and type(cell) == dictionary {
           let h = if cell.cell == "boite" {
-            measure(block(
-              width: cw,
-              inset: (x: 12pt, y: 9pt),
-              fill: cell.color.lighten(93%),
-              stroke: (left: (paint: cell.color, thickness: 3pt)),
-            )[#cell.content]).height
+            measure(_boite-box(cell.content, cell.color, width: cw)).height
           } else if cell.cell == "filled" {
-            let c = if cell.color == auto { accent-state.get() } else { cell.color }
-            measure(block(
-              width: cw,
-              inset: (x: 12pt, y: 9pt),
-              fill: c,
-            )[
-              #text(fill: rgb("#FFFFFF"))[#cell.content]
-            ]).height
+            measure(_filled-box(cell.content, cell.color, width: cw)).height
           } else if cell.cell == "stat" {
             let c = if cell.color == auto { accent-state.get() } else { cell.color }
-            let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
-            let A = measure(amt).height
-            let T = measure(block(width: cw, breakable: false)[
-              #align(center)[#amt]
-              #v(0.14em)
-              #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
-            ]).height
+            let d = _stat-box(cell.amount, cell.label, c, amount-size: cell.amount-size)
+            let A = measure(d.amt).height
+            let T = measure(block(width: cw, breakable: false)[#d.stack]).height
             T * 2 - A
           } else {
             0pt
