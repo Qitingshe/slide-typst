@@ -24,6 +24,21 @@
 // 全局字号 0.85em：单帧高度内容纳更充分的内容（约 15-16 行容量）。
 #show: set text(font: ("New Computer Modern", "Heiti SC"), size: 0.85em)
 
+// 全局字符级两端对齐（Typst 0.15 justify/justification-limits）：
+// justify: true 开两端对齐；justification-limits 是关键——`spacing` 控制词距自适应
+// （默认 66.67%–150%，通常不用动），`tracking` 是字符级字距的自适应范围，默认
+// (0pt, 0pt) 即「禁用」——只有放开 tracking 才真正启用中文字符级对齐
+// （中文无空格，完全靠字距；Web 端 equivalent typography 的 character-based
+// justification）。min: -0.01em 允许轻微收缩、max: 0.02em 允许轻微拉伸，
+// 都是亚像素级且是官方推荐的字符级路线的取值范围，避免一两行长尾被硬拽。
+#set par(
+  justify: true,
+  justification-limits: (
+    spacing: (min: 66.67%, max: 150%),
+    tracking: (min: -0.01em, max: 0.02em),
+  ),
+)
+
 // 章节编号
 #set heading(numbering: none)
 
