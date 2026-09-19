@@ -1,0 +1,19 @@
+# 本地 quick 钩子：无机 typst 时跳过 verify，不阻塞提交。
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: ^lib\.typ$
+      - id: trailing-whitespace
+        exclude: ^lib\.typ$
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+  - repo: local
+    hooks:
+      - id: verify
+        name: verify gates
+        entry: bash -c 'command -v typst >/dev/null 2>&1 && exec python3 scripts/verify.py --strict-pages || { echo "typst missing, skip verify"; exit 0; }'
+        language: system
+        pass_filenames: false

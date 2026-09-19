@@ -9,7 +9,7 @@ typst compile main.typ
 ```
 
 - 必须**零错误、零警告**。
-- **页数以基线为准**：基线页数与变更日志记录在 `.slim/deepwork/template-gallery.md`；增删页后必须复核并更新基线（内容增加时优先收紧间距，不要翻页）。
+- **页数以基线为准**：基线（页数/用法计数/链接数）单一事实源在 gates.json，改动只改它；变更日志在 CHANGELOG.md，历史变更记录在 `.slim/deepwork/template-gallery.md`；增删页后必须复核并更新基线（内容增加时优先收紧间距，不要翻页）。
 - **内容溢出是静默的**（Typst 把溢出内容压到页脚/截断，不报错、不加页）——每条改动必须人工逐页翻看；agent 只保证编译与页数，视觉与溢出核验归用户。
 - 探针文件：自检渲染一律走 /tmp；仓库内不得遗留 `_*.typ` / `_*.pdf` / png / svg 等探针文件。
 
@@ -30,6 +30,11 @@ typst compile main.typ
 | `assets/` | 画廊演示资产（sample-scheme.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
+| `typst.toml` | 项目元数据（compiler 钉 0.13.1） |
+| `gates.json` | 基线单一事实源（页数 38 / 用法 26 / 链接 22 / API 清单）——改基线只改这里 |
+| `scripts/verify.py` | 门禁唯一实现（compile 零警告 / 计数 / API / links / pages 分层）本地+CI 共用 |
+| `.github/workflows/ci.yml` | CI 门禁（ubuntu，pages=warn 因字体差异） |
+| `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
 
 ## 结构约定
 
@@ -60,7 +65,7 @@ typst compile main.typ
   - outline entry 样式（Typst 0.13.1）：`it.body()`/`it.page()`/`it.element.location()`，show 规则体须用代码上下文；show 规则从声明点起全局生效，会覆盖此前的 outline 样式
   - 表格用原生 `table`：表头 `table.table.header` 只负责分组/跨页重复，样式写在内部 `table.cell` 上；图片 `image()` 路径相对调用文件目录；内链 `<label>` 须挂在页面标题上，放 body-slide 的 inner 里会被 Touying 丢弃
   - `figure-block` 的 `image(...)` 调用处不要写 width（块内 `set(100%)` 接管）；原生 `figure` 与 `figure-block` 是两条 caption 路径，勿混用
-- 校验门禁：`rg -c "// 用法:" showcase/` 的计数应 ≈ showcase 页数。
+- 校验门禁：`rg -c "// 用法:" showcase/` 计数须 == gates.json 的 usage-comments 基线（CI 自动断言，verify.py）。
 
 ## 设计系统速查（lib.typ）
 

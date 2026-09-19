@@ -1,0 +1,14 @@
+# CI 门禁：compile 零警告 / 计数 / API / links 全部硬闸；pages 在 ubuntu 走 warn 态是设计预期
+# （ubuntu 无 Heiti SC，编译页数可能与本机不同，且 mdls 不可用）。
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: typst-community/setup-typst@v5
+        with: { typst-version: "0.13.1" }
+      - run: python3 scripts/verify.py

@@ -1,0 +1,11 @@
+[package]
+name = "slide-typst"
+version = "0.1.0"
+entrypoint = "main.typ"
+authors = ["Qitingshe"]
+license = "MIT"
+description = "Slide template gallery: lib.typ design system, one-page-borrowable showcase samples."
+repository = "https://github.com/Qitingshe/slide-typst"
+keywords = ["slides", "chinese", "touying", "gallery", "template"]
+categories = ["presentation"]
+compiler = "0.13.1"
