@@ -479,8 +479,10 @@
 )
 
 // ==== 封面（title slide）====
-// 共享包装：封面页隐藏主题的 header/footer，并给出独立的白色画布。
-#let _cover-page(body) = touying-slide-wrapper(self => {
+// 全宽白画布包装：封面与开场页共用（隐藏主题 header/footer、白底、同一边距）。
+// 视觉区分在各自 body 内：封面 = 左侧渐变面板 + 大图形；开场页 = 左竖条 +
+// 右下角大序号/色块 + 顶部细线。放在任何位置都会自成一张 slide。
+#let _full-page(body) = touying-slide-wrapper(self => {
   self = utils.merge-dicts(self, config-page(
     header: none,
     footer: none,
@@ -491,19 +493,6 @@
 })
 
 // ==== 章节 / 分段开场页（opener，v2）====
-// 每个「大章」或「分段」前的一张独立干净页：大标题 + 可选序号 + 副标题。
-// 与封面同法，用 touying-slide-wrapper 独立成页，隐藏主题页眉/页脚；
-// 视觉上用「左侧强调竖条 + 右下角超淡序号/色块 + 顶部细线」，
-// 与封面的左侧渐变大面板明显区分。放在任何位置都会自成一张 slide。
-#let _opener-page(body) = touying-slide-wrapper(self => {
-  self = utils.merge-dicts(self, config-page(
-    header: none,
-    footer: none,
-    fill: rgb("#FFFFFF"),
-    margin: (x: 2.4em, y: 1.8em),
-  ))
-  touying-slide(self: self, body)
-})
 
 /// section-open —— 章节/分段开场页。
 /// - title (content): 大标题（章名或分段名，如 [上下文工程] / [核心公式]）。
@@ -526,7 +515,7 @@
   let use-accent = color == auto
   let crumb = if index != none { [第 #index 章 · #title] } else { title }
   // ⚠ touying-slide-wrapper 不能放在 context 内；故 context 只包在 body 内。
-  _opener-page(context {
+  _full-page(context {
     let c = if use-accent { accent-state.get() } else { color }
     accent-state.update(c)
     breadcrumb-state.update(crumb)
@@ -601,7 +590,7 @@
   author: none,
   institution: none,
   date: none,
-) = _cover-page([
+) = _full-page([
   #place(left, block(
     width: 38%,
     height: 100%,
