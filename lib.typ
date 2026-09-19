@@ -27,6 +27,7 @@
 #let framamarron = rgb("#A1887F")
 #let framamarronlight = rgb("#D7CCC8")
 #let framagris = rgb("#616161")
+#let framagris-soft = rgb("#767676") // 助文灰：原生 figure/footnote 等次要文字的柔和档
 #let framagrislight = rgb("#F5F5F5")
 #let framagrisdark = rgb("#3E3E3E")
 #let framagrisdarkest = rgb("#000000")
@@ -129,8 +130,7 @@
 /// - gap (length): 图↔图注间距，默认 0.12em（正文 21.25pt ≈2.5pt；em 随正文等比缩放）。
 /// - caption-size (length): 图注字号，默认 0.63em。
 /// - caption-color (color): 图注颜色，默认 framagris。
-/// ⚠ 与原生 figure 是两条路：本例不自动编号、不进目录；原生 figure 走 main.typ 的
-///   figure.caption 规则，与 figure-block 互不影响。
+/// ⚠ 与原生 figure 是两条路：本例不自动编号、不进目录；原生 figure/footnote 样式按需自行声明。
 #let figure-block(
   img,
   caption: none,

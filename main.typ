@@ -27,10 +27,6 @@
 // 章节编号
 #set heading(numbering: none)
 
-// 图注与脚注：更小、更柔和的灰，让正文呼吸（正文字号不变）。
-#show figure.caption: set text(size: 0.85em, fill: rgb("#767676"))
-#show footnote: set text(size: 0.78em, fill: rgb("#767676"))
-
 // 页标题（每页 slide 的标题）样式在 lib.typ 的 slide-theme → header 中定义。
 // 注意：Touying 会把 `==` 标题从正文移到页眉（header）渲染，在正文里对
 // `#show heading.where(level: 2)` 写 show 规则不会生效。
