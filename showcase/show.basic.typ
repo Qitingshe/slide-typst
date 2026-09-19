@@ -3,8 +3,10 @@
 //
 // 演示三个元件：
 //   · #table(...)：原生表格，深底白字表头（framableu 实底）＋斑马纹＋末行强调。
-//   · #figure-block(...)：图像＋图注的组合块（lib.typ 模版元件）——图与图注同宽、
-//     同左缘、图注紧贴图下沿；多子图用 figure-block + grid 的「三图一线」排法。
+//   · #figure-block(...)：图像块（lib.typ 模版元件）——图与图注同宽、图注紧贴图下沿；
+//     默认 caption 左对齐；本家族演示「居中路线」：caption 传 none，调用点自排一行
+//     图宽容器内 #align(center)[#text(...)]（字号/颜色沿用默认 0.63em / framagris）。
+//     多子图用 figure-block + grid 的「三图一线」排法。
 //   · #link(...)：外链（完整 URL）与内链（#label + <标签>）双向跳转，页面级
 //     #show link 规则统一上主题色＋下划线。
 //
@@ -68,14 +70,16 @@
   closing: note[表头行写进 table.header：跨页时自动重复（本页只有一表，作为惯例保留）。],
 )
 
-// 用法: #figure-block(image("../assets/sample-scheme.svg"), caption: [图 1：…], width: 88%)
-// 改这里: img 传 `image(...)` 调用（路径相对本文件，showcase/ 下写 ../assets/）；caption 自由
-//         content 保留手写"图 1："风格；width 为图与图注共享宽度；gap / caption-size /
-//         caption-color 分别调间距、字号、颜色（默认 0.12em / 0.63em / framagris）。
+// 用法: #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 88%)
+//        + 调用点自排居中图注 —— #block(width: 88%)[#align(center)[#text(size, fill)[图 1：…]]]
+// 改这里: img 传 `image(...)` 调用（路径相对本文件，showcase/ 下写 ../assets/）；width 为图
+//         与图注共享宽度；要居中图注时 caption 传 none，自排那行的 size / fill 沿
+//         lib 默认（0.63em / framagris）；想保留左对齐就直接用 caption 参数（默认路线）。
 // ⚠ 坑: ① `image(...)` 调用处**不要写 width**——块内 #set image(width: 100%) 接管，
-//        显式 width 会覆盖它导致溢出；② 原生 `figure`（自动编号、进目录，走 main.typ 的
-//        figure.caption 规则）与 `figure-block`（手写"图 1："、不编号）是两条 caption 路径，
-//        借页时按需选一条，勿混用。
+//        显式 width 会覆盖它导致溢出；② caption 内嵌 #align(center) 不可行（text 内
+//        不能放 block 级元素），居中必须走 caption: none + 容器内 align；③ 原生 `figure`
+//        （自动编号、进目录，走 main.typ 的 figure.caption 规则）与 `figure-block`
+//        （手写"图 1："、不编号）是两条 caption 路径，借页时按需选一条，勿混用。
 == 图片 · image
 
 #body-slide(
@@ -85,7 +89,9 @@
       columns: (1fr, 1fr),
       gutter: 1em,
       [
-        #figure-block(image("../assets/sample-scheme.svg"), caption: [图 1：样例示意图（assets/sample-scheme.svg）], width: 88%)
+        #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 88%)
+        #v(0.1em)
+        #block(width: 88%)[#align(center)[#text(size: 0.63em, fill: framagris)[图 1：样例示意图（assets/sample-scheme.svg）]]]
       ],
       [
         #boitebleue[
@@ -102,10 +108,12 @@
 
 // 用法: #figure-block ×3 + #grid(columns: (1fr, 1fr, 1fr)) —— 三图一线多子图
 // 改这里: 每格一个 figure-block，width: 100% 占满格宽（image 里**别**写 width）；
-//         gutter 用 gutter-tight 收紧子图间距；caption 手写 (a)/(b)/(c) 与正文呼应。
+//         gutter 用 gutter-tight 收紧子图间距；caption 传 none，格内自排一行
+//         #v(0.1em) + #align(center)[#text(0.63em, framagris)[(a) …]]——窄格里
+//         左对齐观感偏，居中与正文 (a)/(b)/(c) 引用呼应。
 // ⚠ 坑: 多子图仍走 figure-block 之手写 caption 路径（不进目录、不计数），勿与原生
-//        figure 混排；同格宽时挑纵横比一致的 SVG（本页三个都是 4:3），否则行高被
-//        最矮的图撑住、高的会溢出格底。
+//        figure 混排；同格宽时挑纵横比一致的 SVG（本页三图 viewBox 同为 800×520），
+//        否则行高被最矮的图撑住、高的会溢出格底。
 == 多子图 · 三图一线
 
 #body-slide(
@@ -114,12 +122,18 @@
     #grid(
       columns: (1fr, 1fr, 1fr),
       gutter: gutter-tight,
-      [#figure-block(image("../assets/sample-scheme.svg"), caption: [(a) 示意图], width: 100%)],
-      [#figure-block(image("../assets/sample-chart.svg"), caption: [(b) 柱状图], width: 100%)],
-      [#figure-block(image("../assets/sample-data.svg"), caption: [(c) 时段图], width: 100%)],
+      [#figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 100%)
+       #v(0.1em)
+       #align(center)[#text(size: 0.63em, fill: framagris)[(a) 示意图]]],
+      [#figure-block(image("../assets/sample-chart.svg"), caption: none, width: 100%)
+       #v(0.1em)
+       #align(center)[#text(size: 0.63em, fill: framagris)[(b) 柱状图]]],
+      [#figure-block(image("../assets/sample-data.svg"), caption: none, width: 100%)
+       #v(0.1em)
+       #align(center)[#text(size: 0.63em, fill: framagris)[(c) 时段图]]],
     )
   ],
-  closing: note[多子图仍走 figure-block 的手写 caption 路（不进目录、不计数），勿混原生 figure；同格宽时挑纵横比一致的 SVG（本页三个都是 4:3），否则行高被最矮的图撑住。],
+  closing: note[多子图仍走 figure-block 的手写 caption 路（不进目录、不计数），勿混原生 figure；同格宽时挑纵横比一致的 SVG（本页三图 viewBox 同为 800×520），否则行高被最矮的图撑住。],
 )
 
 // 用法: #show link: it => ... 给「本页起的全部链接」统一上主题色＋下划线；

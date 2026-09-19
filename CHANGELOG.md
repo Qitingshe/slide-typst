@@ -16,6 +16,9 @@
 ### Changed
 - 工具链锁步升级：typst 0.13.1 → 0.15.1（typst.toml / CI / Pages / verify 版本闸同步；链接序列化基线 22 → 42）
 - 画廊第四轮反馈落地：show.cards 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）、show.basic 表格深底白字表头 + 斑马纹 + 末行强调、新增「多子图 · 三图一线」页（39 页基线 / 用法注释 29）
+- 图注演示改「居中路线」：show.basic 单图与多子图 caption 改 `caption: none` + 调用点
+  `#align(center)[#text(0.63em, framagris)]` + `#v(0.1em)`（收紧图-题间距）；三张样例 SVG
+  viewBox 800×600 → 800×520（裁掉图下 ~80px 空白，元素未溢出）；lib.typ 冻结未动
 
 ## [0.1.0] - 2026-09-19
 
