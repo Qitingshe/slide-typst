@@ -8,7 +8,7 @@
 //     chrome 全部由主题自动渲染，无需调用任何元件。
 //
 // 交叉引用：main.typ 的「内容地图」页用了同一套 recipe；本页演示换一种样式。
-// ⚠ 0.13.1 的 outline entry 是方法调用 it.body() / it.page() / it.element.location()
+// ⚠ outline entry 是方法调用 it.body() / it.page() / it.element.location()（0.15.1）
 //   （不是字段）；show 规则体必须用代码上下文 it => {...}。
 #import "../lib.typ": *
 
