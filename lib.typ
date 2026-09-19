@@ -262,12 +262,21 @@
   }
 }
 
+// 中明度裸色发虚守卫：framajaune / framavert / framaorange / framamarron 底色配白字
+// 对比不足，自动垫深 28%；其余颜色（深色原色、已显式垫深、auto 解析色）原样不动。
+#let _mid-tone-darken(c) = if c == framajaune or c == framavert or c == framaorange or c == framamarron {
+  c.darken(28%)
+} else {
+  c
+}
+
 // 实色卡片视觉盒（boitefilled 非 stretch 路径、stretch-grid 渲染与测量共用）：
-// 白字 + 4pt 圆角 + inset (x:12pt, y:9pt)；color: auto 在渲染/测量时按强调色解析。
+// 白字 + 4pt 圆角 + inset (x:12pt, y:9pt)；color: auto 在渲染/测量时按强调色解析，
+// 解析结果再过 _mid-tone-darken 发虚守卫（两分支共用同一 c，单点生效）。
 // 数值红线：rgb("#FFFFFF") / 4pt / 12×9 逐字保持，勿漂移。
 #let _filled-box(content, color, width: none, fill-height: false) = {
   context {
-    let c = if color == auto { accent-state.get() } else { color }
+    let c = _mid-tone-darken(if color == auto { accent-state.get() } else { color })
     if fill-height {
       block(
         width: 100%,
@@ -294,8 +303,8 @@
 
 /// boitefilled —— 实色填充卡片（boite 系列的对偶变体）：
 /// 底色为强调色、内容为白字，适合放「结论 / 高反差」信息。
-/// 建议搭配深色原色（framableu / framavert / framaviolet / framaorange），
-/// 以保证白字对比度。
+/// 中明度裸色（framajaune / framavert / framaorange / framamarron）自动垫深
+/// 28%（_mid-tone-darken 发虚守卫）；若想硬控，直接传已垫深色（如 framaorange.darken(28%)）。
 /// - content (content): 卡片内容。
 /// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
 /// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
