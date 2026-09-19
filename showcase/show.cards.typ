@@ -5,6 +5,8 @@
 //   · 浅色卡片 boitebleue / verte / rouge / orange / violette / jaune / marron / grise
 //     （3pt 左竖条 + 极浅底 + 圆角，一个内容参数）。
 //   · 实色卡片 boitefilled（强调色底 + 白字，放结论 / 高反差）。
+//   · 引申样例：引用块卡片（quote + boite 视觉，观点/金句）与竖向文本
+//     （rotate 侧标 + stack(dir: ttb) 中文竖列——typst 无 text(dir: ttb)）。
 //   · stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)：自动等高网格。
 //
 // 关键机制（stretch 协议）：卡片加 stretch: true 时不再返回排版好的块，而返回一个
@@ -34,6 +36,34 @@
   boitegrise(stretch: true)[#align(center)[*grise* \ #text(size: 0.72em)[弱化 · 置灰]]],
 )
 
+// 用法: #quote(block: true)[引文] 装进 #boiteXXX —— 引用块卡片（观点/金句/原则）
+// 改这里: 引文写 quote 里，出处改「— …」；boite 换色即换气氛（#boitebleue → #boiteXXX）。
+// ⚠ 坑: #quote 的 block: false 会**自动加弯引号**（适合句子中行内引用），
+//        block: true 不加引号（卡片型引用用它，引号自写或留白给缩进表意）。
+#v(gap-secondary)
+#grid(
+  columns: (1.4fr, 1fr),
+  gutter: 0.8em,
+  [
+    #boitebleue[
+      #quote(block: true)[
+        设计系统是收敛的选择，不是自由的匮乏。
+        #v(0.2em)
+        #h(1fr)
+        #text(size: 0.72em, fill: framagris)[— 画廊第一原则]
+      ]
+    ]
+  ],
+  [
+    #boitegrise[
+      *引用块卡片*
+      高频场景：观点、原则、金句。
+      quote 不自带花哨样式，视觉由外层 boite
+      的浅底竖条提供；出处用 `#h(1fr)` 推右。
+    ]
+  ],
+)
+
 // 用法: #boitefilled(color: X, stretch: true) 交给 stretch-grid —— 实色卡片（色底 + 白字）
 // 改这里: 并排时每张加 stretch: true 让三栏等高（内容一行两行不齐，等高补齐底边）；
 //         color 只传真正够深的底色：framableu / framarouge / framaviolet 直接可用，
@@ -48,6 +78,30 @@
   boitefilled(color: framableu, stretch: true)[*蓝底结论* 高反差，一眼抓住],
   boitefilled(color: framarouge, stretch: true)[*红底结论* 放风险提醒],
   boitefilled(color: framaorange.darken(28%), stretch: true)[*橙底结论* 垫深后才配白字],
+)
+
+// 用法: #rotate(90deg, reflow: true) 西文侧标 / #stack(dir: ttb, spacing: …) 中文竖列
+// 改这里: 侧标文本写 rotate 里（短词 + tracking 拉开）；竖排逐字传 #stack 的子元素。
+// ⚠ 坑: typst 无 #text(dir: ttb)——中文竖排必须显式 #stack(dir: ttb)；
+//        rotate 务必带 reflow: true，否则旋转后不参与布局、会叠到隔壁内容上。
+#v(gap-secondary)
+#grid(
+  columns: (auto, 1fr),
+  column-gutter: 0.6em,
+  [
+    #rotate(90deg, reflow: true)[
+      #text(size: 9pt, fill: framagris, tracking: 0.3em)[SIDEBAR]
+    ]
+  ],
+  [
+    #boitefilled(color: framableu)[
+      #align(center)[
+        #stack(dir: ttb, spacing: 0.35em,
+          text(size: 1.2em)[借], text(size: 1.2em)[页],
+          text(size: 1.2em)[即], text(size: 1.2em)[用])
+      ]
+    ]
+  ],
 )
 
 // 用法: #stretch-grid(columns: 3, gutter: 1em, boiteXXX(stretch: true)[...], ...)

@@ -2,35 +2,35 @@
 // 家族：常规元素 —— 不画新容器，用 Typst 原生能力补齐三类内容。
 //
 // 演示三个元件：
-//   · #table(...)：原生表格，frama 主色系浅底表头（3pt 圆角）＋横向细线分隔。
+//   · #table(...)：原生表格，深底白字表头（framableu 实底）＋斑马纹＋末行强调。
 //   · #figure-block(...)：图像＋图注的组合块（lib.typ 模版元件）——图与图注同宽、
-//     同左缘、图注紧贴图下沿。
+//     同左缘、图注紧贴图下沿；多子图用 figure-block + grid 的「三图一线」排法。
 //   · #link(...)：外链（完整 URL）与内链（#label + <标签>）双向跳转，页面级
 //     #show link 规则统一上主题色＋下划线。
 //
 // 交叉引用：表头/链接配色沿用「配色与强调」家族的明度对比原则——
-//   本页统一走「浅底深字」路线（framableu 深字 + lighten 浅蓝底），不牵涉 darken 垫底。
+//   表格走「深底白字」路线（framableu 实底表头 + 白字），斑马纹 lighten(93%)，
+//   不牵涉中明度底色（vert / orange / jaune / marron）。
 // ⚠ lib.typ 冻结，本家族只用现有元件组合，不发明新装饰。
 #import "../lib.typ": *
 
 // 用法: #table(columns: (...), align: (...), stroke: ..., table.header(...)) —— 原生表格
 // 改这里: columns 传列宽（1fr 比例 / auto 按内容 / 绝对长度）；表头样式写在 header 内部
-//         各 table.cell 的 fill/stroke 上；横向分隔线由 table 级 stroke: (y: ...) 控制。
+//         各 table.cell 的 fill/stroke 上；横向分隔线由 table 级 stroke: (y: ...) 控制；
+//         斑马纹是手动给整行 cell 加 fill；末行强调用更实一层浅底 + 加粗。
 // ⚠ 坑: 0.13 起 table.header 只负责分组与跨页重复，样式写在它内部的 table.cell 上
-//        （fill / stroke）；table.cell 不支持 radius，3pt 圆角外包给 #block(radius: 3pt, …)
-//        的浅底面板，表内 cell 全部透明让面板底色透过；本页走「浅底深字」——framableu
-//        深字 + framableu 底线，不再需要深底白字的 darken 垫色；同族选色按明度二选一
-//        （浅底深字 / 深底白字），中明度底色（marron / vert…）做表头既撑不起白字、
-//        深字又发闷，绕开它。
+//        （fill / stroke）；table.cell 不支持 radius，圆角外包给 #block(radius: 4pt, clip: true)
+//        裁切；本页走「深底白字」路线（framableu 实底表头 + 白字，斑马纹 lighten(93%)），
+//        中明度底色（marron / vert…）做表头既撑不起白字、深字又发闷，绕开它。
 == 表格 · table <tbl-anchor>
 
 #body-slide(
   kicker: [原生 table 也够撑起一张数据表],
   inner: [
     #block(
-      radius: 3pt,
-      fill: framableu.lighten(97%),
-      inset: 0.6em,
+      radius: 4pt,
+      clip: true,
+      stroke: 0.4pt + framableu.lighten(72%),
     )[
       #table(
         columns: (1.3fr, 2fr, 1fr, auto),
@@ -38,28 +38,28 @@
         align: (left, left, center, right),
         stroke: (y: 0.4pt + framableu.lighten(72%)),
         table.header(
-          table.cell(stroke: (top: none, bottom: 1.2pt + framableu))[#text(fill: framableu, weight: "bold")[元件]],
-          table.cell(stroke: (top: none, bottom: 1.2pt + framableu))[#text(fill: framableu, weight: "bold")[关键参数]],
-          table.cell(stroke: (top: none, bottom: 1.2pt + framableu))[#text(fill: framableu, weight: "bold")[默认]],
-          table.cell(stroke: (top: none, bottom: 1.2pt + framableu))[#text(fill: framableu, weight: "bold")[家族]],
+          table.cell(fill: framableu)[#text(fill: rgb("#FFFFFF"), weight: "bold")[元件]],
+          table.cell(fill: framableu)[#text(fill: rgb("#FFFFFF"), weight: "bold")[关键参数]],
+          table.cell(fill: framableu)[#text(fill: rgb("#FFFFFF"), weight: "bold")[默认]],
+          table.cell(fill: framableu)[#text(fill: rgb("#FFFFFF"), weight: "bold")[家族]],
         ),
-        // 主体行：无底色（透出面板浅底），横向细线分隔；末行用 framableu 浅色线收底
+        // 主体行：偶数数据行手动斑马纹（lighten(93%)），末行（boitefilled）升格强调
         table.cell()[keyline],
         table.cell()[color · size],
         table.cell()[auto],
         table.cell()[数据元件],
-        table.cell()[stat],
-        table.cell()[amount-size · color],
-        table.cell()[34pt],
-        table.cell()[数据元件],
+        table.cell(fill: framableu.lighten(93%))[stat],
+        table.cell(fill: framableu.lighten(93%))[amount-size · color],
+        table.cell(fill: framableu.lighten(93%))[34pt],
+        table.cell(fill: framableu.lighten(93%))[数据元件],
         table.cell()[body-slide],
         table.cell()[kicker · inner · closing],
         table.cell()[none],
         table.cell()[页面骨架],
-        table.cell(stroke: (bottom: 0.8pt + framableu.lighten(45%)))[boitefilled],
-        table.cell(stroke: (bottom: 0.8pt + framableu.lighten(45%)))[color · stretch],
-        table.cell(stroke: (bottom: 0.8pt + framableu.lighten(45%)))[auto],
-        table.cell(stroke: (bottom: 0.8pt + framableu.lighten(45%)))[卡片与网格],
+        table.cell(fill: framableu.lighten(85%), stroke: (bottom: 1.2pt + framableu))[#text(weight: "bold")[boitefilled]],
+        table.cell(fill: framableu.lighten(85%), stroke: (bottom: 1.2pt + framableu))[#text(weight: "bold")[color · stretch]],
+        table.cell(fill: framableu.lighten(85%), stroke: (bottom: 1.2pt + framableu))[#text(weight: "bold")[auto]],
+        table.cell(fill: framableu.lighten(85%), stroke: (bottom: 1.2pt + framableu))[#text(weight: "bold")[卡片与网格]],
       )
     ]
     #v(gap-primary)
@@ -98,6 +98,28 @@
     )
   ],
   closing: note[原生 figure 能自动编号进目录（figure.caption 规则在 main.typ）；figure-block 是手写"图 1："的路，借页选一条。],
+)
+
+// 用法: #figure-block ×3 + #grid(columns: (1fr, 1fr, 1fr)) —— 三图一线多子图
+// 改这里: 每格一个 figure-block，width: 100% 占满格宽（image 里**别**写 width）；
+//         gutter 用 gutter-tight 收紧子图间距；caption 手写 (a)/(b)/(c) 与正文呼应。
+// ⚠ 坑: 多子图仍走 figure-block 之手写 caption 路径（不进目录、不计数），勿与原生
+//        figure 混排；同格宽时挑纵横比一致的 SVG（本页三个都是 4:3），否则行高被
+//        最矮的图撑住、高的会溢出格底。
+== 多子图 · 三图一线
+
+#body-slide(
+  kicker: [三张子图一页排，(a)(b)(c) 手写标注],
+  inner: [
+    #grid(
+      columns: (1fr, 1fr, 1fr),
+      gutter: gutter-tight,
+      [#figure-block(image("../assets/sample-scheme.svg"), caption: [(a) 示意图], width: 100%)],
+      [#figure-block(image("../assets/sample-chart.svg"), caption: [(b) 柱状图], width: 100%)],
+      [#figure-block(image("../assets/sample-data.svg"), caption: [(c) 时段图], width: 100%)],
+    )
+  ],
+  closing: note[多子图仍走 figure-block 的手写 caption 路（不进目录、不计数），勿混原生 figure；同格宽时挑纵横比一致的 SVG（本页三个都是 4:3），否则行高被最矮的图撑住。],
 )
 
 // 用法: #show link: it => ... 给「本页起的全部链接」统一上主题色＋下划线；
