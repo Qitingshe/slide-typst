@@ -1,0 +1,30 @@
+# Pages 部署：macOS runner（含 Heiti SC 字体）→ 编译 + 六项门禁（pages 走 strict
+# 硬闸）→ main.pdf 上传 Pages 供预览/下载。需用户先在仓库 Settings > Pages 选择
+# "GitHub Actions" 作为源（fire-and-forget：未开启时本工作流不运行，不阻塞 CI）。
+name: Pages
+on:
+  push: { branches: [main] }
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-latest
+    environment: github-pages
+    steps:
+      - uses: actions/checkout@v6
+      - uses: typst-community/setup-typst@v5
+        with: { typst-version: "0.15.1" }
+      - name: Compile and verify gates (strict-pages on macOS)
+        run: python3 scripts/verify.py --strict-pages
+      - name: Stage PDF for Pages
+        run: mkdir -p _site && cp main.pdf _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - uses: actions/deploy-pages@v4

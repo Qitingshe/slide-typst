@@ -1,27 +1,15 @@
 // chapters/ch02.typ - 第 2 章 上下文工程
-//
-// ==== v2 章节约定（其他章节照此改写）====
-// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
-//      #section-open(index: [2], title: [上下文工程], subtitle: [...], color: framavert)
-//    - index 为书章节序号（内容分段省略 index）。
-//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
-//      boitefilled、页眉紧凑标题都自动沿用该色。
-//    - 面包屑自动生成为「第 2 章 · 上下文工程」，显示在内页右上角。
-// 2. `==` 标题只写「主题」，不再重复「第 N 章 ·」前缀（前缀已进开场页与面包屑）。
-// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
-// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
-//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
+// 强调色：framableu（蓝），上下文是 Agent 能力的基础
 #import "../lib.typ": *
 
-// ---------- 第 2 章 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   index: [2],
   title: [上下文工程],
   subtitle: [上下文决定能力上限：静态前缀 + 轨迹],
-  color: framavert,
+  color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framavert ----------
+// ---------- 第 1 页 · framableu ----------
 
 == 上下文的结构
 
@@ -30,8 +18,8 @@
   inner: [
     #stretch-grid(
       columns: 2,
-      gutter: 1em,
-      boiteverte(stretch: true)[
+      gutter: gutter-primary,
+      boitebleue(stretch: true)[
         #align(center)[*静态前缀*]
         - 系统提示词：身份 / 权限 / 行为准则
         - 工具定义：名称 / 描述 / 参数格式
@@ -43,12 +31,13 @@
       ],
     )
     #v(gap-secondary)
-    #boitebleue[*KV Cache* 缓存已见 token 的键值，避免重复预填充——静态前缀越长，缓存收益越大]
+    - KV Cache 缓存已见 token 的键值，避免重复预填充——静态前缀越长，缓存收益越大
+    - 实验 2-1：消 Kit 上下文各要素——缺提示词 → 答非所问；缺工具描述 → 不调用工具
   ],
   closing: note[上下文 = 每次调用拼接后的完整输入],
 )
 
-// ---------- 第 2 页 · 强调色 framavert ----------
+// ---------- 第 2 页 · framableu ----------
 
 == 从提示工程到上下文工程
 
@@ -63,7 +52,7 @@
   closing: note[提示工程 ⊂ 上下文工程],
 )
 
-// ---------- 第 3 页 · 强调色 framavert ----------
+// ---------- 第 3 页 · framableu ----------
 
 == 长程任务与压缩
 
@@ -76,5 +65,3 @@
   ],
   closing: boitefilled[上下文是根：一切 Agent 能力都长在它上面],
 )
-
-// 下一章强调色由 ch03 的 section-open 自行声明，这里不再交接。

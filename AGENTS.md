@@ -24,6 +24,10 @@ typst compile main.typ
 | `chapters/engineering.typ` | 分段「工程要点」：Harness 五要素、范式演进、全书数据 |
 | `chapters/wrapup.typ` | 分段「小结」：一条主线、展望与行动 |
 | `chapters/tour-map.typ` | 分段「十章速览」入口：十章地图页 |
+| `gates.json` | 基线单一事实源：页数 / 用法注释数 / 链接数 / API 清单 |
+| `scripts/verify.py` | 门禁唯一实现（本地 + CI + pre-commit 共用） |
+| `.github/workflows/` | `ci.yml` 门禁（ubuntu）+ `pages.yml` Pages 部署（macOS，strict 页数闸 + main.pdf 预览） |
+| `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 时自动跳过，不阻塞提交） |
 
 ## 结构约定
 

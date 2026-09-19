@@ -1,16 +1,14 @@
 // chapters/engineering.typ - 工程要点（Harness 五要素 / 范式演进 / 全书数据与阅读路径）
-// 每页强调色走位：framableu → framaorange → framaviolet，在各页末尾声明下一页颜色。
-// （第一页省略声明——直接沿用默认强调色 framableu。）
+// 强调色走位：framableu → framaorange → framaviolet，在各页末尾声明下一页颜色。
 #import "../lib.typ": *
 
-// ---------- 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   title: [工程要点],
   subtitle: [从公式到生产：Harness 五要素与范式演进],
   color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framableu（默认，无需声明）----------
+// ---------- 第 1 页 · framableu（默认，无需声明）----------
 
 == Harness 五要素
 
@@ -27,8 +25,8 @@
     #v(gap-secondary)
     #stretch-grid(
       columns: 3,
-      row-gutter: 0.5em,
-      column-gutter: 0.7em,
+      row-gutter: gutter-tight,
+      column-gutter: gutter-tight,
       boitebleue(stretch: true)[*Context 上下文* —— 信息要充分：提示词、知识库、Sidecar],
       boiteverte(stretch: true)[*Tools 工具接口* —— 命名直观、参数有例（MCP）],
       boiterouge(stretch: true)[*Constrain 约束* —— 故障安全默认值，显式开放],
@@ -39,10 +37,9 @@
   closing: note[行业转向：生产系统从「能做事」转向「可靠地做事」——约束 + 验证 + 纠正],
 )
 
-// 下一页强调色：本页末尾收尾声明（被吸收，不翻页）
 #slide-accent(framaorange)
 
-// ---------- 第 2 页 · 强调色 framaorange ----------
+// ---------- 第 2 页 · framaorange ----------
 
 == 范式演进
 
@@ -61,10 +58,9 @@
   ],
 )
 
-// 下一页强调色：本页末尾收尾声明（被吸收，不翻页）
 #slide-accent(framaviolet)
 
-// ---------- 第 3 页 · 强调色 framaviolet ----------
+// ---------- 第 3 页 · framaviolet ----------
 
 == 全书数据与阅读路径
 
@@ -73,11 +69,11 @@
   inner: [
     #stretch-grid(
       columns: 4,
-      gutter: 0.6em,
+      gutter: gutter-tight,
       stat(stretch: true)[10][正文章节],
       stat(stretch: true)[109][配套实验],
       stat(stretch: true)[15][语言版本],
-      stat(amount-size: 26pt, stretch: true)[48.3k][GitHub ★],
+      stat(amount-size: 28pt, stretch: true)[48.3k][GitHub Stars],
     )
     #v(gap-primary)
     - 每章 4–19 个实验，从基础到生产

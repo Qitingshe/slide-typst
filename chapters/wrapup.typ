@@ -1,15 +1,14 @@
 // chapters/wrapup.typ - 小结与展望（全书的收束与行动建议）
-// 每页强调色走位：framableu（继承 engineering 的收尾重置）→ framavert。
+// 强调色走位：framableu（继承 engineering 的收尾重置）→ framavert。
 #import "../lib.typ": *
 
-// ---------- 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   title: [小结],
   subtitle: [一条主线，与下一步行动],
   color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framableu（继承自工程要点的收尾重置）----------
+// ---------- 第 1 页 · framableu（继承自工程要点的收尾重置）----------
 
 == 一条主线
 
@@ -24,10 +23,10 @@
   ],
 )
 
-// 下一页强调色：本页末尾收尾声明（被吸收，不翻页）
+// 收尾声明：被吸收，不翻页
 #slide-accent(framavert)
 
-// ---------- 第 2 页 · 强调色 framavert ----------
+// ---------- 第 2 页 · framavert ----------
 
 == 展望与行动
 
@@ -37,7 +36,7 @@
   inner: [
     #stretch-grid(
       columns: 2,
-      gutter: 1em,
+      gutter: gutter-primary,
       boiteverte(stretch: true)[
         *前沿方向*
         - 模型即 Agent：RL 内化工具调用

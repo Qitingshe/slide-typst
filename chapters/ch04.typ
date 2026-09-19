@@ -1,27 +1,15 @@
 // chapters/ch04.typ - 第 4 章 工具
-//
-// ==== v2 章节约定（其他章节照此改写）====
-// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
-//      #section-open(index: [4], title: [工具], subtitle: [...], color: framaorange)
-//    - index 为书章节序号（内容分段省略 index）。
-//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
-//      boitefilled、页眉紧凑标题都自动沿用该色。
-//    - 面包屑自动生成为「第 4 章 · 工具」，显示在内页右上角。
-// 2. `==` 标题只写「主题」，不再重复「第 4 章 ·」前缀（前缀已进开场页与面包屑）。
-// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
-// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
-//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
+// 强调色：framavert（绿），工具是 Agent 改变世界的双手
 #import "../lib.typ": *
 
-// ---------- 第 4 章 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   index: [4],
   title: [工具],
   subtitle: [工具是 Agent 的双手：五类工具与 MCP 接入],
-  color: framaorange,
+  color: framavert,
 )
 
-// ---------- 第 1 页 · 强调色 framaorange ----------
+// ---------- 第 1 页 · framavert ----------
 
 == 五类工具
 
@@ -30,8 +18,8 @@
   inner: [
     #stretch-grid(
       columns: 2,
-      row-gutter: 0.6em,
-      column-gutter: 0.8em,
+      row-gutter: gutter-tight,
+      column-gutter: gutter-primary,
       boitebleue(stretch: true)[*感知* 搜索 / 文件 / API / 数据库 —— 访问信息],
       boiteverte(stretch: true)[*执行* 代码 / 文件操作 / 系统命令 —— 决策变行动],
       boiteviolette(stretch: true)[*协作* 委托子 Agent / 请求人工确认 / 多 Agent 协调],
@@ -42,7 +30,7 @@
   closing: note[事件触发类归入广义工具：让外部世界主动来找 Agent],
 )
 
-// ---------- 第 2 页 · 强调色 framaorange ----------
+// ---------- 第 2 页 · framavert ----------
 
 == 工具调用流程
 
@@ -57,7 +45,7 @@
   closing: note[例：天气工具——「今天北京下雨吗」→ 查声明 → call(北京) → 「小雨，带把伞」],
 )
 
-// ---------- 第 3 页 · 强调色 framaorange ----------
+// ---------- 第 3 页 · framavert ----------
 
 == MCP 与工具设计
 
@@ -67,8 +55,7 @@
     - MCP（Model Context Protocol）：统一「模型 ↔ 工具」接口，一次接入、处处复用
     - 高风险操作（支付 / 删除 / 投产）封装为专用工具 + 审计 + 人工确认
     - 安全边界：权限最小化、可追溯
+    - 实验 4-1：MCP 工具搭建与调用
   ],
   closing: boitefilled[通用工具好探索，专用工具保安全],
 )
-
-// 下一章强调色由 ch05 的 section-open 自行声明，这里不再交接。

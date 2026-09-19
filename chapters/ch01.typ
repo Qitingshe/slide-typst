@@ -1,19 +1,7 @@
 // chapters/ch01.typ - 第 1 章 AI Agent 入门
-//
-// ==== v2 章节约定（其他章节照此改写）====
-// 1. 章首用一张 section-open 开场页，并在这里声明本章的强调色与面包屑：
-//      #section-open(index: [1], title: [AI Agent 入门], subtitle: [...], color: framableu)
-//    - index 为书章节序号（内容分段省略 index）。
-//    - color 会自动写入 accent-state，之后本页/本章的 keyline、stat、
-//      boitefilled、页眉紧凑标题都自动沿用该色。
-//    - 面包屑自动生成为「第 1 章 · AI Agent 入门」，显示在内页右上角。
-// 2. `==` 标题只写「主题」，不再重复「第 1 章 ·」前缀（前缀已进开场页与面包屑）。
-// 3. 章节之间不再需要 #slide-accent(...) 交接色：下一章的 section-open 会自行声明。
-// 4. 切记：section-open 必须紧跟在 `=` 之后、本章第一个 `==` 之前，且放在
-//    `==` 标题之前不要写 #slide-accent(...)（会凭空多出一页）。
+// 强调色：framableu（蓝），贯穿本章三页
 #import "../lib.typ": *
 
-// ---------- 第 1 章 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   index: [1],
   title: [AI Agent 入门],
@@ -21,7 +9,7 @@
   color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framableu ----------
+// ---------- 第 1 页 · framableu ----------
 
 == 产品实证
 
@@ -30,8 +18,8 @@
   inner: [
     #stretch-grid(
       columns: 3,
-      row-gutter: 0.6em,
-      column-gutter: 0.8em,
+      row-gutter: gutter-tight,
+      column-gutter: gutter-primary,
       boitebleue(stretch: true)[*Cursor* 编程助手：开放式工作流与代码操作],
       boiteverte(stretch: true)[*Deep Research* 长程研究：检索、综合、成文],
       boiteorange(stretch: true)[*Manus* 全能执行：拆解任务、调用工具],
@@ -43,7 +31,7 @@
   closing: note[共同特征：开放式动作空间 · 内部思考 · 持续交互],
 )
 
-// ---------- 第 2 页 · 强调色 framableu ----------
+// ---------- 第 2 页 · framableu ----------
 
 == 观察与动作空间
 
@@ -57,7 +45,7 @@
   closing: boitefilled[*结论* Agent 的能力 = 模型能力 × 接口设计],
 )
 
-// ---------- 第 3 页 · 强调色 framableu ----------
+// ---------- 第 3 页 · framableu ----------
 
 == 构建原则与全书路线
 
@@ -70,5 +58,3 @@
   ],
   closing: note[全书路线：上下文（§2–3）→ 工具（§4–5）→ 交互（§6）→ 评估（§7）→ 后训练（§8）→ 进化（§9）→ 协作（§10）],
 )
-
-// 下一章强调色由 ch02 的 section-open 自行声明，这里不再交接。

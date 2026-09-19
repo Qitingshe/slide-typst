@@ -2,14 +2,13 @@
 // 强调色：framableu（默认，无需声明）；结尾交还 framableu 给 ch01。
 #import "../lib.typ": *
 
-// ---------- 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   title: [十章速览],
   subtitle: [十个章节，一条从「会对话」到「能做事」的成长路径],
   color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framableu（默认）----------
+// ---------- 第 1 页 · framableu ----------
 
 == 十章地图
 
@@ -18,8 +17,8 @@
   inner: [
     #stretch-grid(
       columns: 5,
-      row-gutter: 0.5em,
-      column-gutter: 0.6em,
+      row-gutter: gutter-tight,
+      column-gutter: gutter-tight,
       boitefilled(color: framableu, stretch: true)[1 · 入门],
       boitebleue(stretch: true)[2 · 上下文],
       boitebleue(stretch: true)[3 · 记忆],

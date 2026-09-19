@@ -1,0 +1,18 @@
+{
+  "compiler": "0.15.1",
+  "baselines": { "pages": 55, "usage-comments": 0, "links": 10 },
+  "api": [
+    "framableu", "framableulight", "framavert", "framavertlight", "framarouge", "framarougelight",
+    "framaviolet", "framavioletlight", "framaorange", "framaorangelight", "framajaune", "framajaunelight",
+    "framamarron", "framamarronlight", "framagris", "framagrislight", "framagrisdark", "framagrisdarkest",
+    "frameEmph", "alert",
+    "boitebleue", "boiteverte", "boiterouge", "boiteorange", "boiteviolette", "boitejaune", "boitemarron", "boitegrise",
+    "accent-state", "slide-accent", "breadcrumb-state",
+    "keyline", "note", "figure-block",
+    "gap-primary", "gap-secondary",
+    "body-slide", "stat", "boitefilled",
+    "stretch-grid", "slide-theme", "cetz-canvas", "section-open", "cover",
+    "chart", "plot"
+  ],
+  "gates": { "pages": "strict-local" }
+}

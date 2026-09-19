@@ -1,0 +1,11 @@
+[package]
+name = "slide-typst"
+version = "0.1.0"
+entrypoint = "main.typ"
+authors = ["Qitingshe"]
+license = "MIT"
+description = "AI Agent book overview deck: lib.typ design system (gallery edition), 55-slide book overview."
+repository = "https://github.com/Qitingshe/slide-typst"
+keywords = ["slides", "chinese", "touying", "ai-agent-book", "presentation"]
+categories = ["presentation"]
+compiler = "0.15.1"

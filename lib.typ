@@ -1,10 +1,54 @@
-// lib.typ - 共享工具模块
-// 供 main.typ 和 chapters/*.typ 共同使用
+// lib.typ - AI Agent 书稿设计系统库
+// 供 main.typ 与 chapters/* 内容使用；版本 / API / 页数基线见 gates.json
+
+// ==== API 地图 ====
+// 门禁面 API 46 个，与 gates.json 的 api 清单一一对应（注释双胞胎）；另 4 个低阶
+// token 公共导出不设门禁（gates 检查是 ⊇，加进去只有 churn 无保护）：framagris-soft /
+// gutter-tight / gutter-primary / gutter-loose。
+// 改 API 名（增删/改名）必须同步 gates.json 的 api 清单，否则 verify.py 会断言失败。
+// —— 配色 18：framableu framableulight / framavert framavertlight / framarouge framarougelight /
+//    framaviolet framavioletlight / framaorange framaorangelight / framajaune framajaunelight /
+//    framamarron framamarronlight / framagris framagrislight / framagrisdark framagrisdarkest
+// —— 强调文本 2：frameEmph alert
+// —— 浅色卡片 8：boitebleue boiteverte boiterouge boiteorange boiteviolette boitejaune boitemarron boitegrise
+// —— 强调色流转 3：accent-state slide-accent breadcrumb-state
+// —— 数据元件 3：keyline note figure-block
+// —— 间距体系 2：gap-primary gap-secondary
+// —— 页面/内容件 3：body-slide stat boitefilled
+// —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
+// —— 图表 2：chart plot
+
+// ── 页眉细线满宽常量（B10）────────────────────────────
+// 页面内容区宽度 841.89 − 2×12.5pt（页眉左右 0.5em=12.5pt 内缩）≈ 816.9pt。
+// ⚠ 探针实测（/tmp 自检）：header 区域内 layout(size => size.width) 返回值与
+//   816.9pt 不恒等（isolated probe 816.89 / 真实 deck 820.64），且 `line(length:
+//   100%)` 与 layout 包裹两种写法都会把细线渲染成 ≈56pt（place 内自噬宽度），
+//   故保留原字面值作命名常量——渲染与旧 PDF 逐字节一致，零视觉差。
+#let _header-line-width = 816.9pt
+
+// ==== 字号阶梯 ====
+// 绝对字号只在门面/数据件，正文一律 em 相对：
+//   cover/section 标题 32pt · stat 数字 34pt · keyline 24pt（数据/门面绝对字号）
+//   meta 9.5pt · 小号 10pt（meta/小字用点制）
+//   正文 0.85em（main.typ 全局）· 图注 0.63em · 助文 0.75em（em 相对，随主题缩放任动）
+// 新增数据件时，先看能否复用现有档位，别再引入第五档绝对字号。
 
 #import "@preview/touying:0.7.4": *
 #import themes.university: *
-#import "@preview/cetz:0.4.2"
+#import "@preview/cetz:0.5.2"
+#import "@preview/cetz-plot:0.1.4"
 #import "@preview/numbly:0.1.0": numbly
+
+// cetz-plot 0.1.4 的两个命名空间：chart（饼图/柱状图等图表）与 plot（线性图等
+// 绘图环境）。借页者 `#import "lib.typ": *` 后直接 #chart.piechart(...) /
+// #plot.plot(...) 即可。
+// ⚠ 这里刻意用 `#let` 再导出一层，而不是 `#import "...": chart, plot` 直接引名：
+//   verify.py 的 api 门禁只认顶层 #let 导出（按 `^#let` 正则检索），直接引名会
+//   让「API 地图 ↔ gates.json api 清单」这对双胞胎断连——门禁抓不到这两个符号。
+#let chart = cetz-plot.chart
+#let plot = cetz-plot.plot
+// cetz / numbly 的模块绑定经顶层 import 亦为公共导出（showcase 画布内
+// `#import cetz.draw: *` 依赖之）；刻意少一层封装、不设门禁；勿误删。
 
 // ==== Framasoft 配色 ====
 // 浅色现代基调：每种「原色」都配有同族浅色。
@@ -14,6 +58,8 @@
 
 #let framableu = rgb("#0C5B7A")
 #let framableulight = rgb("#1290B0")
+// ⚠ 亮度断层：同族浅色中该对（blue/light）明度差最小，视觉上几乎同档，勿误当
+//   『浅底大块背景』使用（对比优先用 framagrislight / 深色做浅卡）。
 #let framavert = rgb("#8E9C48")
 #let framavertlight = rgb("#E3EBC7")
 #let framarouge = rgb("#CC2D18")
@@ -27,14 +73,15 @@
 #let framamarron = rgb("#A1887F")
 #let framamarronlight = rgb("#D7CCC8")
 #let framagris = rgb("#616161")
+#let framagris-soft = rgb("#767676") // 助文灰：原生 figure/footnote 等次要文字的柔和档
 #let framagrislight = rgb("#F5F5F5")
 #let framagrisdark = rgb("#3E3E3E")
 #let framagrisdarkest = rgb("#000000")
 
 // ==== 强调文本（Framaorange 加粗；刻意保持「稀有、可选」）====
-// frameEmph 与 alert 同源同色，alert 同时通过 config-methods 绑定。
+// alert = frameEmph 同义转发（单实现源）：frameEmph 供正文使用，alert 供 config-methods 绑定。
 #let frameEmph(body) = text(fill: framaorange, weight: "bold", body)
-#let alert(body) = text(fill: framaorange, weight: "bold", body)
+#let alert(body) = frameEmph(body)
 
 // ==== 浅色强调卡片（对应 \boiteXXX）====
 // 左竖条(3pt) + 约 5%–8% 的极浅底色 + 无重边框 + 圆角 + 舒适内边距。
@@ -46,17 +93,37 @@
 // 2·T - A（T = 数字+间距+标签天然高，A = 数字行高），标签恰好以行底收口、
 // 不溢出到下方内容。不使用 grid.cell（作为直接子元素才生效，被 context 包裹
 // 会被吞掉）；boitefilled/stat 的 color: auto 在测量/渲染时按强调色解析。
-#let _boite(content, color: framableu, stretch: false) = {
-  if stretch {
-    // 交给 stretch-grid 排版：返回规格字典
-    (cell: "boite", color: color, content: content)
+// 浅色卡片视觉盒（左竖条语言常量唯一出处）：_boite 非 stretch 路径、
+// stretch-grid（_spec-render / 测量）共用。数值红线：3pt 竖条 / lighten(93%) /
+// 4pt 圆角 / inset (x:12pt, y:9pt) 逐字保持，勿漂移。
+// - width: none → 自然宽（普通卡片）；传长度 → 定宽（stretch-grid 测量）。
+// - fill-height: true → 满高拉伸盒 + 内盒 inset（stretch-grid 单元内渲染）。
+#let _boite-box(content, color, width: none, fill-height: false) = {
+  if fill-height {
+    block(
+      radius: 4pt,
+      fill: color.lighten(93%),
+      stroke: (left: (paint: color, thickness: 3pt)),
+      width: 100%,
+      height: 100%,
+    )[#block(inset: (x: 12pt, y: 9pt))[#content]]
   } else {
     block(
+      width: if width == none { auto } else { width },
       inset: (x: 12pt, y: 9pt),
       radius: 4pt,
       fill: color.lighten(93%),
       stroke: (left: (paint: color, thickness: 3pt)),
     )[#content]
+  }
+}
+
+#let _boite(content, color: framableu, stretch: false) = {
+  if stretch {
+    // 交给 stretch-grid 排版：返回规格字典
+    (cell: "boite", color: color, content: content)
+  } else {
+    _boite-box(content, color)
   }
 }
 
@@ -121,11 +188,45 @@
 /// 示例：#note[细节见第 8 章]
 #let note(body, color: framagris) = text(size: 0.75em, fill: color)[#body]
 
+// ==== 图像与图注 ====
+/// 图像＋图注的组合块：图与图注共享同一宽度与左缘，图注紧贴图下沿。
+/// - img (content): `image(...)` 调用，**调用处不要写 width**——块内 set(100%) 接管。
+/// - caption (content, none): 图注文本，自由 content（保留手写"图 1："风格）；none 则无注。
+/// - width (length/ratio): 图与图注共享宽度，默认 88%。
+/// - gap (length): 图↔图注间距，默认 0.12em（正文 21.25pt ≈2.5pt；em 随正文等比缩放）。
+/// - caption-size (length): 图注字号，默认 0.63em。
+/// - caption-color (color): 图注颜色，默认 framagris。
+/// ⚠ 与原生 figure 是两条路：本例不自动编号、不进目录；原生 figure/footnote 样式按需自行声明。
+#let figure-block(
+  img,
+  caption: none,
+  width: 88%,
+  gap: 0.12em,
+  caption-size: 0.63em,
+  caption-color: framagris,
+) = [
+  #block(width: width)[
+    #set image(width: 100%)
+    #img
+  ]
+  #if caption != none [
+    #v(gap)
+    #block(width: width)[
+      #text(size: caption-size, fill: caption-color)[#caption]
+    ]
+  ]
+]
+
 // ==== 正文页骨架模板 + 节奏间距 ====
 // 页面级留白只有两种节奏源：gap-primary（主节奏：keyline 后 / 收尾前）与
 // gap-secondary（次级节奏：主体内段间，如公式↔网格、网格↔列表）。
 #let gap-primary = 0.3em
 #let gap-secondary = 0.4em
+
+// 网格 gutter 三档（stretch-grid 默认取 primary；按页面密度选 tight / loose）
+#let gutter-tight = 0.6em
+#let gutter-primary = 0.8em
+#let gutter-loose = 1em
 
 /// body-slide —— 标准正文页骨架：keyline 结论 → 主体 → 收尾。
 /// - kicker (content, none): 页面主结论行，交给 keyline 渲染；省略则无结论行。
@@ -151,6 +252,33 @@
   #if closing != none [#v(closing-gap) #closing]
 ]
 
+// 大数字盒（数据元件常量唯一出处）：bold 大数字 / 0.14em 数字↔标签间距 /
+// 0.8em framagris 灰标签。返回规格字典供 stat 三路径消费：
+// - amt          → 数字单行（stretch 渲染 / 测量单独 measure 数字行高 A）
+// - stack        → 双居中列（stretch 渲染的 layout 内容、测量 T 用）
+// - stack-single → 单居中列（plain 渲染：整列作为一个居中单元，与双居中视觉不同）
+// 数值红线：0.14em / 0.8em framagris 逐字保持，勿漂移。
+// ⚠ ① color 需已解析（调用方在 context 内处理 accent-state）——纯函数不能取 state；
+//   ② 测量用的 T/A 长度无法借 context/layout 表达式传出（它们只产出 content），
+//   故长度计算保留在调用方的 context 块内，_stat-box 只提供结构 dict。
+#let _stat-box(amount, label, color, amount-size: 34pt) = (
+  amt: text(size: amount-size, weight: "bold", fill: color)[#amount],
+  stack-single: [
+    #align(center)[
+      #text(size: amount-size, weight: "bold", fill: color)[#amount]
+      #v(0.14em)
+      #text(size: 0.8em, fill: framagris)[#label]
+    ]
+  ],
+  stack: [
+    #align(center)[
+      #text(size: amount-size, weight: "bold", fill: color)[#amount]
+    ]
+    #v(0.14em)
+    #align(center)[#text(size: 0.8em, fill: framagris)[#label]]
+  ],
+)
+
 /// stat —— 大数字：超大强调色数字 + 灰色小标签。
 /// - amount (content): 大数字本体，可传字符串或数学内容。
 /// - label (content): 数字下方的灰色解释。
@@ -163,17 +291,48 @@
     // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
     (cell: "stat", amount-size: amount-size, color: color, amount: amount, label: label)
   } else {
-    let use-accent = color == auto
     context {
-      let c = if use-accent { accent-state.get() } else { color }
+      let c = if color == auto { accent-state.get() } else { color }
+      let d = _stat-box(amount, label, c, amount-size: amount-size)
+      block(breakable: false)[#d.stack-single]
+    }
+  }
+}
+
+// 中明度裸色发虚守卫：framajaune / framavert / framaorange / framamarron 底色配白字
+// 对比不足，自动垫深 28%；其余颜色（深色原色、已显式垫深、auto 解析色）原样不动。
+#let _mid-tone-darken(c) = if c == framajaune or c == framavert or c == framaorange or c == framamarron {
+  c.darken(28%)
+} else {
+  c
+}
+
+// 实色卡片视觉盒（boitefilled 非 stretch 路径、stretch-grid 渲染与测量共用）：
+// 白字 + 4pt 圆角 + inset (x:12pt, y:9pt)；color: auto 在渲染/测量时按强调色解析，
+// 解析结果再过 _mid-tone-darken 发虚守卫（两分支共用同一 c，单点生效）。
+// 数值红线：rgb("#FFFFFF") / 4pt / 12×9 逐字保持，勿漂移。
+#let _filled-box(content, color, width: none, fill-height: false) = {
+  context {
+    let c = _mid-tone-darken(if color == auto { accent-state.get() } else { color })
+    if fill-height {
       block(
-        breakable: false,
+        width: 100%,
+        height: 100%,
+        radius: 4pt,
+        fill: c,
       )[
-        #align(center)[
-          #text(size: amount-size, weight: "bold", fill: c)[#amount]
-          #v(0.14em)
-          #text(size: 0.8em, fill: framagris)[#label]
+        #block(inset: (x: 12pt, y: 9pt))[
+          #text(fill: rgb("#FFFFFF"))[#content]
         ]
+      ]
+    } else {
+      block(
+        width: if width == none { auto } else { width },
+        inset: (x: 12pt, y: 9pt),
+        radius: 4pt,
+        fill: c,
+      )[
+        #text(fill: rgb("#FFFFFF"))[#content]
       ]
     }
   }
@@ -181,8 +340,8 @@
 
 /// boitefilled —— 实色填充卡片（boite 系列的对偶变体）：
 /// 底色为强调色、内容为白字，适合放「结论 / 高反差」信息。
-/// 建议搭配深色原色（framableu / framavert / framaviolet / framaorange），
-/// 以保证白字对比度。
+/// 中明度裸色（framajaune / framavert / framaorange / framamarron）自动垫深
+/// 28%（_mid-tone-darken 发虚守卫）；若想硬控，直接传已垫深色（如 framaorange.darken(28%)）。
 /// - content (content): 卡片内容。
 /// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
 /// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
@@ -191,17 +350,7 @@
     // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
     (cell: "filled", color: color, content: content)
   } else {
-    let use-accent = color == auto
-    context {
-      let c = if use-accent { accent-state.get() } else { color }
-      block(
-        inset: (x: 12pt, y: 9pt),
-        radius: 4pt,
-        fill: c,
-      )[
-        #text(fill: rgb("#FFFFFF"))[#content]
-      ]
-    }
+    _filled-box(content, color)
   }
 }
 
@@ -229,39 +378,20 @@
 ///     boitefilled(color: framaorange, stretch: true)[…], …)
 #let _spec-render(cell) = {
   if cell.cell == "boite" {
-    block(
-      width: 100%,
-      height: 100%,
-      radius: 4pt,
-      fill: cell.color.lighten(93%),
-      stroke: (left: (paint: cell.color, thickness: 3pt)),
-    )[
-      #block(inset: (x: 12pt, y: 9pt))[#cell.content]
-    ]
+    _boite-box(cell.content, cell.color, fill-height: true)
   } else if cell.cell == "filled" {
-    let c = if cell.color == auto { accent-state.get() } else { cell.color }
-    block(
-      width: 100%,
-      height: 100%,
-      radius: 4pt,
-      fill: c,
-    )[
-      #block(inset: (x: 12pt, y: 9pt))[
-        #text(fill: rgb("#FFFFFF"))[#cell.content]
-      ]
-    ]
+    _filled-box(cell.content, cell.color, fill-height: true)
   } else if cell.cell == "stat" {
     // 数字锚定行垂直中心，标签流在数字下方（行高由 stretch-grid 保证收口）
-    let c = if cell.color == auto { accent-state.get() } else { cell.color }
+    // ⚠ layout 必须处于 context 体内（block 内容位），block 在外层——反序会报 unknown variable
     block(width: 100%, height: 100%)[
       #context {
-        let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
-        let A = measure(amt).height
+        let c = if cell.color == auto { accent-state.get() } else { cell.color }
+        let d = _stat-box(cell.amount, cell.label, c, amount-size: cell.amount-size)
+        let A = measure(d.amt).height
         layout(size => [
           #v((size.height - A) / 2)
-          #align(center)[#amt]
-          #v(0.14em)
-          #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
+          #d.stack
         ])
       }
     ]
@@ -270,7 +400,7 @@
   }
 }
 
-#let stretch-grid(..cells, columns: 1, row-gutter: 0.8em, column-gutter: 0.8em, gutter: none) = layout(size => {
+#let stretch-grid(..cells, columns: 1, row-gutter: gutter-primary, column-gutter: gutter-primary, gutter: none) = layout(size => {
   let arr = cells.pos()
   assert(arr.len() > 0, message: "stretch-grid 需要至少一个格")
   let ncols = columns
@@ -286,30 +416,14 @@
         let cell = arr.at(row * ncols + col, default: none)
         if cell != none and type(cell) == dictionary {
           let h = if cell.cell == "boite" {
-            measure(block(
-              width: cw,
-              inset: (x: 12pt, y: 9pt),
-              fill: cell.color.lighten(93%),
-              stroke: (left: (paint: cell.color, thickness: 3pt)),
-            )[#cell.content]).height
+            measure(_boite-box(cell.content, cell.color, width: cw)).height
           } else if cell.cell == "filled" {
-            let c = if cell.color == auto { accent-state.get() } else { cell.color }
-            measure(block(
-              width: cw,
-              inset: (x: 12pt, y: 9pt),
-              fill: c,
-            )[
-              #text(fill: rgb("#FFFFFF"))[#cell.content]
-            ]).height
+            measure(_filled-box(cell.content, cell.color, width: cw)).height
           } else if cell.cell == "stat" {
             let c = if cell.color == auto { accent-state.get() } else { cell.color }
-            let amt = text(size: cell.amount-size, weight: "bold", fill: c)[#cell.amount]
-            let A = measure(amt).height
-            let T = measure(block(width: cw, breakable: false)[
-              #align(center)[#amt]
-              #v(0.14em)
-              #align(center)[#text(size: 0.8em, fill: framagris)[#cell.label]]
-            ]).height
+            let d = _stat-box(cell.amount, cell.label, c, amount-size: cell.amount-size)
+            let A = measure(d.amt).height
+            let T = measure(block(width: cw, breakable: false)[#d.stack]).height
             T * 2 - A
           } else {
             0pt
@@ -356,12 +470,13 @@
         let c = accent-state.get()
         let c-head = c.darken(4%) // 加深一档，保证白底对比
         // 左格块只承载标题文字；下方细线用「固定长度 + 锚定块左下」画出，
-        // 使其独立于网格列宽（不再因右侧面包屑而缩短）：页宽 841.89pt，页眉
-        // 左右各 0.5em=12.5pt inset → 满宽 816.9pt。这样无论当页有无面包屑，
-        // 线与线长一致，且始终整条落在「标题+面包屑」之下，二者不再重叠。
+        // 使其独立于网格列宽（不再因右侧面包屑而缩短）。细线长度取顶部常量
+        // _header-line-width（B10：值 816.9pt 由 841.89 − 2×12.5 推导，逐字节
+        // 保留原渲染）。这样无论当页有无面包屑，线与线长一致，且始终整条落在
+        // 「标题+面包屑」之下，二者不再重叠。
         block(breakable: false)[
           #text(size: 1.1em, weight: "bold", fill: c-head)[#current-heading.body]
-          #place(bottom + left, dy: 0.4em, line(length: 816.9pt, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
+          #place(bottom + left, dy: 0.4em, line(length: _header-line-width, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
         ]
       }
     },
@@ -391,15 +506,8 @@
   config-methods(
     alert: (self: none, it) => text(fill: framaorange, weight: "bold", it),
   ),
-  config-info(
-    title: [深入理解 AI Agent],
-    subtitle: none,
-    author: [QITINGSHE],
-    date: datetime.today(),
-    institution: [bojieli/ai-agent-book],
-    contact: none,
-    logo: none,
-  ),
+  // 注：deck 专属元数据（书名/作者/日期）不属于设计系统，已移出 lib——
+  // 由每份 deck 的 main.typ 通过 slide-theme.with(config-info(...)) 自行声明。
 )
 
 // ==== CeTZ 与 Touying 的动画绑定 ====
@@ -409,8 +517,10 @@
 )
 
 // ==== 封面（title slide）====
-// 共享包装：封面页隐藏主题的 header/footer，并给出独立的白色画布。
-#let _cover-page(body) = touying-slide-wrapper(self => {
+// 全宽白画布包装：封面与开场页共用（隐藏主题 header/footer、白底、同一边距）。
+// 视觉区分在各自 body 内：封面 = 左侧渐变面板 + 大图形；开场页 = 左竖条 +
+// 右下角大序号/色块 + 顶部细线。放在任何位置都会自成一张 slide。
+#let _full-page(body) = touying-slide-wrapper(self => {
   self = utils.merge-dicts(self, config-page(
     header: none,
     footer: none,
@@ -421,19 +531,6 @@
 })
 
 // ==== 章节 / 分段开场页（opener，v2）====
-// 每个「大章」或「分段」前的一张独立干净页：大标题 + 可选序号 + 副标题。
-// 与封面同法，用 touying-slide-wrapper 独立成页，隐藏主题页眉/页脚；
-// 视觉上用「左侧强调竖条 + 右下角超淡序号/色块 + 顶部细线」，
-// 与封面的左侧渐变大面板明显区分。放在任何位置都会自成一张 slide。
-#let _opener-page(body) = touying-slide-wrapper(self => {
-  self = utils.merge-dicts(self, config-page(
-    header: none,
-    footer: none,
-    fill: rgb("#FFFFFF"),
-    margin: (x: 2.4em, y: 1.8em),
-  ))
-  touying-slide(self: self, body)
-})
 
 /// section-open —— 章节/分段开场页。
 /// - title (content): 大标题（章名或分段名，如 [上下文工程] / [核心公式]）。
@@ -456,7 +553,7 @@
   let use-accent = color == auto
   let crumb = if index != none { [第 #index 章 · #title] } else { title }
   // ⚠ touying-slide-wrapper 不能放在 context 内；故 context 只包在 body 内。
-  _opener-page(context {
+  _full-page(context {
     let c = if use-accent { accent-state.get() } else { color }
     accent-state.update(c)
     breadcrumb-state.update(crumb)
@@ -500,13 +597,27 @@
   ]
 ]
 
-#let _cover-meta(author, institution, date) = text(size: 9.5pt, fill: framagris)[#author · #institution · #date]
+// meta 行容忍 none：none 项不渲染「· 」连缀，全部 none 时整行输出为空。
+#let _cover-meta(author, institution, date) = {
+  let items = ()
+  if author != none { items.push([#author]) }
+  if institution != none { items.push([#institution]) }
+  if date != none { items.push([#date]) }
+  text(size: 9.5pt, fill: framagris)[#items.join([ · ])]
+}
 
-#let _cover-meta-block(author, institution, date) = [
-  #line(length: 100%, stroke: (paint: framagris.lighten(60%), thickness: 0.5pt))
-  #v(0.7em)
-  #_cover-meta(author, institution, date)
-]
+// meta 区块：author/institution/date 全为 none 时整块（含细分隔线）不输出。
+#let _cover-meta-block(author, institution, date) = {
+  if author == none and institution == none and date == none {
+    []
+  } else {
+    [
+      #line(length: 100%, stroke: (paint: framagris.lighten(60%), thickness: 0.5pt))
+      #v(0.7em)
+      #_cover-meta(author, institution, date)
+    ]
+  }
+}
 
 // ---- cover：分栏色块（层叠大图形左面板）----
 // 左面板：横向渐变底色；浅蓝大圆 / 圆弧 / 细圆环层叠出抽象编辑海报感；
@@ -514,10 +625,10 @@
 #let cover(
   title: [Title],
   subtitle: none,
-  author: [QITINGSHE],
-  institution: [USTC],
-  date: datetime.today().display(),
-) = _cover-page([
+  author: none,
+  institution: none,
+  date: none,
+) = _full-page([
   #place(left, block(
     width: 38%,
     height: 100%,
@@ -543,7 +654,9 @@
     #place(bottom + left, dx: 1.6em, dy: -0.55em, line(length: 3.2em, stroke: (paint: white.transparentize(82%), thickness: 1pt)))
     #place(bottom + left, dx: 1.6em, dy: -1.5em, text(size: 11pt, weight: "medium", fill: white, tracking: 0.24em)[#institution])
   ])
-  #place(top + right, dx: -1.8em, dy: 2.6em, block(width: 55%)[
+  // 标题块下移（2.6em→5.2em）：标题上方留白与标题↔meta 间留白等高，
+  // 封面右侧不再「头顶着、脚空着」（@150ppi 实测：顶 302px ≈ 中缝 301px）。
+  #place(top + right, dx: -1.8em, dy: 5.2em, block(width: 55%)[
     #_cover-title(title, subtitle, size: 30pt, color: framableu)
   ])
   #place(bottom + right, dx: -1.8em, dy: -2.4em, block(width: 55%)[

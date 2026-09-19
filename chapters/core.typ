@@ -1,20 +1,15 @@
-// chapters/core.typ - 核心公式（内容主要源自原书第 1 章）
-// 本文件是「排版层级」的设计示例：每页一个强调色，串联起二级标题 / keyline /
-// 卡片 / stat，形成 蓝 → 绿 → 橙 → 紫 的四页色彩走位。
-//
-// 强调色的声明方式（重要）：#slide-accent(色值) 放在「上一页的末尾」，
-// 作为被吸收的收尾内容（Touying 不会为它单独翻页）；放在「下一页标题之前」
-// 会在两页之间凭空多出一页空页。第一页可省去声明——直接用默认 framableu。
+// chapters/core.typ - 核心公式（内容源自原书第 1 章）
+// 强调色走位：蓝 → 绿 → 橙 → 紫，每页末尾声明下一页颜色。
+// 本分段从 main.typ 的 `= 核心公式` 进入，开场页紧随其后。
 #import "../lib.typ": *
 
-// ---------- 开场页（独立干净页，无页眉/页脚）----------
 #section-open(
   title: [核心公式],
   subtitle: [一条公式，贯穿全书的骨架],
   color: framableu,
 )
 
-// ---------- 第 1 页 · 强调色 framableu（默认，无需声明）----------
+// ---------- 第 1 页 · framableu（默认，无需声明）----------
 
 == Agent = LLM + 上下文 + 工具
 
@@ -23,11 +18,11 @@
   inner: [
     #stretch-grid(
       columns: 3,
-      gutter: 1em,
+      gutter: gutter-primary,
       boitebleue(stretch: true)[
         #align(center)[*大脑 · LLM*]
         - 理解意图、思考规划、判断决策
-        - 预训练世界知识 + 后训练固化决策策略（第 8 章）
+        - 预训练世界知识 + 后训练固化决策策略
       ],
       boiteverte(stretch: true)[
         #align(center)[*眼睛 · 上下文*]
@@ -37,20 +32,19 @@
       boiteorange(stretch: true)[
         #align(center)[*手脚 · 工具*]
         - 感知或改变世界的接口
-        - 工具定义、调用协议、适配器
+        - 工具定义、调用协议、适配器（MCP）
       ],
     )
   ],
   closing: boiterouge[
-    *边界澄清*：该公式只描述 Agent 边界之内的实现，不包含 Environment。
-    Agent 通过「观察通道 + 动作接口」与环境交互 —— 见下页闭环图。
+    *边界澄清*：公式描述的是 Agent 内部的实现结构，
+    不包含 Environment。Agent 通过观察 + 动作接口与环境交互。
   ],
 )
 
-// 下一页强调色：本页末尾收尾声明（被吸收，不翻页）
 #slide-accent(framavert)
 
-// ---------- 第 2 页 · 强调色 framavert ----------
+// ---------- 第 2 页 · framavert ----------
 
 == Agent 与环境的闭环
 
@@ -59,7 +53,7 @@
   inner: [
     #grid(
       columns: (1fr, 1fr),
-      gutter: 1em,
+      gutter: gutter-loose,
       [
         - 外层：Agent 与环境闭环交互 —— 环境返回*观察*，Agent 选择*行动*；行动改变环境状态，产生下一次观察。
         - 内层：*Model–Harness 结构* —— Model 负责策略决策；Harness 构造上下文、暴露工具接口、维护循环与状态。
@@ -70,96 +64,92 @@
       [
         #cetz.canvas({
           import cetz.draw: *
-
           // Agent 边界（左）—— 跟随本页强调色（绿）
-          rect((0.3, 0.5), (4.6, 5.9), fill: framavert.lighten(80%), stroke: framavert)
-          content((2.45, 5.35), text(fill: framavert, weight: "bold")[*Agent*])
-
-          // Model 与 Harness
-          circle((2.45, 4.0), radius: 0.7, fill: framaorange.transparentize(15%), stroke: framaorange)
-          content((2.45, 4.0), text(size: 0.85em, weight: "bold")[*Model*])
-
-          rect((0.8, 0.8), (4.1, 3.0), fill: white, stroke: framableulight)
-          content((2.45, 2.6), text(size: 0.8em, weight: "bold")[*Harness*])
-          content((2.45, 2.05), text(size: 0.62em)[上下文构造])
-          content((2.45, 1.65), text(size: 0.62em)[工具接口 · 状态])
-          content((2.45, 1.25), text(size: 0.62em)[约束 · 验证 · 纠正])
-
-          // Environment 边界（右）—— 用紫色形成绿 / 紫对比
-          rect((5.6, 0.5), (10.8, 5.9), fill: framaviolet.lighten(88%), stroke: framaviolet)
-          content((8.2, 5.35), text(fill: framaviolet, weight: "bold")[*Environment*])
-          content((8.2, 3.9), text(size: 0.68em)[文件 · 数据库 · 网页])
-          content((8.2, 3.5), text(size: 0.68em)[用户 · 其他 Agent])
-          content((8.2, 3.1), text(size: 0.68em)[物理 / 仿真世界])
-
-          // 观察与行动
-          line((4.6, 4.8), (5.6, 4.8), mark: (end: "stealth"))
-          content((5.1, 5.1), text(size: 0.68em)[行动])
-          line((5.6, 1.6), (4.6, 1.6), mark: (end: "stealth"))
-          content((5.1, 1.25), text(size: 0.68em)[观察])
+          rect((0.2, 0.4), (5.06, 7.6), fill: framavert.lighten(80%), stroke: framavert)
+          content((2.63, 7.0), text(fill: framavert.darken(10%), weight: "bold")[*Agent*])
+          // Model 圆（半径再放大 1.2 倍 → 0.7×1.44≈1.01）
+          circle((2.63, 5.2), radius: 1.01, fill: framarougelight, stroke: none)
+          content((2.63, 5.2), text(size: 0.8em, weight: "bold")[*Model*])
+          // Harness 矩形（偏移保持，宽×1.2、高×1.5）
+          rect((0.6, 0.6), (4.5, 3.75), fill: white, stroke: framableulight)
+          content((2.55, 3.5), text(size: 0.78em, weight: "bold")[*Harness*])
+          content((2.55, 2.7), text(size: 0.62em)[上下文构造])
+          content((2.55, 2.1), text(size: 0.62em)[工具接口 · 状态])
+          content((2.55, 1.5), text(size: 0.62em)[约束 · 验证 · 纠正])
+          // Environment 边界（右，间距按 1.2 倍）
+          rect((6.86, 0.4), (12.86, 7.6), fill: framaviolet.lighten(88%), stroke: framaviolet)
+          content((9.86, 7.0), text(fill: framaviolet.darken(10%), weight: "bold")[*Environment*])
+          content((9.86, 5.0), text(size: 0.68em)[文件 · 数据库 · 网页])
+          content((9.86, 4.4), text(size: 0.68em)[用户 · 其他 Agent])
+          content((9.86, 3.8), text(size: 0.68em)[物理 / 仿真世界])
+          // 行动（Agent → Environment，长度 1.2→1.8×1.5）
+          line((5.06, 6.4), (6.86, 6.4), mark: (end: "stealth"))
+          content((5.96, 6.7), text(size: 0.68em)[行动])
+          // 观察（Environment → Agent，长度 1.2→1.8×1.5）
+          line((6.86, 2.2), (5.06, 2.2), mark: (end: "stealth"))
+          content((5.96, 1.9), text(size: 0.68em)[观察])
         })
       ],
     )
   ],
+  closing: none,
 )
 
-// 下一页强调色：本页末尾收尾声明
 #slide-accent(framaorange)
 
-// ---------- 第 3 页 · 强调色 framaorange ----------
+// ---------- 第 3 页 · framaorange ----------
 
 == ReAct 循环
 
 #grid(
-  columns: (1fr, 1.1fr),
-  gutter: 1em,
+  columns: (1.2fr, 1fr),
+  gutter: gutter-primary,
   [
     #cetz.canvas({
       import cetz.draw: *
-
-      // 思考（上）—— 跟随本页强调色（橙）
-      circle((2.2, 4.0), radius: 0.8, fill: framaorange, stroke: none)
-      content((2.2, 4.0), text(size: 0.85em, fill: white, weight: "bold")[*思考*])
-
+      // 等腰三角形布局：思考（顶），行动（右下），观察（左下）
+      // 画布宽 0-10，高 0-7，图形居中在 4-7 高度
+      let cx = 5.0  // 水平中心
+      // 思考（顶部居中）
+      circle((cx, 6.0), radius: 1.2, fill: framagrisdark, stroke: none)
+      content((cx, 6.0), text(size: 1em, fill: white, weight: "bold")[*思考*])
       // 行动（右下）
-      circle((4.9, 1.9), radius: 0.8, fill: framableu, stroke: none)
-      content((4.9, 1.9), text(size: 0.85em, fill: white, weight: "bold")[*行动*])
-
+      circle((7.5, 2.5), radius: 1.2, fill: framableu, stroke: none)
+      content((7.5, 2.5), text(size: 1em, fill: white, weight: "bold")[*行动*])
       // 观察（左下）
-      circle((2.2, 0.2), radius: 0.8, fill: framavert, stroke: none)
-      content((2.2, 0.2), text(size: 0.85em, fill: white, weight: "bold")[*观察*])
-
-      // 循环箭头
-      line((2.9, 3.65), (4.15, 2.45), mark: (end: "stealth"))
-      line((4.45, 1.35), (2.95, 0.55), mark: (end: "stealth"))
-      line((1.55, 0.95), (1.55, 3.15), mark: (end: "stealth"))
-
-      // 说明
-      content((5.8, 2.7), text(size: 0.66em)[推理下一步])
-      content((5.8, 0.9), text(size: 0.66em)[调用工具])
-      content((0.5, 3.8), text(size: 0.66em)[工具结果回传])
+      circle((2.5, 2.5), radius: 1.2, fill: framavert, stroke: none)
+      content((2.5, 2.5), text(size: 1em, fill: white, weight: "bold")[*观察*])
+      // 箭头：思考 → 行动（右下方向）
+      line((cx + 0.85, 5.2), (6.8, 3.4), mark: (end: "stealth"))
+      // 箭头：行动 → 观察（左下方向）
+      line((6.3, 2.5), (3.7, 2.5), mark: (end: "stealth"))
+      // 箭头：观察 → 思考（上方向）
+      line((3.35, 3.4), (cx - 0.85, 5.2), mark: (end: "stealth"))
+      // 标签
+      content((8.5, 4.3), text(size: 0.8em)[推理下一步])
+      content((5.0, 2.0), text(size: 0.8em)[调用工具])
+      content((1.5, 4.3), text(size: 0.8em)[工具结果回传])
     })
   ],
   [
     #keyline(size: 21pt)[$"上下文" = "静态前缀" + "轨迹"$]
     #v(gap-primary)
-    - *轨迹* = 用户消息 + 模型回复（思考 / 内容 / 工具调用）+ 工具执行结果
-    - *想 → 做 → 看*：思考该做什么 → 调用工具 → 观察结果，循环直至任务完成
-    - 轨迹可解释、可调试，还可沉淀为知识库或 RL 训练语料（第 7–9 章）
+    - *轨迹* = 用户消息 + 模型回复（思考/内容/工具调用）+ 工具结果
+    - *想→做→看*：思考 → 调用工具 → 观察结果，循环直至任务完成
+    - 轨迹可解释、可调试，还可沉淀为知识库或 RL 训练语料
     #v(gap-primary)
     #stretch-grid(
       columns: 2,
-      gutter: 0.7em,
-      stat(amount-size: 30pt, color: framaorange, stretch: true, [3], [多币种汇总 · 迭代]),
-      stat(amount-size: 30pt, color: framableu, stretch: true, [4], [多币种汇总 · 工具调用]),
+      gutter: gutter-tight,
+      stat(amount-size: 30pt, color: framaorange, stretch: true, [2], [迭代步]),
+      stat(amount-size: 30pt, color: framableu, stretch: true, [3], [工具调用]),
     )
   ],
 )
 
-// 下一页强调色：本页末尾收尾声明
 #slide-accent(framaviolet)
 
-// ---------- 第 4 页 · 强调色 framaviolet ----------
+// ---------- 第 4 页 · framaviolet ----------
 
 == 上下文五要素
 
@@ -168,14 +158,14 @@
   inner: [
     #grid(
       columns: (1.25fr, 1fr),
-      gutter: 0.9em,
+      gutter: gutter-tight,
       [
         #boiteviolette[
           *静态前缀*（每次调用不变）
           - 系统提示词：身份 / 权限 / 行为准则
           - 工具定义：名称 / 描述 / 参数格式
         ]
-        #v(0.2em) // 单元格内堆叠留白收紧：整页元素密集，保证单页容纳
+        #v(0.2em)
         #boiteorange[
           *动态轨迹*（随交互增长）
           - 用户消息：需求输入，可注入 RAG 外部知识
@@ -184,7 +174,7 @@
       ],
       [
         #stat(amount-size: 36pt, [5], [上下文要素])
-        #v(0.2em) // 单元格内堆叠留白收紧：整页元素密集，保证单页容纳
+        #v(0.2em)
         #boitefilled(color: framableu)[
           *消融洞察（实验 1-1）*
           缺工具定义 → 行动归零；缺工具结果 → 盲目重试；缺历史 → 重复犯错。
@@ -195,5 +185,5 @@
   ],
 )
 
-// 收尾：把强调色还给默认 framableu，避免「紫」路泄漏到后续章节
+// 收尾：把强调色还给默认 framableu，避免「紫」泄漏到后续分段
 #slide-accent(framableu)
