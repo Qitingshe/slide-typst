@@ -42,11 +42,21 @@ def main():
     # ---- 1. compile：typst 必须零错误零警告（硬闸） ----
     proc = run(["typst", "compile", "main.typ", "--diagnostic-format=short"])
     merged = proc.stdout + proc.stderr
-    if proc.returncode != 0 or re.search(r"\b(error|warning)\b", merged, re.IGNORECASE):
+    # 门禁分层补全：CI（非 macOS）缺系统字体（Heiti SC / New Computer Modern 未捆绑入库）
+    # 时 typst 仅输出字型缺失 warning，属预期差异，此场景豁免 FAIL；其余任何 error/warning
+    # （内容级）仍按硬闸 FAIL。macOS 本地与 Pages runner 字体完整，不受影响。
+    font_only = (
+        sys.platform != "darwin"
+        and bool(merged.strip())
+        and all(re.search(r"unknown font family", line, re.IGNORECASE) for line in merged.splitlines() if line.strip())
+    )
+    if proc.returncode != 0 or (merged.strip() and not font_only and re.search(r"\b(error|warning)\b", merged, re.IGNORECASE)):
         print("[FAIL] compile (typst 输出含 error/warning 或非零退出)")
         if merged.strip():
             print("       " + (merged.strip().splitlines() or [""])[0][:200])
         failed = True
+    elif font_only:
+        print("[WARN] compile (非 macOS 字型缺失 warning：系统字体未入库属预期，内容级 warning 仍硬闸)")
     else:
         print("[PASS] compile")
 
@@ -73,20 +83,22 @@ def main():
         print(f"[PASS] api ({len(gates['api'])}/{len(gates['api'])})")
 
     # ---- 4. links：main.pdf 中 /Link 出现次数 == 基线（硬闸） ----
+    # 纯 Python 字节计数（语义与 `rg -a -o` 逐字节等价），不依赖 rg——
+    # GitHub 托管 runner 镜像不装 ripgrep，此前 CI 在此直接 FileNotFoundError 崩溃。
     pdf = os.path.join(ROOT, "main.pdf")
     if not os.path.exists(pdf):
         print("[FAIL] links (main.pdf 不存在——应先跑完 compile)")
         failed = True
     else:
-        proc = run(["rg", "-a", "-o", "/Link", "main.pdf"])
-        count = proc.stdout.count("/Link")
+        data = open(pdf, "rb").read()
+        count = data.count(b"/Link")
         if count == baselines["links"]:
             print(f"[PASS] links ({count})")
         else:
             print(f"[FAIL] links ({count} != {baselines['links']})")
             failed = True
 
-    # ---- 5. pages：macOS 优先 mdls，其余优先 rg /Type /Page[^s]，取不到 WARN ----
+    # ---- 5. pages：macOS 优先 mdls，其余用字节计数取数，取不到 WARN ----
     def pages_macos():
         try:
             p = run(["mdls", "-name", "kMDItemNumberOfPages", "-raw", "main.pdf"])
@@ -95,24 +107,24 @@ def main():
         except Exception:
             return None
 
-    def pages_via_rg():
+    def pages_via_bytes():
+        # 与旧 rg -a -o "/Type /Page[^s]" 语义一致：原始字节上的正则计数。
         try:
-            p = run(["rg", "-a", "-o", "/Type /Page[^s]", "main.pdf"])
-            return len(re.findall(r"/Type /Page[^s]", p.stdout))
+            return len(re.findall(rb"/Type /Page[^s]", open(pdf, "rb").read()))
         except Exception:
             return None
 
     if sys.platform == "darwin":
-        methods = [pages_macos, pages_via_rg]
+        methods = [pages_macos, pages_via_bytes]
     else:
-        methods = [pages_via_rg, pages_macos]
+        methods = [pages_via_bytes, pages_macos]
     n = None
     for m in methods:
         n = m()
         if n is not None:
             break
     if n is None:
-        print("[WARN] pages (无法获取页数：mdls / rg 均不可用)")
+        print("[WARN] pages (无法获取页数：mdls / 字节计数均不可用)")
     elif n == baselines["pages"]:
         print(f"[PASS] pages ({n})")
     elif strict_pages:

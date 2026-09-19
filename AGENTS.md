@@ -42,6 +42,9 @@ typst compile main.typ
   `scripts/verify.py` 是门禁唯一实现（本地 + CI + pre-commit 共用），AGENTS.md 不复制数字。
 - **门禁分层**：pages 仅在 macOS（`mdls`，字体完整）走 hard gate；CI（ubuntu 无 Heiti SC，
   分页漂移属预期）与其余场景 pages 为 warn——字体不可捆绑入库，故不以 ubuntu 页数作硬闸。
+  compile 检查同源豁免：非 macOS 上仅含 `unknown font family` 字型缺失 warning 时降级 WARN
+  （内容级 warning 仍硬闸）。verify.py 不依赖 rg/ripgrep（GitHub 托管 runner 镜像无
+  ripgrep，链接与页数全走纯 Python 字节计数；本机开发可再用 rg 手动统计）。
 - **身份边界**：deck 身份元数据（书名/作者/机构/日期）只住 main.typ 的 `slide-theme.with(
   config-info(...))`；lib.typ 零 deck 身份（`cover` 元数据默认一律 none）。
 - **show 规则纪律**：show 规则从声明点起全局生效会覆盖先前样式——新家族页面必须先查全

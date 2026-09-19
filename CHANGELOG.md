@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+### Fixed
+- verify.py：移除以 rg/ripgrep 为依赖的链接/页数统计（GitHub 托管 runner 镜像不装 ripgrep，
+  此前 CI 在 links 检查直接 FileNotFoundError 崩溃），改纯 Python 字节计数，语义逐字节等价；
+  compile 检查对非 macOS 的 `unknown font family` 字型缺失 warning 降级 WARN（内容级仍硬闸）
+
 ### Changed
 - 工具链锁步升级：typst 0.13.1 → 0.15.1（typst.toml / CI / Pages / verify 版本闸同步；链接序列化基线 22 → 42）
 - 画廊第四轮反馈落地：show.cards 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）、show.basic 表格深底白字表头 + 斑马纹 + 末行强调、新增「多子图 · 三图一线」页（39 页基线 / 用法注释 29）
