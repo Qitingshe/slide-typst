@@ -14,6 +14,7 @@
   （排除 `/Type/Pages` 与每页一个的 `/Type/PageLabel`），实测新旧 PDF 均返回 39
 
 ### Changed
+- 0.15 新特性纳入：全局字符级两端对齐 `#set par(justify: true, justification-limits: (tracking: (min: -0.01em, max: 0.02em)))`（main.typ，仅中文正文受益，39 页不翻）；表格页表头改「多级分组」示范 `table.header(level: 1, …)` + `table.header(level: 2, …)`（colspan 跨组 / repeat:false 跨页只续子列行 / table stroke 须 `(x: none, …)` 去默认竖线）
 - 工具链锁步升级：typst 0.13.1 → 0.15.1（typst.toml / CI / Pages / verify 版本闸同步；链接序列化基线 22 → 42）
 - 画廊第四轮反馈落地：show.cards 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）、show.basic 表格深底白字表头 + 斑马纹 + 末行强调、新增「多子图 · 三图一线」页（39 页基线 / 用法注释 29）
 - 图注演示改「居中路线」：show.basic 单图与多子图 caption 改 `caption: none` + 调用点
