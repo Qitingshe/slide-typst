@@ -121,6 +121,36 @@
 /// 示例：#note[细节见第 8 章]
 #let note(body, color: framagris) = text(size: 0.75em, fill: color)[#body]
 
+// ==== 图像与图注 ====
+/// 图像＋图注的组合块：图与图注共享同一宽度与左缘，图注紧贴图下沿。
+/// - img (content): `image(...)` 调用，**调用处不要写 width**——块内 set(100%) 接管。
+/// - caption (content, none): 图注文本，自由 content（保留手写"图 1："风格）；none 则无注。
+/// - width (length/ratio): 图与图注共享宽度，默认 88%。
+/// - gap (length): 图↔图注间距，默认 0.12em（正文 21.25pt ≈2.5pt；em 随正文等比缩放）。
+/// - caption-size (length): 图注字号，默认 0.63em。
+/// - caption-color (color): 图注颜色，默认 framagris。
+/// ⚠ 与原生 figure 是两条路：本例不自动编号、不进目录；原生 figure 走 main.typ 的
+///   figure.caption 规则，与 figure-block 互不影响。
+#let figure-block(
+  img,
+  caption: none,
+  width: 88%,
+  gap: 0.12em,
+  caption-size: 0.63em,
+  caption-color: framagris,
+) = [
+  #block(width: width)[
+    #set image(width: 100%)
+    #img
+  ]
+  #if caption != none [
+    #v(gap)
+    #block(width: width)[
+      #text(size: caption-size, fill: caption-color)[#caption]
+    ]
+  ]
+]
+
 // ==== 正文页骨架模板 + 节奏间距 ====
 // 页面级留白只有两种节奏源：gap-primary（主节奏：keyline 后 / 收尾前）与
 // gap-secondary（次级节奏：主体内段间，如公式↔网格、网格↔列表）。

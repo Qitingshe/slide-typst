@@ -3,7 +3,8 @@
 //
 // 演示三个元件：
 //   · #table(...)：原生表格，frama 主色系浅底表头（3pt 圆角）＋横向细线分隔。
-//   · #image(...)：位图 / SVG 插图，width 百分比缩放，图注紧贴图下沿的小灰字。
+//   · #figure-block(...)：图像＋图注的组合块（lib.typ 模版元件）——图与图注同宽、
+//     同左缘、图注紧贴图下沿。
 //   · #link(...)：外链（完整 URL）与内链（#label + <标签>）双向跳转，页面级
 //     #show link 规则统一上主题色＋下划线。
 //
@@ -67,12 +68,14 @@
   closing: note[表头行写进 table.header：跨页时自动重复（本页只有一表，作为惯例保留）。],
 )
 
-// 用法: #image("../assets/sample-scheme.svg", width: 88%) + 下方图注
-// 改这里: 路径相对「调用它的 .typ 文件所在目录」——本文件在 showcase/ 下，
-//         资产在仓库根，故写 ../assets/；width 传百分比（height 自动等比例）。
-// ⚠ 坑: SVG 放大不糊、PNG 会糊——宽幅示意优先存 SVG；#figure 能自动编号进目录，
-//        本例只演示最朴素的 image() + 图注；图注用 block(width: 88%) 与图同宽、
-//        左缘对齐，#v(0.18em) 让注文紧贴图下沿（0.63em 小灰字，别用正文字号）。
+// 用法: #figure-block(image("../assets/sample-scheme.svg"), caption: [图 1：…], width: 88%)
+// 改这里: img 传 `image(...)` 调用（路径相对本文件，showcase/ 下写 ../assets/）；caption 自由
+//         content 保留手写"图 1："风格；width 为图与图注共享宽度；gap / caption-size /
+//         caption-color 分别调间距、字号、颜色（默认 0.12em / 0.63em / framagris）。
+// ⚠ 坑: ① `image(...)` 调用处**不要写 width**——块内 #set image(width: 100%) 接管，
+//        显式 width 会覆盖它导致溢出；② 原生 `figure`（自动编号、进目录，走 main.typ 的
+//        figure.caption 规则）与 `figure-block`（手写"图 1："、不编号）是两条 caption 路径，
+//        借页时按需选一条，勿混用。
 == 图片 · image
 
 #body-slide(
@@ -82,21 +85,19 @@
       columns: (1fr, 1fr),
       gutter: 1em,
       [
-        #image("../assets/sample-scheme.svg", width: 88%)
-        #v(0.18em)
-        #block(width: 88%)[#text(size: 0.63em, fill: framagris)[图 1：样例示意图（assets/sample-scheme.svg）]]
+        #figure-block(image("../assets/sample-scheme.svg"), caption: [图 1：样例示意图（assets/sample-scheme.svg）], width: 88%)
       ],
       [
         #boitebleue[
           *放图要点*
           - 先给 image() 一个 width，别让图以原始尺寸顶破页面。
-          - 图片与图注之间用 #raw("#v(0.18em)") 收敛，图注紧贴图下沿的小灰字。
+          - 图注交给 #raw("#figure-block") 模版元件：图与图注同宽同左缘，间距/字号由 gap、caption-size 参数接管。
           - 一套 deck 的示意图统一放 assets/，路径从仓库根写起。
         ]
       ],
     )
   ],
-  closing: note[#figure 能自动编号并进目录，画廊里只演示最朴素的 image() + 图注。],
+  closing: note[原生 figure 能自动编号进目录（figure.caption 规则在 main.typ）；figure-block 是手写"图 1："的路，借页选一条。],
 )
 
 // 用法: #show link: it => ... 给「本页起的全部链接」统一上主题色＋下划线；

@@ -17,7 +17,7 @@ typst compile main.typ
 
 | 文件 | 职责 |
 |---|---|
-| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、section-open/cover、cetz-canvas；**冻结，改动需独立评审** |
+| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、section-open/cover、cetz-canvas、figure-block；**冻结，改动需独立评审** |
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 cover（含参数变体）、开场页 section-open（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
@@ -59,6 +59,7 @@ typst compile main.typ
   - `slide-accent(色)` 放上一页末尾；`section-open` 必须紧跟 `=` 之后、段内第一个 `==` 之前
   - outline entry 样式（Typst 0.13.1）：`it.body()`/`it.page()`/`it.element.location()`，show 规则体须用代码上下文；show 规则从声明点起全局生效，会覆盖此前的 outline 样式
   - 表格用原生 `table`：表头 `table.table.header` 只负责分组/跨页重复，样式写在内部 `table.cell` 上；图片 `image()` 路径相对调用文件目录；内链 `<label>` 须挂在页面标题上，放 body-slide 的 inner 里会被 Touying 丢弃
+  - `figure-block` 的 `image(...)` 调用处不要写 width（块内 `set(100%)` 接管）；原生 `figure` 与 `figure-block` 是两条 caption 路径，勿混用
 - 校验门禁：`rg -c "// 用法:" showcase/` 的计数应 ≈ showcase 页数。
 
 ## 设计系统速查（lib.typ）
@@ -68,6 +69,7 @@ typst compile main.typ
 - **卡片**：`boitebleue` / `boiteverte` / `boiterouge` / `boiteorange` / `boiteviolette` / `boitejaune` / `boitemarron` / `boitegrise`；`boitefilled`（实色白字）；均支持 `stretch: true`（规格字典 → stretch-grid）。
 - **网格**：`stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)` —— 自动等高；stat 行高按 `2·T − A` 锚定垂直中心。
 - **数据元件**：`keyline(body, color: auto, size: 24pt)`；`stat(amount, label, amount-size: 34pt, color: auto, stretch: false)`；`note(body, color: framagris)`。
+- **图注**：`figure-block(img, caption: none, width: 88%, gap: 0.12em, caption-size: 0.63em, caption-color: framagris)` —— 图与图注同宽同左缘，紧贴图下沿；和原生 figure（计数/进目录）是两条路。
 - **章节/封面**：`section-open(title(必), subtitle, index, color: auto)` 写入 accent-state + breadcrumb-state；`cover(title, subtitle, author, institution, date)`。
 - **CeTZ**：`cetz-canvas(...)` = touying-reducer + cetz.canvas；用于动态架构图。
 - 新页面先用现有元件组合，不要发明新容器/装饰语言。
