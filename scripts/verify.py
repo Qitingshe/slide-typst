@@ -108,9 +108,12 @@ def main():
             return None
 
     def pages_via_bytes():
-        # 与旧 rg -a -o "/Type /Page[^s]" 语义一致：原始字节上的正则计数。
+        # 原始字节上的正则计数（不依赖 rg）。注意 0.14+ krilla 引擎把页面对象
+        # 序列化为无空格 `/Type/Page`，旧正则 `/Type /Page` 恒计 0；改用
+        # `\s*` 同时兼容新旧两种形式，`[^sL]` 排除 `/Type/Pages` 与每页一个的
+        # `/Type/PageLabel`（实测 krilla 下两者均会误计）。
         try:
-            return len(re.findall(rb"/Type /Page[^s]", open(pdf, "rb").read()))
+            return len(re.findall(rb"/Type\s*/Page[^sL]", open(pdf, "rb").read()))
         except Exception:
             return None
 

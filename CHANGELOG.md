@@ -9,6 +9,9 @@
 - verify.py：移除以 rg/ripgrep 为依赖的链接/页数统计（GitHub 托管 runner 镜像不装 ripgrep，
   此前 CI 在 links 检查直接 FileNotFoundError 崩溃），改纯 Python 字节计数，语义逐字节等价；
   compile 检查对非 macOS 的 `unknown font family` 字型缺失 warning 降级 WARN（内容级仍硬闸）
+- verify.py：pages 字节回退路径兼容 0.14+ krilla 引擎（页面对象序列化为无空格 `/Type/Page`，
+  旧正则恒计 0 → 非 macOS 上 pages 静默恒 WARN），regex 改 `/Type\s*/Page[^sL]`
+  （排除 `/Type/Pages` 与每页一个的 `/Type/PageLabel`），实测新旧 PDF 均返回 39
 
 ### Changed
 - 工具链锁步升级：typst 0.13.1 → 0.15.1（typst.toml / CI / Pages / verify 版本闸同步；链接序列化基线 22 → 42）
