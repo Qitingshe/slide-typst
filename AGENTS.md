@@ -36,6 +36,26 @@ typst compile main.typ
 | `.github/workflows/ci.yml` | CI 门禁（ubuntu，pages=warn 因字体差异） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
 
+## 架构原理（2026-09 资深架构重构固化）
+
+- **基线单一事实源**：页数 / 用法计数 / 链接数 / API 清单只写 gates.json，改基线只改它；
+  `scripts/verify.py` 是门禁唯一实现（本地 + CI + pre-commit 共用），AGENTS.md 不复制数字。
+- **门禁分层**：pages 仅在 macOS（`mdls`，字体完整）走 hard gate；CI（ubuntu 无 Heiti SC，
+  分页漂移属预期）与其余场景 pages 为 warn——字体不可捆绑入库，故不以 ubuntu 页数作硬闸。
+- **身份边界**：deck 身份元数据（书名/作者/机构/日期）只住 main.typ 的 `slide-theme.with(
+  config-info(...))`；lib.typ 零 deck 身份（`cover` 元数据默认一律 none）。
+- **show 规则纪律**：show 规则从声明点起全局生效会覆盖先前样式——新家族页面必须先查全
+  deck 是否已有同名规则；规则体尽量用代码上下文限定作用域（见 outline recipe）；
+  删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
+- **防拆规则**：lib.typ 保持单体（当前 638 行）；只有当超过 ~1000 行、或出现「按节独立
+  分发」的真实需求时才评审拆分，不预设 facade。
+- **升级协议（锁步）**：维持 typst 0.13.1 + touying 0.7.4 + cetz 0.4.2 + numbly 0.1.0；
+  升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
+  全绿；③ 新 PDF 与旧 PDF **逐页对照核验**（视觉/溢出归用户）；④ 更新 CHANGELOG。
+  `verify.py` 的 version 检查对主次版本偏离输出 warn。
+- **候选待办（暂不实施）**：页脚/进度条本地化（B7）、body-slide 高度 816.9pt 魔数改
+  表达式（B10）、framableulight 亮度断层的文档说明。
+
 ## 结构约定
 
 ### Front Matter（已验证配方，勿乱动）
@@ -69,7 +89,7 @@ typst compile main.typ
 
 ## 设计系统速查（lib.typ）
 
-- **配色**：`framableu` / `framavert` / `framarouge` / `framaviolet` / `framaorange` / `framajaune` / `framamarron` / `framagris`（各含 light 变体）+ `framagrisdark` / `framagrisdarkest`；`frameEmph` / `alert` = 橙色加粗（稀有、可选）。
+- **配色**：`framableu` / `framavert` / `framarouge` / `framaviolet` / `framaorange` / `framajaune` / `framamarron` / `framagris`（各含 light 变体）+ `framagrisdark` / `framagrisdarkest` + `framagris-soft`（助文灰）；`frameEmph` / `alert` = 橙色加粗（稀有、可选）。
 - **页面骨架**：`body-slide(kicker: none, inner: none, closing: none, gap: gap-primary, closing-gap: gap-primary)`；`gap-primary` = 0.3em（keyline 后/收尾前）；`gap-secondary` = 0.4em（主体内段间）。
 - **卡片**：`boitebleue` / `boiteverte` / `boiterouge` / `boiteorange` / `boiteviolette` / `boitejaune` / `boitemarron` / `boitegrise`；`boitefilled`（实色白字）；均支持 `stretch: true`（规格字典 → stretch-grid）。
 - **网格**：`stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)` —— 自动等高；stat 行高按 `2·T − A` 锚定垂直中心；gutter 三档 token：`gutter-tight` 0.6em / `gutter-primary` 0.8em（默认）/ `gutter-loose` 1em。
