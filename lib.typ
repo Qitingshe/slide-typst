@@ -1,5 +1,5 @@
-// lib.typ - 共享工具模块
-// 供 main.typ 和 chapters/*.typ 共同使用
+// lib.typ - 模版画廊设计系统库
+// 供 main.typ 与 showcase/* 借页使用；版本 / API / 页数基线见 gates.json（lib 冻结，改动需独立评审）
 
 #import "@preview/touying:0.7.4": *
 #import themes.university: *
@@ -523,13 +523,27 @@
   ]
 ]
 
-#let _cover-meta(author, institution, date) = text(size: 9.5pt, fill: framagris)[#author · #institution · #date]
+// meta 行容忍 none：none 项不渲染「· 」连缀，全部 none 时整行输出为空。
+#let _cover-meta(author, institution, date) = {
+  let items = ()
+  if author != none { items.push([#author]) }
+  if institution != none { items.push([#institution]) }
+  if date != none { items.push([#date]) }
+  text(size: 9.5pt, fill: framagris)[#items.join([ · ])]
+}
 
-#let _cover-meta-block(author, institution, date) = [
-  #line(length: 100%, stroke: (paint: framagris.lighten(60%), thickness: 0.5pt))
-  #v(0.7em)
-  #_cover-meta(author, institution, date)
-]
+// meta 区块：author/institution/date 全为 none 时整块（含细分隔线）不输出。
+#let _cover-meta-block(author, institution, date) = {
+  if author == none and institution == none and date == none {
+    []
+  } else {
+    [
+      #line(length: 100%, stroke: (paint: framagris.lighten(60%), thickness: 0.5pt))
+      #v(0.7em)
+      #_cover-meta(author, institution, date)
+    ]
+  }
+}
 
 // ---- cover：分栏色块（层叠大图形左面板）----
 // 左面板：横向渐变底色；浅蓝大圆 / 圆弧 / 细圆环层叠出抽象编辑海报感；
@@ -537,9 +551,9 @@
 #let cover(
   title: [Title],
   subtitle: none,
-  author: [QITINGSHE],
-  institution: [USTC],
-  date: datetime.today().display(),
+  author: none,
+  institution: none,
+  date: none,
 ) = _cover-page([
   #place(left, block(
     width: 38%,

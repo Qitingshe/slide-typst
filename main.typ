@@ -41,6 +41,7 @@
   subtitle: [lib.typ 设计系统 · 元件样例与借页指南],
   author: [QITINGSHE],
   institution: [slide-typst],
+  date: datetime.today().display(),
 )
 
 // ============ 快速开始 ============
