@@ -10,8 +10,15 @@
 // 交叉引用：画布走 cetz-canvas（坐标即厘米）；图注手写 figure-block 同规格
 // （0.63em framagris 居中，image 宽度接管对画布无效）；numbly 由 lib 导入。
 // 版面纪律：整页一张画布 + 一手短注（长注进 closing）——grid 行高 = 左右最高列。
+// 图例字级独立降档：leg-label 只缩图例文字（0.7em×0.8em≈11.9pt），刻度/轴标原档不动。
 // ⚠ chart / plot 由 lib.typ 顶层导出直接可用；不要再 #import cetz / cetz-plot。
 #import "../lib.typ": *
+
+// 图例标签降档：cetz-plot 无独立图例字号键，图例 label 是 Typst content，
+// 用内嵌 set text 只缩图例（0.7em×0.8em≈11.9pt，低于刻度 14.9pt 一档）。
+// ⚠ 坑：0.6em 会叠成 0.42×基准过小，0.8em 是调好的档位勿动；代码块末尾
+//       必须裸写 label 值（写成 [label] 会输出字面量文本 "label"）。
+#let leg-label(label) = { set text(size: 0.8em); label }
 
 // 用法: #chart.piechart(data, value-key: 1, label-key: 0, radius: N, slice-style: 色板数组,
 //       outset: 下标, outer-label: (content: fn, radius: 比例), legend: (position, ..))
@@ -25,12 +32,12 @@
 == 图表 · 饼图
 
 #let pie-data = (
-  ([复制], 52),
-  ([换色], 40),
-  ([复用], 36),
-  ([重排], 30),
-  ([自绘], 26),
-  ([公式], 22),
+  (leg-label[复制], 52),
+  (leg-label[换色], 40),
+  (leg-label[复用], 36),
+  (leg-label[重排], 30),
+  (leg-label[自绘], 26),
+  (leg-label[公式], 22),
 )
 #let pie-total = pie-data.map(t => t.at(1)).sum()
 #let pie-top-pct = calc.round(pie-data.at(0).at(1) / pie-total * 100)
@@ -135,7 +142,7 @@
             x-format: plot.formats.decimal.with(digits: 0),
             bar-style: i => (fill: bar-colors.at(i), stroke: none),
             bar-data,
-            labels: ([整页复制], [换色], [换组件], [改写]),
+            labels: (leg-label[整页复制], leg-label[换色], leg-label[换组件], leg-label[改写]),
             legend: "inner-north-east",
           )
         })] // #align 收口：0.7em 只作用于画布
@@ -200,15 +207,15 @@
             legend: "inner-north-east",
             {
               plot.add(loss-train,
-                label: [训练], mark: "o", mark-size: 0.17,
+                label: leg-label[训练], mark: "o", mark-size: 0.17,
                 style: (stroke: (paint: framableu, thickness: 1.4pt), fill: none),
                 mark-style: (fill: framableu, stroke: none))
               plot.add(((0, 2.42), (1, 1.75), (2, 1.35), (3, 1.12), (4, 1.01), (5, 0.96)),
-                label: [验证], mark: "square", mark-size: 0.16,
+                label: leg-label[验证], mark: "square", mark-size: 0.16,
                 style: (stroke: (paint: framarouge, thickness: 1.4pt), fill: none),
                 mark-style: (fill: framarouge, stroke: none))
               plot.add(((0, 2.45), (1, 1.80), (2, 1.38), (3, 1.10), (4, 0.94), (5, 0.86)),
-                label: [验证·正则], mark: "triangle", mark-size: 0.17,
+                label: leg-label[验证·正则], mark: "triangle", mark-size: 0.17,
                 style: (stroke: (paint: framaviolet, thickness: 1.4pt, dash: "dashed"), fill: none),
                 mark-style: (fill: framaviolet, stroke: none))
             },

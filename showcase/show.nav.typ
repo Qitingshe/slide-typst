@@ -4,7 +4,8 @@
 // 演示两件事：
 //   · 自动目录 recipe：#show outline.entry 重排条目样式 + #outline(depth: 1) 生成。
 //     条目自动链接到对应页，删改章节时目录自动跟随。
-//   · 页面 chrome：页眉（标题 + 细线）、右上角面包屑、页脚三格、顶部进度条。
+//   · 页面 chrome：页眉（标题 + 细线）、右上角面包屑、页脚三格（作者 / deck 标题 /
+//     日期+页码）、顶部进度条。
 //     chrome 全部由主题自动渲染，无需调用任何元件。
 //
 // 交叉引用：main.typ 的「内容地图」页用了同一套 recipe；本页演示换一种样式。
@@ -45,7 +46,8 @@
 
 // 用法: chrome 由主题自动渲染，本页自身就是演示现场。
 // 改这里: 页眉标题 = 本页 `==` 文案；面包屑 = 最近一次 section-open 的标题；
-//          页脚三格 = config-info(title / author·institution·date / 页码)。
+//          页脚三格 = config-info 驱动（touying 默认渲染）：作者 / deck 标题 /
+//          日期+页码（N/M），三色块各 0.4em 高、白字。
 // ⚠ 坑: 面包屑为 none 时不渲染、不留空位；`==` 标题已被移到页眉，
 //        正文里再写标题样式规则无效。
 == 页面 chrome · 页眉 / 面包屑 / 页脚 / 进度条
@@ -58,7 +60,7 @@
       gutter: 0.8em,
       boitebleue(stretch: true)[*页眉* 标题 + 整行浅色细线；标题颜色跟随当前强调色。],
       boitegrise(stretch: true)[*面包屑* 右上角小灰字 = 最近一次 section-open 的标题。],
-      boiteverte(stretch: true)[*页脚* 三格：deck 标题 / 作者 · 机构 · 日期 / 页码。],
+      boiteverte(stretch: true)[*页脚* 三格：作者 / deck 标题 / 日期+页码（N/M）。],
       boiteorange(stretch: true)[*进度条* 页面顶部细条，指示当前页在整个 deck 中的位置。],
     )
   ],

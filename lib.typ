@@ -2,7 +2,9 @@
 // 供 main.typ 与 showcase/* 借页使用；版本 / API / 页数基线见 gates.json（lib 冻结，改动需独立评审）
 
 // ==== API 地图 ====
-// 公开符号 46 个（无 _ 前缀），与 gates.json 的 api 清单一一对应（注释双胞胎）。
+// 门禁面 API 46 个，与 gates.json 的 api 清单一一对应（注释双胞胎）；另 4 个低阶
+// token 公共导出不设门禁（gates 检查是 ⊇，加进去只有 churn 无保护）：framagris-soft /
+// gutter-tight / gutter-primary / gutter-loose。
 // 改 API 名（增删/改名）必须同步 gates.json 的 api 清单，否则 verify.py 会断言失败。
 // —— 配色 18：framableu framableulight / framavert framavertlight / framarouge framarougelight /
 //    framaviolet framavioletlight / framaorange framaorangelight / framajaune framajaunelight /
@@ -15,6 +17,14 @@
 // —— 页面/内容件 3：body-slide stat boitefilled
 // —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
 // —— 图表 2：chart plot
+
+// ── 页眉细线满宽常量（B10）────────────────────────────
+// 页面内容区宽度 841.89 − 2×12.5pt（页眉左右 0.5em=12.5pt 内缩）≈ 816.9pt。
+// ⚠ 探针实测（/tmp 自检）：header 区域内 layout(size => size.width) 返回值与
+//   816.9pt 不恒等（isolated probe 816.89 / 真实 deck 820.64），且 `line(length:
+//   100%)` 与 layout 包裹两种写法都会把细线渲染成 ≈56pt（place 内自噬宽度），
+//   故保留原字面值作命名常量——渲染与旧 PDF 逐字节一致，零视觉差。
+#let _header-line-width = 816.9pt
 
 // ==== 字号阶梯 ====
 // 绝对字号只在门面/数据件，正文一律 em 相对：
@@ -37,6 +47,8 @@
 //   让「API 地图 ↔ gates.json api 清单」这对双胞胎断连——门禁抓不到这两个符号。
 #let chart = cetz-plot.chart
 #let plot = cetz-plot.plot
+// cetz / numbly 的模块绑定经顶层 import 亦为公共导出（showcase 画布内
+// `#import cetz.draw: *` 依赖之）；刻意少一层封装、不设门禁；勿误删。
 
 // ==== Framasoft 配色 ====
 // 浅色现代基调：每种「原色」都配有同族浅色。
@@ -46,6 +58,8 @@
 
 #let framableu = rgb("#0C5B7A")
 #let framableulight = rgb("#1290B0")
+// ⚠ 亮度断层：同族浅色中该对（blue/light）明度差最小，视觉上几乎同档，勿误当
+//   『浅底大块背景』使用（对比优先用 framagrislight / 深色做浅卡）。
 #let framavert = rgb("#8E9C48")
 #let framavertlight = rgb("#E3EBC7")
 #let framarouge = rgb("#CC2D18")
@@ -456,12 +470,13 @@
         let c = accent-state.get()
         let c-head = c.darken(4%) // 加深一档，保证白底对比
         // 左格块只承载标题文字；下方细线用「固定长度 + 锚定块左下」画出，
-        // 使其独立于网格列宽（不再因右侧面包屑而缩短）：页宽 841.89pt，页眉
-        // 左右各 0.5em=12.5pt inset → 满宽 816.9pt。这样无论当页有无面包屑，
-        // 线与线长一致，且始终整条落在「标题+面包屑」之下，二者不再重叠。
+        // 使其独立于网格列宽（不再因右侧面包屑而缩短）。细线长度取顶部常量
+        // _header-line-width（B10：值 816.9pt 由 841.89 − 2×12.5 推导，逐字节
+        // 保留原渲染）。这样无论当页有无面包屑，线与线长一致，且始终整条落在
+        // 「标题+面包屑」之下，二者不再重叠。
         block(breakable: false)[
           #text(size: 1.1em, weight: "bold", fill: c-head)[#current-heading.body]
-          #place(bottom + left, dy: 0.4em, line(length: 816.9pt, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
+          #place(bottom + left, dy: 0.4em, line(length: _header-line-width, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
         ]
       }
     },

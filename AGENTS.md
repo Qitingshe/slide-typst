@@ -23,7 +23,7 @@ typst compile main.typ
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
 | `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）+ 全要素样板页（末页） |
 | `showcase/show.data.typ` | keyline（色/字号变体）、stat（默认/定制/stretch 行）、note、alert/frameEmph |
-| `showcase/show.nav.typ` | 自动目录 recipe（outline + entry 样式 + outlined:false 技巧）+ chrome（页眉标题+细线、面包屑、页脚三格、进度条） |
+| `showcase/show.nav.typ` | 自动目录 recipe（outline + entry 样式 + outlined:false 技巧）+ chrome（页眉标题+细线、面包屑、页脚三格 — 作者 / deck 标题 / 日期+页码、进度条） |
 | `showcase/show.color.typ` | frama 调色板总览 + slide-accent 色交接演示（节内页级走位仅此一处） |
 | `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
 | `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
@@ -57,8 +57,14 @@ typst compile main.typ
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
   全绿；③ 新 PDF 与旧 PDF **逐页对照核验**（视觉/溢出归用户）；④ 更新 CHANGELOG。
   `verify.py` 的 version 检查对主次版本偏离输出 warn。
-- **候选待办（暂不实施）**：页脚/进度条本地化（B7）、body-slide 高度 816.9pt 魔数改
-  表达式（B10）、framableulight 亮度断层的文档说明。
+- **候选待办（暂不实施）**：页脚/进度条本地化（B7——触发条件：touying 升版改变
+  university 默认 footer 渲染，或用户要求改页脚设计）；图表编排 helper 预封装
+  （T-10——等第二个图表家族需求出现再评审）。
+- **已完结（P6）**：页眉细线 816.9pt 魔数 → `_header-line-width` 命名常量（探针证明
+  header 内 `layout(size => size.width)` 不恒等于 816.9pt，表达式方案不可行，命名常量
+  保留原字面值、逐字节同渲染；注：B10 旧描述「body-slide 高度」失准，魔数实际是页眉
+  **细线长度**）；framableulight 亮度断层已文档化（lib.typ:59）；图例字级独立降档
+  `leg-label` helper（show.charts.typ，0.7em×0.8em≈11.9pt，低于刻度档）。
 
 ## 结构约定
 

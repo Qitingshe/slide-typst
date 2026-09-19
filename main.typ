@@ -8,7 +8,8 @@
 // 身份元数据（config-info）在此声明。
 #import "lib.typ": *
 
-// 设计系统（lib.typ）只含通用配置；本 deck 的身份元数据在此声明，渲染进页脚三格。
+// 设计系统（lib.typ）只含通用配置；本 deck 的身份元数据（config-info）在此声明，
+// 由 touying 默认页脚渲染成三格：作者 / deck 标题 / 日期+页码（N/M）。
 // 借阅者改这几行即可换成自己的 deck。
 #show: slide-theme.with(config-info(
   title: [Slide 模板画廊],
