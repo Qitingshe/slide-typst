@@ -15,6 +15,13 @@
 // —— 页面/内容件 3：body-slide stat boitefilled
 // —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
 
+// ==== 字号阶梯 ====
+// 绝对字号只在门面/数据件，正文一律 em 相对：
+//   cover/section 标题 32pt · stat 数字 34pt · keyline 24pt（数据/门面绝对字号）
+//   meta 9.5pt · 小号 10pt（meta/小字用点制）
+//   正文 0.85em（main.typ 全局）· 图注 0.63em · 助文 0.75em（em 相对，随主题缩放任动）
+// 新增数据件时，先看能否复用现有档位，别再引入第五档绝对字号。
+
 #import "@preview/touying:0.7.4": *
 #import themes.university: *
 #import "@preview/cetz:0.4.2"
@@ -47,9 +54,9 @@
 #let framagrisdarkest = rgb("#000000")
 
 // ==== 强调文本（Framaorange 加粗；刻意保持「稀有、可选」）====
-// frameEmph 与 alert 同源同色，alert 同时通过 config-methods 绑定。
+// alert = frameEmph 同义转发（单实现源）：frameEmph 供正文使用，alert 供 config-methods 绑定。
 #let frameEmph(body) = text(fill: framaorange, weight: "bold", body)
-#let alert(body) = text(fill: framaorange, weight: "bold", body)
+#let alert(body) = frameEmph(body)
 
 // ==== 浅色强调卡片（对应 \boiteXXX）====
 // 左竖条(3pt) + 约 5%–8% 的极浅底色 + 无重边框 + 圆角 + 舒适内边距。
@@ -190,6 +197,11 @@
 // gap-secondary（次级节奏：主体内段间，如公式↔网格、网格↔列表）。
 #let gap-primary = 0.3em
 #let gap-secondary = 0.4em
+
+// 网格 gutter 三档（stretch-grid 默认取 primary；按页面密度选 tight / loose）
+#let gutter-tight = 0.6em
+#let gutter-primary = 0.8em
+#let gutter-loose = 1em
 
 /// body-slide —— 标准正文页骨架：keyline 结论 → 主体 → 收尾。
 /// - kicker (content, none): 页面主结论行，交给 keyline 渲染；省略则无结论行。
@@ -363,7 +375,7 @@
   }
 }
 
-#let stretch-grid(..cells, columns: 1, row-gutter: 0.8em, column-gutter: 0.8em, gutter: none) = layout(size => {
+#let stretch-grid(..cells, columns: 1, row-gutter: gutter-primary, column-gutter: gutter-primary, gutter: none) = layout(size => {
   let arr = cells.pos()
   assert(arr.len() > 0, message: "stretch-grid 需要至少一个格")
   let ncols = columns

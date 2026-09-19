@@ -72,7 +72,7 @@ typst compile main.typ
 - **配色**：`framableu` / `framavert` / `framarouge` / `framaviolet` / `framaorange` / `framajaune` / `framamarron` / `framagris`（各含 light 变体）+ `framagrisdark` / `framagrisdarkest`；`frameEmph` / `alert` = 橙色加粗（稀有、可选）。
 - **页面骨架**：`body-slide(kicker: none, inner: none, closing: none, gap: gap-primary, closing-gap: gap-primary)`；`gap-primary` = 0.3em（keyline 后/收尾前）；`gap-secondary` = 0.4em（主体内段间）。
 - **卡片**：`boitebleue` / `boiteverte` / `boiterouge` / `boiteorange` / `boiteviolette` / `boitejaune` / `boitemarron` / `boitegrise`；`boitefilled`（实色白字）；均支持 `stretch: true`（规格字典 → stretch-grid）。
-- **网格**：`stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)` —— 自动等高；stat 行高按 `2·T − A` 锚定垂直中心。
+- **网格**：`stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)` —— 自动等高；stat 行高按 `2·T − A` 锚定垂直中心；gutter 三档 token：`gutter-tight` 0.6em / `gutter-primary` 0.8em（默认）/ `gutter-loose` 1em。
 - **数据元件**：`keyline(body, color: auto, size: 24pt)`；`stat(amount, label, amount-size: 34pt, color: auto, stretch: false)`；`note(body, color: framagris)`。
 - **图注**：`figure-block(img, caption: none, width: 88%, gap: 0.12em, caption-size: 0.63em, caption-color: framagris)` —— 图与图注同宽同左缘，紧贴图下沿；和原生 figure（计数/进目录）是两条路。
 - **章节/封面**：`section-open(title(必), subtitle, index, color: auto)` 写入 accent-state + breadcrumb-state；`cover(title, subtitle, author, institution, date)`。
