@@ -1,6 +1,20 @@
 // lib.typ - 模版画廊设计系统库
 // 供 main.typ 与 showcase/* 借页使用；版本 / API / 页数基线见 gates.json（lib 冻结，改动需独立评审）
 
+// ==== API 地图 ====
+// 公开符号 44 个（无 _ 前缀），与 gates.json 的 api 清单一一对应（注释双胞胎）。
+// 改 API 名（增删/改名）必须同步 gates.json 的 api 清单，否则 verify.py 会断言失败。
+// —— 配色 18：framableu framableulight / framavert framavertlight / framarouge framarougelight /
+//    framaviolet framavioletlight / framaorange framaorangelight / framajaune framajaunelight /
+//    framamarron framamarronlight / framagris framagrislight / framagrisdark framagrisdarkest
+// —— 强调文本 2：frameEmph alert
+// —— 浅色卡片 8：boitebleue boiteverte boiterouge boiteorange boiteviolette boitejaune boitemarron boitegrise
+// —— 强调色流转 3：accent-state slide-accent breadcrumb-state
+// —— 数据元件 3：keyline note figure-block
+// —— 间距体系 2：gap-primary gap-secondary
+// —— 页面/内容件 3：body-slide stat boitefilled
+// —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
+
 #import "@preview/touying:0.7.4": *
 #import themes.university: *
 #import "@preview/cetz:0.4.2"
