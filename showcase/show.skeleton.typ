@@ -12,6 +12,7 @@
 // 交叉引用：「卡片与网格」「数据元件」两家族的每一页都建立在 body-slide 之上。
 // ⚠ 坑：body / content / main 是 Typst 保留名，不能当具名参数，只能传
 //    kicker / inner / closing / gap / closing-gap。
+// ⚠ 溢出: body-slide inner 内容建议 ≤ 12 行正文（约 0.85em 基准），超出会在页脚处挤压截断。
 #import "../lib.typ": *
 
 // 用法: #body-slide(kicker: [...], inner: [...], closing: [...]) —— 三段齐全

@@ -987,6 +987,7 @@
       // 超淡大号年份（背景字）
       content((2.6, 5.2), text(size: 84pt, weight: "bold", fill: framableu.lighten(50%).transparentize(78%))[#year])
       // 唯一橙色小方块
+      /// 小暖色块平衡左面渐变蓝的视觉重心（对角线重量配平）。
       rect((5.4, 0.7), (6.1, 1.4), fill: framaorange, stroke: none)
     }))
     #place(bottom + left, dx: 1.6em, dy: -0.55em, line(length: 3.2em, stroke: (paint: white.transparentize(82%), thickness: 1pt)))

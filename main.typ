@@ -23,7 +23,7 @@
 
 // 中文字体回退：西文使用模板默认衬线，中文回退到系统字体 Heiti SC。
 // 全局字号 0.85em：单帧高度内容纳更充分的内容（约 15-16 行容量）。
-#show: set text(font: ("New Computer Modern", "Heiti SC"), size: 0.85em)
+#show: set text(font: ("New Computer Modern", "Heiti SC"), size: 0.85em, hyphenate: true)
 
 // 全局字符级两端对齐（Typst 0.15 justify/justification-limits）：
 // justify: true 开两端对齐；justification-limits 是关键——`spacing` 控制词距自适应
@@ -148,6 +148,10 @@
 = 配色与强调
 #section-open(title: [配色与强调], subtitle: [frama 调色板与页级走位], color: framavert)
 #include "showcase/show.color.typ"
+
+= 设计系统速查
+#section-open(title: [设计系统速查], subtitle: [配色 · 间距 · 字体层级 · 卡片构造 · 溢出边界], color: framajaune)
+#include "showcase/show.system.typ"
 
 = 页面编排
 #section-open(title: [页面编排], subtitle: [排版元件 · 表格替代语言 · grid-slide 区域网格], color: framagris)
