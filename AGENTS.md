@@ -28,6 +28,7 @@ typst compile main.typ
 | `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
 | `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot 0.1.4）：饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 格式化样板；合计 4 页 |
+| `showcase/show.tables.typ` | 表格替代语言：cmp-grid（对比网格）/ term-rows（术语行）/ flow-steps（编号流程，横向+纵向）+ body-slide center 垂直居中变体；合计 4 页 |
 | `assets/` | 画廊演示资产（sample-scheme.svg / sample-chart.svg / sample-data.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
@@ -51,7 +52,7 @@ typst compile main.typ
 - **show 规则纪律**：show 规则从声明点起全局生效会覆盖先前样式——新家族页面必须先查全
   deck 是否已有同名规则；规则体尽量用代码上下文限定作用域（见 outline recipe）；
   删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
-- **防拆规则**：lib.typ 保持单体（当前 638 行）；只有当超过 ~1000 行、或出现「按节独立
+- **防拆规则**：lib.typ 保持单体（当前 920 行）；只有当超过 ~1000 行、或出现「按节独立
   分发」的真实需求时才评审拆分，不预设 facade。
 - **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.5.2 + cetz-plot 0.1.4 + numbly 0.1.0；
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
