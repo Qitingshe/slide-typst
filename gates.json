@@ -1,6 +1,6 @@
 {
   "compiler": "0.15.1",
-  "baselines": { "pages": 53, "usage-comments": 38, "links": 59 },
+  "baselines": { "pages": 54, "usage-comments": 38, "links": 59 },
   "api": [
     "framableu", "framableulight", "framavert", "framavertlight", "framarouge", "framarougelight",
     "framaviolet", "framavioletlight", "framaorange", "framaorangelight", "framajaune", "framajaunelight",

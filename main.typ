@@ -116,8 +116,7 @@
 #body-slide(
   kicker: none,
   inner: [
-    #set par(leading: 0.01em) // 12 行目录：超紧行距防溢出孤页
-    #v(0.25em) // 页顶留白
+    #v(0.3em) // 目录页顶留白：参考 v1 风格
     #outline(title: none, depth: 1)
   ],
   closing: [#align(center)[#text(size: 0.72em, fill: framagris)[十一个家族 · 从封面门面到区域编排]]],
