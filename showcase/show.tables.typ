@@ -5,7 +5,7 @@
 //   · cmp-grid（对比网格）：左/右栏双色对比表，替代原生 table 灰细线对标。
 //   · term-rows（术语行）：名称→说明枚举，替代灰色表格式术语表。
 //   · flow-steps（编号流程条）：横向/纵向编号药丸＋箭头连接，替代步骤枚举表。
-//   · body-slide(center: true)：垂直居中变体——内容块在正文区内上下等距居中。
+//   · body-slide(center: true)：垂直居中变体——kicker 顶锚定，inner[+closing] 在剩余空间上下居中。
 //
 // 交叉引用：lib.typ 定义了三组件与 body-slide center 模式；
 //           本页演示每组的典型用法与坑点。
@@ -71,22 +71,22 @@
   closing: note[横向三步骤，默认用 → 连接。],
 )
 
-// 用法: flow-steps(..., dir: "col") + body-slide(center: true) 组合成收尾页。
-// 改这里: 每步 = (title, color)；center: true 令 kicker+inner+closing 整块上下居中。
-// ⚠ 坑: 纵向行高被药丸+↓ 字形度量锁死 ≈61.5pt/行（说明 ≤3 行）；center 变体配
-//        短步骤（不写长 desc），上下留白才对称——长说明的纵向流程按顶对齐页使用。
+// 用法: flow-steps(..., dir: "col") + body-slide(center: true) 保留 desc。
+// 改这里: 每步 = (title, desc, color)；纵向时间线步支持 desc，与横向三组件等密度。
+// ⚠ 坑: center:true 仅 inner[+closing] 在 kicker 下居中，kicker 保持顶部锚定。
+//        纵向行高被药丸+↓ 字形度量锁死 ≈61.5pt/行；说明 ≤3 行，长文用横向页。
 == 编号流程条 · flow-steps（纵向）
 
 #body-slide(
-  kicker: [纵向编号 + ↓ 连接，整块居中适配收尾页],
+  kicker: [纵向时间线，带 desc 居中收尾],
   inner: [
     #flow-steps(
       dir: "col",
-      (title: [拆解], color: framableu),
-      (title: [组装], color: framavert),
-      (title: [收束], color: framaorange),
+      (title: [拆解], desc: [原始数据清洗], color: framableu),
+      (title: [组装], desc: [结构规整合并], color: framavert),
+      (title: [收束], desc: [校验输出归档], color: framaorange),
     )
   ],
-  closing: note[center: true 令整块上下居中、留白等距——纵向短步骤正是它的典型用法。],
+  closing: note[纵向三步均带 desc；center:true 仅主体区居中，kicker 仍顶锚。],
   center: true,
 )

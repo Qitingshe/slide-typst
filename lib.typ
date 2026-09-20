@@ -235,8 +235,8 @@
 /// - closing (content, none): 收尾块（note / boitefilled / boiteXXX / 自定义内容），省略则无。
 /// - gap (length): keyline 与主体之间的留白，默认 gap-primary；刻意紧凑的整页可传 0pt。
 /// - closing-gap (length): 收尾块前的留白，默认同 gap-primary。
-/// - center (bool): true 时 kicker+inner+closing 整块在页面正文区内垂直居中
-///   （上下等距）；默认 false 保持顶对齐，渲染与旧版逐字节一致。
+/// - center (bool): true 时 inner [+ closing] 在 kicker 下方的剩余空间内垂直居中
+///   （kicker 保持顶部锚定，不参与居中）；默认 false 保持顶对齐。
 /// 用法：
 ///   #body-slide(
 ///     kicker: [结论],
@@ -251,23 +251,23 @@
   closing-gap: gap-primary,
   center: false,
 ) = {
-  let c = [
-    #if kicker != none [#keyline[#kicker] #v(gap)]
-    #inner
-    #if closing != none [#v(closing-gap) #closing]
-  ]
   if center {
-    // 垂直居中模式：整块在页面正文区内居中，上/下各留等距空隙。
-    // ⚠ 实现用 v(1fr)/v(1fr) 双柔性空间（两个 1fr 均分剩余高度，上下等距），
-    //   不用「measure 内容高 → v((avail-h)/2)」的测量法——探针实测（/tmp 自检）：
-    //   目录页 avail=209.76pt，但对含 outline 的内容 measure 只得 h=8.58pt
-    //   （outline 条目页号依赖最终布局，在 measure 的假设布局里不解析、条目塌缩），
-    //   真渲染高 ≈150pt，若按 8.58pt 计算 offset≈100pt 会把内容推出页底。
-    //   fr 方案由排版器在真实布局里自适应任何内容高（含位置依赖元素），内容超高
-    //   时 fr 收缩到 0（等价于测量法的钳位），永不引入溢出；对普通页面两者数值等价。
-    [#v(1fr) #c #v(1fr)]
+    // 垂直居中模式（kicker 顶锚 + inner[+closing] 居中）：
+    // kicker 保持顶部锚定（v(gap) 仍在其下方），不参与居中。
+    // inner[+closing] 在 kicker 下方的剩余空间内用 v(1fr)/v(1fr) 上下居中。
+    // 两个 1fr 均分剩余高度，由排版器在真实布局里自适应任何内容高；
+    // 内容超高时 fr 收缩到 0（永不引入溢出）。
+    // ⚠ v(1fr)/v(1fr) 优于 measure 测量法（解决目录页 outline 条目塌缩），
+    //   详情见 9 月 commit 注释。
+    [#if kicker != none [#keyline[#kicker] #v(gap)]
+      #v(1fr)
+      #inner
+      #if closing != none [#v(closing-gap) #closing]
+      #v(1fr)]
   } else {
-    c
+    [#if kicker != none [#keyline[#kicker] #v(gap)]
+      #inner
+      #if closing != none [#v(closing-gap) #closing]]
   }
 }
 
@@ -629,7 +629,8 @@
         ]
       ]
     } else {
-      // 纵向时间线行：左轨药丸 + 下箭头；右列标题 + 说明
+      // 纵向时间线行：左轨药丸 + 下箭头；右列标题 + desc 水平同行。
+      // 用户要求描述与关键词在同一水平线（如「拆解 · 原始数据清洗」），不走换行。
       grid(
         columns: (auto, 1fr),
         column-gutter: 0.9em,
@@ -643,8 +644,8 @@
         [
           #text(size: 0.92em, weight: "bold", fill: col.darken(10%))[#title]
           #if desc != none [
-            #v(0.22em)
-            #text(size: 0.76em, fill: framagris)[#desc]
+            #h(0.3em)
+            #text(size: 0.76em, fill: framagris)[· #desc]
           ]
         ],
       )
