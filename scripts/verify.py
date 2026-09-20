@@ -98,7 +98,10 @@ def main():
             print(f"[FAIL] links ({count} != {baselines['links']})")
             failed = True
 
-    # ---- 5. pages：macOS 优先 mdls，其余用字节计数取数，取不到 WARN ----
+    # ---- 5. pages：字节计数优先（确定性）；mdls 仅作兜底 ----
+    # macOS 的 mdls 依赖 Spotlight 索引，对刚编译的新 PDF 常返回 (null) 或
+    # 上一版本的滞后值（实测），曾导致基线误读；故全平台统一先走字节计数，
+    # mdls 只在字节计数失败时兜底。
     def pages_macos():
         try:
             p = run(["mdls", "-name", "kMDItemNumberOfPages", "-raw", "main.pdf"])
@@ -117,10 +120,7 @@ def main():
         except Exception:
             return None
 
-    if sys.platform == "darwin":
-        methods = [pages_macos, pages_via_bytes]
-    else:
-        methods = [pages_via_bytes, pages_macos]
+    methods = [pages_via_bytes, pages_macos]
     n = None
     for m in methods:
         n = m()

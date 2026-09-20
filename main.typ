@@ -85,6 +85,7 @@
 
 #body-slide(
   kicker: none,
+  center: true, // 用户点名：目录 5 行 + 收尾在页面正文区垂直居中（上下等距）
   inner: [
     #v(0.5em) // 页顶留白：让清单在页眉细线下方安静落下
     #outline(title: none, depth: 1)

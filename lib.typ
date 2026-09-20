@@ -15,6 +15,7 @@
 // —— 数据元件 3：keyline note figure-block
 // —— 间距体系 2：gap-primary gap-secondary
 // —— 页面/内容件 3：body-slide stat boitefilled
+// —— 表格替代语言 4：cmp-grid term-rows flow-steps chapter-dots
 // —— 排版驱动器 5：stretch-grid slide-theme cetz-canvas section-open cover
 // —— 图表 2：chart plot
 
@@ -234,6 +235,8 @@
 /// - closing (content, none): 收尾块（note / boitefilled / boiteXXX / 自定义内容），省略则无。
 /// - gap (length): keyline 与主体之间的留白，默认 gap-primary；刻意紧凑的整页可传 0pt。
 /// - closing-gap (length): 收尾块前的留白，默认同 gap-primary。
+/// - center (bool): true 时 kicker+inner+closing 整块在页面正文区内垂直居中
+///   （上下等距）；默认 false 保持顶对齐，渲染与旧版逐字节一致。
 /// 用法：
 ///   #body-slide(
 ///     kicker: [结论],
@@ -246,11 +249,27 @@
   closing: none,
   gap: gap-primary,
   closing-gap: gap-primary,
-) = [
-  #if kicker != none [#keyline[#kicker] #v(gap)]
-  #inner
-  #if closing != none [#v(closing-gap) #closing]
-]
+  center: false,
+) = {
+  let c = [
+    #if kicker != none [#keyline[#kicker] #v(gap)]
+    #inner
+    #if closing != none [#v(closing-gap) #closing]
+  ]
+  if center {
+    // 垂直居中模式：整块在页面正文区内居中，上/下各留等距空隙。
+    // ⚠ 实现用 v(1fr)/v(1fr) 双柔性空间（两个 1fr 均分剩余高度，上下等距），
+    //   不用「measure 内容高 → v((avail-h)/2)」的测量法——探针实测（/tmp 自检）：
+    //   目录页 avail=209.76pt，但对含 outline 的内容 measure 只得 h=8.58pt
+    //   （outline 条目页号依赖最终布局，在 measure 的假设布局里不解析、条目塌缩），
+    //   真渲染高 ≈150pt，若按 8.58pt 计算 offset≈100pt 会把内容推出页底。
+    //   fr 方案由排版器在真实布局里自适应任何内容高（含位置依赖元素），内容超高
+    //   时 fr 收缩到 0（等价于测量法的钳位），永不引入溢出；对普通页面两者数值等价。
+    [#v(1fr) #c #v(1fr)]
+  } else {
+    c
+  }
+}
 
 // 大数字盒（数据元件常量唯一出处）：bold 大数字 / 0.14em 数字↔标签间距 /
 // 0.8em framagris 灰标签。返回规格字典供 stat 三路径消费：
@@ -442,6 +461,266 @@
     )
   }
 })
+
+// ==== 表格替代语言 ====
+// 全书原 34 处裸 #table（0.5pt 灰细线）与卡片语言脱节，系统性替换为四类
+// 有设计在场的组件。分类映射：
+//   对比型（维度×两侧） → cmp-grid（维度标签 + 双色对比单元格）
+//   枚举型（名称→说明） → term-rows（术语行）或 stretch-grid 卡片
+//   流程型（编号步骤）   → flow-steps（编号药丸 + 箭头流程条）
+//   大数据型（章节图例） → chapter-dots（色点 + № + 名称 + 一句话）
+// 视觉红线（均在既有卡片语言内）：4pt 圆角 / 3pt 左竖条 / lighten(93%) 浅底；
+// 对比单元格去掉卡片级 12×9 内边距、降为更紧凑的 (x:10pt, y:4pt)（单元格是
+// 内容节奏，不是信息卡；避免 5 行对比页堆高）；内容对齐规则见 _cmp-cell（单行
+// 居中 / 多行左对齐——修「左栏短值在宽格里右侧留白失衡」的模板级根治）。
+
+// 编号药丸（内部件）：实色小圆角胶囊 + 白字编号；中明度色自动垫深。
+#let _pill(n, c, size: 0.72em) = rect(
+  radius: 0.9em,
+  fill: _mid-tone-darken(c),
+  stroke: none,
+  inset: (x: 0.5em, y: 0.2em),
+)[#text(size: size, weight: "bold", fill: rgb("#FFFFFF"))[#n]]
+
+// 对比/术语单元格（内部件）：紧凑档浅底左竖条盒，供 cmp-grid / term-rows 使用。
+// 对齐规则（审美裁量）：单行内容水平居中——左栏短值（如 `ls`、`指令措辞`）在
+// 宽单元格里不再右侧留白过大，两列读起来平衡；多行内容保持左对齐（居中段落
+// 阅读观感差）。检测：以可用宽与 999pt 超宽各 measure 一次，高度无变化即未换行
+// → 居中；换行（多行）→ 左对齐。y inset 5pt→4pt 为配合溢出页减高。
+#let _cmp-cell(content, color, width: none) = block(
+  width: if width == none { auto } else { width },
+  inset: (x: 10pt, y: 4pt),
+  radius: 4pt,
+  fill: color.lighten(93%),
+  stroke: (left: (paint: color, thickness: 3pt)),
+)[
+  #context {
+    layout(size => {
+      let one = measure(block(width: 999pt, breakable: false)[#content]).height
+      let wrap = measure(block(width: size.width, breakable: false)[#content]).height
+      if wrap <= one * 1.3 {
+        align(center)[#content]
+      } else {
+        content
+      }
+    })
+  }
+]
+
+/// cmp-grid —— 对比网格：左侧灰色维度标签列 + 双色值单元格，替代「维度×两侧」对比表。
+/// - lhs / rhs (dictionary): 左/右栏 (title: 栏标题, color: 强调色)；title 为 none 时省略表头行。
+/// - rows (array of dictionary): 每行 (label: 维度名, left: 左值, right: 右值)。
+/// - label-width (length): 维度标签列宽，默认 5.2em；标签长时按需加宽。
+/// - gutter (length): 列间距，默认 gutter-tight。
+/// - row-gap (length): 行间距，默认 0.25em。
+/// - header-gap (length): 表头↔首行间距，默认 0.4em。
+/// 用法：
+///   #cmp-grid(
+///     lhs: (title: [观察空间], color: framableu),
+///     rhs: (title: [动作空间], color: framaorange),
+///     rows: (
+//       (label: [内容], left: [上下文窗口、知识库], right: [工具调用、代码生成]),
+///     ),
+///   )
+#let cmp-grid(
+  lhs: none,
+  rhs: none,
+  rows: (),
+  label-width: 5.2em,
+  gutter: gutter-tight,
+  row-gap: 0.25em,
+  header-gap: 0.4em,
+) = context {
+  assert(lhs != none and rhs != none, message: "cmp-grid 需要 lhs 与 rhs")
+  let ltitle = lhs.at("title", default: none)
+  let rtitle = rhs.at("title", default: none)
+  let a = if lhs.at("color", default: auto) == auto { accent-state.get() } else { lhs.at("color", default: auto) }
+  let b = if rhs.at("color", default: auto) == auto { accent-state.get() } else { rhs.at("color", default: auto) }
+  let has-head = ltitle != none and rtitle != none
+  let head = if has-head {
+    grid(
+      columns: (label-width, 1fr, 1fr),
+      column-gutter: gutter,
+      [],
+      _filled-box(align(center)[#text(weight: "bold")[#ltitle]], a, width: 100%),
+      _filled-box(align(center)[#text(weight: "bold")[#rtitle]], b, width: 100%),
+    )
+  } else { [] }
+  let body = grid(
+    columns: (label-width, 1fr, 1fr),
+    column-gutter: gutter,
+    row-gutter: row-gap,
+    ..rows.map(row => (
+      align(horizon + right)[#text(size: 0.78em, weight: "bold", fill: framagris)[#row.at("label")]],
+      _cmp-cell(row.at("left"), a, width: 100%),
+      _cmp-cell(row.at("right"), b, width: 100%),
+    )).flatten(),
+  )
+  [
+    #head
+    #if has-head [#v(header-gap)]
+    #body
+  ]
+}
+
+/// term-rows —— 术语行：左侧名称列 + 右侧单色值单元格，替代「名称→说明」枚举表。
+/// - rows (array of dictionary): 每行 (label: 名称, value: 说明, color: auto 可选逐行主色)。
+/// - label-width (length): 名称列宽，默认 7em。
+/// - gutter (length): 列间距，默认 gutter-tight。
+/// - row-gap (length): 行间距，默认 0.25em。
+/// 用法：
+///   #term-rows(rows: (
+///     (label: [保存经历], value: [日志记录（仅是数据）]),
+///     (label: [持续进化], value: [跨任务积累，改变后续行为]),
+///   ))
+#let term-rows(
+  rows: (),
+  label-width: 7em,
+  gutter: gutter-tight,
+  row-gap: 0.25em,
+) = context {
+  assert(rows.len() > 0, message: "term-rows 需要至少一行")
+  grid(
+    columns: (label-width, 1fr),
+    column-gutter: gutter,
+    row-gutter: row-gap,
+    ..rows.map(row => (
+      align(horizon + right)[#text(size: 0.78em, weight: "bold", fill: framagrisdark)[#row.at("label")]],
+      _cmp-cell(
+        row.at("value"),
+        if row.at("color", default: auto) == auto { accent-state.get() } else { row.at("color") },
+        width: 100%,
+      ),
+    )).flatten(),
+  )
+}
+
+// flow-steps 单步（内部件）。
+// 横向（compact: true）＝步骤卡：编号药丸 + 标题 + 说明，浅底左竖条语言；
+// 纵向（compact: false）＝时间线行：左轨药丸 + 下箭头，右列标题 + 说明（无卡片盒，
+// 步骤长文场景靠低矮行高控制页高，与横向卡的视觉强度形成层级差）。
+#let _flow-step-box(s, n, width, compact: true, last: true) = {
+  let c = s.at("color", default: auto)
+  let title = s.at("title", default: none)
+  let desc = s.at("desc", default: none)
+  context {
+    let col = if c == auto { accent-state.get() } else { c }
+    if compact {
+      block(
+        width: width,
+        inset: (x: 8pt, y: 8pt),
+        radius: 4pt,
+        fill: col.lighten(93%),
+        stroke: (left: (paint: col, thickness: 3pt)),
+      )[
+        #align(center)[#_pill(n, col)]
+        #if title != none [
+          #v(0.4em)
+          #align(center)[#text(size: 0.9em, weight: "bold", fill: col.darken(10%))[#title]]
+        ]
+        #if desc != none [
+          #v(0.25em)
+          #text(size: 0.74em, fill: framagris)[#desc]
+        ]
+      ]
+    } else {
+      // 纵向时间线行：左轨药丸 + 下箭头；右列标题 + 说明
+      grid(
+        columns: (auto, 1fr),
+        column-gutter: 0.9em,
+        [
+          #align(center)[#_pill(n, col)]
+          #if not last [
+            #v(0.25em)
+            #align(center)[#text(size: 0.8em, fill: framagris)[↓]]
+          ]
+        ],
+        [
+          #text(size: 0.92em, weight: "bold", fill: col.darken(10%))[#title]
+          #if desc != none [
+            #v(0.22em)
+            #text(size: 0.76em, fill: framagris)[#desc]
+          ]
+        ],
+      )
+    }
+  }
+}
+
+/// flow-steps —— 编号流程条：药丸编号 + 标题/说明 + 箭头，替代「步骤」枚举表。
+/// - ..steps (positional dictionaries): 每步 (title, desc: none, color: auto)。
+/// - dir (string): "row" 横向（→ 连接）或 "col" 纵向（↓ 连接）。
+/// - arrow-w (length): 横向模式箭头列宽，默认 1.5em。
+/// - row-gap (length): 纵向模式行间距，默认 0.25em。
+/// 用法：
+///   #flow-steps(
+///     (title: [工具声明], desc: [JSON Schema 参数格式], color: framableu),
+///     (title: [模型决策], desc: [选工具并生成参数], color: framavert),
+///     (title: [执行], desc: [校验 + 调用 + 捕获], color: framaorange),
+///   )
+#let flow-steps(..steps, dir: "row", arrow-w: 1.5em, row-gap: 0.25em) = {
+  let arr = steps.pos()
+  assert(arr.len() > 0, message: "flow-steps 需要至少一个步骤")
+  let n = arr.len()
+  if dir == "row" {
+    layout(size => {
+      let step-w = (size.width - (n - 1) * arrow-w) / n
+      let widths = ()
+      let cells = ()
+      for i in range(n) {
+        widths.push(step-w)
+        if i < n - 1 { widths.push(arrow-w) }
+        cells.push(_flow-step-box(arr.at(i), i + 1, step-w, compact: true))
+        if i < n - 1 {
+          cells.push(align(center + horizon)[#text(size: 0.85em, fill: framagris)[#sym.arrow.r]])
+        }
+      }
+      grid(columns: widths, column-gutter: 0pt, ..cells)
+    })
+  } else {
+    stack(
+      dir: ttb,
+      spacing: 0pt,
+      ..range(n).map(i => [
+        #_flow-step-box(arr.at(i), i + 1, 100%, compact: false, last: i == n - 1)
+        #if i < n - 1 [#v(row-gap)]
+      ]),
+    )
+  }
+}
+
+/// chapter-dots —— 章节色点图例：色点 + 编号/名称 + 一句话主题，替代「章节×主题×色」大表。
+/// - ..items (positional dictionaries): 每项 (n: 编号, name: 章名, desc: 一句话, color: 强调色)。
+/// - columns (int): 列数，默认 5（10 章 → 2 行）。
+/// - row-gutter / column-gutter (length): 网格间距，默认 gutter-tight。
+/// 用法：
+///   #chapter-dots(
+///     (n: [1], name: [入门], desc: [Agent = LLM + 上下文 + 工具], color: framableu),
+///     … #10,
+///   )
+#let chapter-dots(..items, columns: 5, row-gutter: gutter-tight, column-gutter: gutter-tight) = grid(
+  columns: (1fr,) * columns,
+  row-gutter: row-gutter,
+  column-gutter: column-gutter,
+  ..items.pos().map(it => block(
+    inset: (x: 8pt, y: 5pt),
+    radius: 4pt,
+    fill: framagrislight,
+  )[
+    #grid(
+      columns: (auto, 1fr),
+      column-gutter: 0.45em,
+      [
+        #align(horizon + left)[#rect(width: 0.52em, height: 0.52em, radius: 0.13em, fill: it.at("color"), stroke: none)]
+      ],
+      [
+        #text(size: 0.8em, weight: "bold", fill: framagrisdark)[#it.at("n")] #text(size: 0.8em, weight: "bold", fill: it.at("color"))[#it.at("name")]
+        #v(0.12em)
+        #text(size: 0.7em, fill: framagris)[#it.at("desc")]
+      ],
+    )
+  ]),
+)
 
 // ==== 主题配置 ====
 #let slide-theme = university-theme.with(

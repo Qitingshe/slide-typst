@@ -8,19 +8,30 @@
   color: framableu,
 )
 
-// ---------- 第 1 页 · framableu（继承自工程要点的收尾重置）----------
+// ---------- 第 1 页 · framableu ----------
 
 == 一条主线
 
 #body-slide(
   kicker: [大脑思考 · 眼睛观察 · 手脚行动],
-  gap: 0pt,
   inner: [
-    - 一个循环：ReAct「想 → 做 → 看」，上下文 = 静态前缀 + 轨迹
-    - 一层工程：Harness = 上下文管理 + 工具接口 + 约束 + 验证 + 纠正
-    - 三个时间尺度：上下文适应 / 外部产物更新 / 参数更新，协同进化
-    - 十个方向：眼睛（§2–3）、手脚（§4–5）、交互（§6）、评估（§7）、大脑（§8）、进化（§9）、群体（§10）
+    - 一个公式：$"Agent" = "LLM" + "上下文" + "工具"$
+    - 一个循环：ReAct「想 → 做 → 看」；一层工程：Harness = 上下文管理 + 工具接口 + 约束 + 验证 + 纠正
+    #v(gap-primary)
+    #term-rows(
+      label-width: 6.8em,
+      rows: (
+        (label: [LLM（大脑）], value: [§8 模型后训练：SFT / RL 内化策略], color: framaorange),
+        (label: [上下文（眼睛）], value: [§2 上下文工程 + §3 记忆知识库], color: framableu),
+        (label: [工具（手脚）], value: [§4 工具设计 + §5 Coding Agent], color: framavert),
+        (label: [交互（感官）], value: [§6 模态 × 时机双维扩展], color: framavert),
+        (label: [评估（镜子）], value: [§7 评估 = 可比较的信号], color: framaviolet),
+        (label: [进化（成长）], value: [§9 四层更新 + 双循环], color: framaviolet),
+        (label: [协作（团队）], value: [§10 多 Agent 组织与涌现], color: framaviolet),
+      ),
+    )
   ],
+  closing: note[三个时间尺度：上下文适应 / 外部产物更新 / 参数更新 —— 协同进化],
 )
 
 // 收尾声明：被吸收，不翻页
@@ -31,8 +42,7 @@
 == 展望与行动
 
 #body-slide(
-  kicker: [下一步：亲手把一个 Agent 跑起来],
-  gap: 0pt,
+  kicker: [下一站：亲自把 Agent 跑起来],
   inner: [
     #stretch-grid(
       columns: 2,
@@ -56,8 +66,8 @@
     #align(center)[#text(size: 15pt, weight: "bold", fill: framableu)[深入理解 AI Agent —— 设计原理与工程实践]]
     #align(center)[#text(size: 10.5pt, fill: framagris)[全开源 · 10 章 · 109 实验 · 15 语言 · github.com/bojieli/ai-agent-book]]
   ],
-  closing-gap: 0.7em,
+  closing-gap: 0.7em, // 签名块刻意留白：书尾落款，与上文拉开呼吸
 )
 
-// 收尾：把强调色还给默认 framableu（最终重置）
+// 收尾：把强调色还给默认 framableu
 #slide-accent(framableu)

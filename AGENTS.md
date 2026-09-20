@@ -9,7 +9,7 @@ typst compile main.typ
 ```
 
 - 必须**零错误、零警告**。
-- 整份 deck 必须维持 **55 页**（封面 1 页 + 目标 1 + 目录 1 + 四分段正文）。页数变化 = 回归，需查明。
+- 整份 deck 必须维持 **78 页**（封面 1 + 目标段 2 + 目录段 2 + 核心公式段 11 + 十章速览段 53 + 工程要点段 6 + 小结段 3；= 分段页 + section-open + `==` 页）。页数变化 = 回归，需查明。
 - 视觉排版核对由**人工**完成；agent 不得声称「视觉正确」，只负责结构、编译与页数。
 - 需要自检渲染时用 /tmp 或临时文件，**完成后删除**；仓库内不得遗留 `_*.typ` / `_*.pdf` / png 等探针文件。
 
@@ -33,7 +33,7 @@ typst compile main.typ
 
 - `= 分段名`（level 1）每段紧跟 `#section-open(index/title/subtitle/color)` 开场页，且必须位于段内第一个 `==` 之前。
 - `== 标题`（level 2）= 单页幻灯片；标题由 Touying 移到页眉渲染，正文里写 `show heading` 规则无效。
-- 每章一个有强调色（ch01 蓝 / ch02 蓝 / ch03 紫 / ch04 绿 / ch05 蓝 / ch06 绿 / ch07 紫 / ch08 紫 / ch09 紫 / ch10 紫）。
+- 每章一个有强调色（ch01 蓝 / ch02 蓝 / ch03 紫 / ch04 绿 / ch05 蓝 / ch06 绿 / ch07 紫 / ch08 橙 / ch09 紫 / ch10 紫）。
 - 色交接：`#slide-accent(色)` 放在**上一页末尾**（被吸收、不翻页）；放在下一页标题之前会凭空多一页。分段切换由下个 `section-open` 自行声明。
 - 页码恒等性：不要增减页面数量；内容增多时优先收紧间距而非翻页。
 
@@ -63,7 +63,8 @@ typst compile main.typ
 - 卡片：`boitebleue` / `boiteverte` / `boiteorange` / `boiteviolette` / `boitejaune` / `boitemarron` / `boitegrise` / `boitefilled`（后接 `(color: …)`、`(stretch: true)` 等）。
 - `stretch-grid(columns, gutter 或 row/column-gutter, …cells)`：自动等高卡片/stat 网格；单元格里的卡片只写 `#boiteXX(stretch: true)[…]`，**不要**外面再包 `[]` 或加括号。
 - 其余元件：`keyline`（金句行 24pt）、`stat(amount-size)[数字][标签]`、`note`（小灰字附注）、`section-open`（章节开场页）、`cover`（封面）。
-- 新页面先用现有元件组合（body-slide + stretch-grid + boite* + stat），不要发明新容器/装饰语言；需要通用新能力时先在 `lib.typ` 加文档化函数。
+- **表格替代语言**（对齐统一风格，禁止裸 `#table`）：对比型 → `cmp-grid(lhs/rhs/rows)`（维度标签 + 双色对比单元格，右栏=章强调色、左栏=参照灰）；枚举型 → `term-rows(rows)`（名称→说明）；流程型 → `flow-steps(dir: "row"|"col", …)`（编号流程条）；章节图例类数据 → `chapter-dots`（色点 + № + 名称）。四件均可用 `stretch-grid` + `boite*` 卡片语言互相替代，按语义选型。
+- 新页面先用现有元件组合（body-slide + stretch-grid + boite* + stat + 表格替代语言），不要发明新容器/装饰语言；需要通用新能力时先在 `lib.typ` 加文档化函数。
 
 ## 协作契约
 
