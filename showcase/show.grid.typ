@@ -47,7 +47,7 @@
   ],
 )
 
-// 如此页（grid-slide center: true）整页居中——适合单块内容或签名收尾页。
+// 用法: grid-slide(columns:, rows:, gutter:, center: true, ..cells) 整页居中方案
 // 改这里: 用 center: true 让整块在正文区上下等距居中；columns/rows 取短轴路径。
 // ⚠ 坑: 居中模式优于手工 v(1fr)/v(1fr) 布局；同 body-slide center 的双 fr 论证。
 == 居中整页 · grid-slide center

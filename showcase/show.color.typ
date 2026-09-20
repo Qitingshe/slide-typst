@@ -8,7 +8,7 @@
 //     让下一页的标题、keyline、stat、boitefilled 全部自动跟随新色。
 //
 // 交叉引用：keyline / stat / boitefilled 的 color: auto 都由 accent-state 决定。
-// ⚠️ 唯一的页级走位演示页在本家族；lib.typ 只允许节级（section-open color）换色。
+// ⚠ 唯一的页级走位演示页在本家族；lib.typ 只允许节级（section-open color）换色。
 #import "../lib.typ": *
 
 // 文件级局部 helper：单块色卡（名字 + 底色 + 文字色）。
