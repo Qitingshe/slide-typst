@@ -103,12 +103,12 @@
   link(
     it.element.location(),
     grid(
-      columns: (0.55em, auto, 1fr, auto),
-      column-gutter: (0.85em, 1.4em, 1em),
+      columns: (0.55em, auto, 1fr, 1.2em),
+      column-gutter: (0.85em, 1.4em, 0.5em),
       align(horizon + left)[#rect(width: 2.5pt, height: 1.05em, radius: 1.25pt, fill: framableu, stroke: none)],
       text(size: 1.08em, weight: "bold", fill: framagrisdark)[#it.body()],
       [],
-      text(size: 0.75em, fill: framagris)[#it.page()],
+      align(right, text(size: 0.75em, fill: framagris)[#it.page()]),
     ),
   ) + v(0pt) // 条目行距：在 outline 自带间距上已足以换行，不额外补间距；10 行目录收紧（原 0.35em→0.2em→0.13em→0.08em→0pt，逐档试到收尾行回本页）
 }

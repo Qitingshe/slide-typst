@@ -27,9 +27,9 @@
   link(
     it.element.location(),
     grid(
-      columns: (auto, 1fr),
-      column-gutter: 1.1em,
-      text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()],
+      columns: (1.2em, 1fr),
+      column-gutter: 0.5em,
+      align(right, text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()]),
       text(size: 1.02em, fill: framagrisdark)[#it.body()],
     ),
   ) + v(0.05em) // 条目间距：收紧（原 0.42em→0.28em→0.18em→0.05em）让 10 行目录 + note 收尾回本页
