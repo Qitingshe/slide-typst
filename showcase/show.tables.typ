@@ -74,7 +74,7 @@
 // 用法: flow-steps(..., dir: "col") + body-slide(center: true) 保留 desc。
 // 改这里: 每步 = (title, desc, color)；纵向时间线步支持 desc，与横向三组件等密度。
 // ⚠ 坑: center:true 仅 inner[+closing] 在 kicker 下居中，kicker 保持顶部锚定。
-//        纵向行高被药丸+↓ 字形度量锁死 ≈61.5pt/行；说明 ≤3 行，长文用横向页。
+//        纵向每行 ≈61.5pt（药丸 + 连接器间隙固定）；说明 ≤3 行，长文用横向页。
 == 编号流程条 · flow-steps（纵向）
 
 #body-slide(

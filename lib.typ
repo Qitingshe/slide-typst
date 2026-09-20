@@ -472,6 +472,20 @@
 // 内容节奏，不是信息卡；避免 5 行对比页堆高）；内容对齐规则见 _cmp-cell（单行
 // 居中 / 多行左对齐——修「左栏短值在宽格里右侧留白失衡」的模板级根治）。
 
+// 纵向连接线（内部件）：2pt 粗短竖线，在两药丸之间居中显示。
+// 用法: #_connector-line(framableu)
+// ⚠ 坑: 内部组件，仅由 flow-steps 调用。
+#let _connector-line(c) = context {
+  let col = if c == auto { accent-state.get() } else { c }
+  align(center + horizon, rect(
+    width: 2pt,
+    height: 0.5em,
+    fill: col.darken(15%),
+    stroke: none,
+    radius: 1pt,
+  ))
+}
+
 // 编号药丸（内部件）：实色小圆角胶囊 + 白字编号；中明度色自动垫深。
 // 用法: #_pill(1, framableu, size: 0.72em)
 // 改这里: 第 1 个参数 = 编号文本，第 2 个 = 颜色，size = 字号。
@@ -602,8 +616,8 @@
 
 // flow-steps 单步（内部件）。
 // 横向（compact: true）＝步骤卡：编号药丸 + 标题 + 说明，浅底左竖条语言；
-// 纵向（compact: false）＝时间线行：左轨药丸 + 下箭头，右列标题 + 说明（无卡片盒，
-// 步骤长文场景靠低矮行高控制页高，与横向卡的视觉强度形成层级差）。
+// 纵向（compact: false）＝时间线行：左轨药丸，右列标题 + 说明（无卡片盒）；
+// 连接器竖线由 flow-steps 在行间插入并居中，分隔两药丸。
 #let _flow-step-box(s, n, width, compact: true, last: true) = {
   let c = s.at("color", default: auto)
   let title = s.at("title", default: none)
@@ -629,17 +643,16 @@
         ]
       ]
     } else {
-      // 纵向时间线行：左轨药丸 + 下箭头；右列标题 + desc 水平同行。
+      // 纵向时间线行：左轨药丸 + 中线连接器；右列标题 + desc 水平同行。
+      // 连接器用短竖线（2pt 粗 × 0.7em 高、圆角），放在上、下药丸之间距离开
+      // 辟的间隙正中间；整个左列用 stack 确保连接器在两步之间准确居中。
       // 用户要求描述与关键词在同一水平线（如「拆解 · 原始数据清洗」），不走换行。
       grid(
         columns: (auto, 1fr),
         column-gutter: 0.9em,
+        row-gutter: 0pt,
         [
           #align(center)[#_pill(n, col)]
-          #if not last [
-            #v(0.25em)
-            #align(center + horizon)[#text(size: 0.9em, fill: col.darken(15%))[⬇]]
-          ]
         ],
         [
           #text(size: 0.92em, weight: "bold", fill: col.darken(10%))[#title]
@@ -653,9 +666,9 @@
   }
 }
 
-/// flow-steps —— 编号流程条：药丸编号 + 标题/说明 + 箭头，替代「步骤」枚举表。
+/// flow-steps —— 编号流程条：药丸编号 + 标题/说明 + 连接器，替代「步骤」枚举表。
 /// - ..steps (positional dictionaries): 每步 (title, desc: none, color: auto)。
-/// - dir (string): "row" 横向（→ 连接）或 "col" 纵向（↓ 连接）。
+/// - dir (string): "row" 横向（→ 连接）或 "col" 纵向（竖线连接）。
 /// - arrow-w (length): 横向模式箭头列宽，默认 1.5em。
 /// - row-gap (length): 纵向模式行间距，默认 0.25em。
 /// 用法：
@@ -665,7 +678,7 @@
 ///     (title: [执行], desc: [校验 + 调用 + 捕获], color: framaorange),
 ///   )
 /// 改这里: 每步 = (title, desc, color)；dir 控制横向/纵向。
-/// ⚠ 坑: 纵向模式行高被药丸+↓字形度量锁死 ≈61.5pt/行；建议步骤 ≤5，≥5 步时
+/// ⚠ 坑: 纵向模式每行 ≈61.5pt（药丸 + 竖线连接器固定高度）；建议步骤 ≤5，≥5 步时
 ///       单步说明 ≤3 行，长文转横向模式或 desc: none，否则静默溢出。
 #let flow-steps(..steps, dir: "row", arrow-w: 1.5em, row-gap: 0.25em) = {
   let arr = steps.pos()
@@ -687,14 +700,22 @@
       grid(columns: widths, column-gutter: 0pt, ..cells)
     })
   } else {
-    stack(
-      dir: ttb,
-      spacing: 0pt,
-      ..range(n).map(i => [
-        #_flow-step-box(arr.at(i), i + 1, 100%, compact: false, last: i == n - 1)
-        #if i < n - 1 [#v(row-gap)]
-      ]),
-    )
+    let items = ()
+    for i in range(n) {
+      items.push(_flow-step-box(arr.at(i), i + 1, 100%, compact: false))
+      if i < n - 1 {
+        let s = arr.at(i)
+        let sc = s.at("color", default: auto)
+        items.push(block(
+          height: 1em,
+          width: 1.5em,
+          inset: 0pt,
+          _connector-line(sc)
+        ))
+        items.push(v(row-gap))
+      }
+    }
+    stack(dir: ttb, spacing: 0pt, ..items)
   }
 }
 
@@ -1051,4 +1072,3 @@
     #_cover-meta-block(author, institution, date)
   ])
 ])
-
