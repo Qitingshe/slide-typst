@@ -71,22 +71,22 @@
   closing: note[横向三步骤，默认用 → 连接。],
 )
 
-// 用法: body-slide(center: true) 使整块垂直居中。
-// 改这里: 加 center: true 参数；注意 fr 方案的原理（lib.typ 有完整论证注释）。
-// ⚠ 坑: 纵向 flow-steps 的行高被药丸度量锁死 ≈61.5pt/行；body-slide(center: true)
-//        配合纵向步骤适用于中等长度内容——页高充裕时不浪费上方空白。
-== 纵向流程 · body-slide center 变体
+// 用法: flow-steps(..., dir: "col") + body-slide(center: true) 组合成收尾页。
+// 改这里: 每步 = (title, color)；center: true 令 kicker+inner+closing 整块上下居中。
+// ⚠ 坑: 纵向行高被药丸+↓ 字形度量锁死 ≈61.5pt/行（说明 ≤3 行）；center 变体配
+//        短步骤（不写长 desc），上下留白才对称——长说明的纵向流程按顶对齐页使用。
+== 编号流程条 · flow-steps（纵向）
 
 #body-slide(
-  kicker: [垂直居中 + 纵向步骤，适合紧凑或签名式结尾页],
+  kicker: [纵向编号 + ↓ 连接，整块居中适配收尾页],
   inner: [
     #flow-steps(
       dir: "col",
-      (title: [输入], desc: [原始数据清洗], color: framableu),
-      (title: [处理], desc: [特征工程与模型推理], color: framavert),
-      (title: [输出], desc: [结果可视化与存储], color: framaorange),
+      (title: [拆解], color: framableu),
+      (title: [组装], color: framavert),
+      (title: [收束], color: framaorange),
     )
   ],
-  closing: note[body-slide(center: true) 使内容在正文区内上下居中。],
+  closing: note[center: true 令整块上下居中、留白等距——纵向短步骤正是它的典型用法。],
   center: true,
 )
