@@ -638,7 +638,7 @@
           #align(center)[#_pill(n, col)]
           #if not last [
             #v(0.25em)
-            #align(center)[#text(size: 0.8em, fill: framagris)[↓]]
+            #align(center)[#text(size: 0.9em, fill: col.darken(15%))[sym.arrow.down]]
           ]
         ],
         [
