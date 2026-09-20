@@ -104,7 +104,7 @@
     it.element.location(),
     grid(
       columns: (0.55em, auto, 1fr, 1.6em),
-      column-gutter: (0.85em, 1.4em, 0.8em),
+      column-gutter: (0.85em, 1.4em, 1.6em),
       align(horizon + left)[#rect(width: 2.5pt, height: 1.05em, radius: 1.25pt, fill: framableu, stroke: none)],
       text(size: 1.08em, weight: "bold", fill: framagrisdark)[#it.body()],
       [],
