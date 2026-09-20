@@ -27,8 +27,8 @@
   link(
     it.element.location(),
     grid(
-      columns: (1.2em, 1fr),
-      column-gutter: 0.5em,
+      columns: (1.6em, 1fr),
+      column-gutter: 0.8em,
       align(right, text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()]),
       text(size: 1.02em, fill: framagrisdark)[#it.body()],
     ),
