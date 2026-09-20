@@ -771,6 +771,79 @@
   cover: cetz.draw.hide.with(bounds: true),
 )
 
+// ==== 区域编排 grid-slide（v2.0）====
+
+/// grid-slide —— 区域编排页骨架（v2.0）
+///
+/// 按行列网格划分页面，内容依次填入每个格子 —— 先定格局，后填内容。
+/// 格子按行优先顺序从 positional args 读取，网格维度由 columns/rows 决定。
+/// 支持 Typst 原生 grid.cell(colspan:, rowspan:) 在任意格子上声明跨步。
+///
+/// - columns (list of relative/lengths): 列宽定义，如 (1fr, 1fr) 均分两列、
+///   (1.5fr, 1fr) 偏左、(3em, 1fr, 1fr) 固定宽首列。默认 (1fr)。
+/// - rows (list of relative/lengths): 行高定义，默认 (auto, 1fr)。
+///   末行 1fr 撑满剩余页面空间（底部锚定）；单行 (1fr) 填充整页。
+/// - gutter (length): 区域间距，默认 gutter-primary；内部映射到 Typst grid
+///   的 column-gutter 与 row-gutter（grid 不直接接受 gutter: 参数）。
+/// - align (tuple): 格子内内容的默认对齐，默认 (center, top)；可传 (left, top) 等。
+/// - center (bool): true 时整张网格在页面正文区内垂直居中（等价 body-slide center
+///   的双 v(1fr) 方案；kicker 无——用 #keyline 放网格内区域即可）。默认 false。
+/// - ..cells (positional, content): 按行优先顺序依次填入格子的内容。
+///   格子数必须 ≤ columns×rows；不足时剩余格子留空；超过时报错。
+///   需要跨步时在对应格子上用 grid.cell(colspan: 2, rowspan: 1)[...] 包裹。
+///
+/// 用法：
+///   #grid-slide(
+///     columns: (1fr, 1fr),
+///     rows: (auto, 1fr),
+///     gutter: gutter-primary,
+///     align: (left, top),
+///     // cell(1,1)
+///     [
+///       #image("assets/sample-scheme.svg", height: 3em)
+///       #text(size: 0.76em, fill: framagris)[系统架构概览]
+///     ],
+///     // cell(1,2)
+///     [
+///       #keyline[核心特性]
+///       * 弹性伸缩
+///       * 自动容错
+///       * 声明式 API
+///     ],
+///     // cell(2,1-2)：通栏底部（colspan: 2）
+///     grid.cell(colspan: 2)[
+///       #grid(columns: (1fr, 1fr, 1fr), gutter: gutter-tight,
+///         [图一], [图二], [图三]
+///       )
+///     ],
+///   )
+#let grid-slide(
+  columns: (1fr,),
+  rows: (auto, 1fr),
+  gutter: gutter-primary,
+  align: (center, top),
+  center: false,
+  ..cells,
+) = {
+  let arr = cells.pos()
+  let expect = columns.len() * rows.len()
+  assert(arr.len() <= expect, message: "grid-slide: 内容格子数超过 grid 容量 (" + str(expect) + ")")
+  let g = grid(
+    columns: columns,
+    rows: rows,
+    column-gutter: gutter,
+    row-gutter: gutter,
+    ..arr,
+  )
+  if center {
+    // 中心对齐：双 v(1fr) 方案复用 body-slide center 自验的排版方式，
+    // 见 body-slide center 注释（优于 measure 测量法）。
+    [#v(1fr) #align(align, g) #v(1fr)]
+  } else {
+    align(align, g)
+  }
+}
+
 // ==== 封面（title slide）====
 // 全宽白画布包装：封面与开场页共用（隐藏主题 header/footer、白底、同一边距）。
 // 视觉区分在各自 body 内：封面 = 左侧渐变面板 + 大图形；开场页 = 左竖条 +
@@ -871,6 +944,66 @@
       #v(0.7em)
       #_cover-meta(author, institution, date)
     ]
+  }
+}
+
+// ---- 区域编排 grid-slide（v2.0）----
+// 先定格局后填内容：行列网格定义位置，内容按行优先顺序填入格子。
+// 支持原生 grid.cell(colspan:, rowspan:) 声明跨步，末行默认 1fr 撑满底部。
+
+/// grid-slide —— 区域编排页骨架（v2.0）。
+///
+/// 按行列网格划分页面，内容依次填入每个格子 —— 先定格局，后填内容。
+/// 格子按行优先顺序从 positional args 读取，网格维度由 columns/rows 决定。
+/// 需要跨步时在对应格子上用 `grid.cell(colspan: 2, rowspan: 1)[...]` 包裹。
+///
+/// - columns (list of relative/length): 列宽，如 `(1fr, 1fr)` 均分两列；
+///   默认 `(1fr)`。
+/// - rows (list of relative/length): 行高，默认 `(auto, 1fr)` 末行撑到底部。
+/// - gutter (length): 区域间距，默认 `gutter-primary`。
+/// - cell-align (tuple): 格内内容默认对齐，默认 `(center, top)`。
+/// - center (bool): `true` 时整张网格在页面正文区内垂直居中（双 v(1fr)，
+///   同 body-slide center 方案）。默认 `false`。
+/// - ..cells (positional, content): 按行优先顺序填入格子的内容。
+///   格子数不得超过 `columns × rows`，不足时剩余格子留空。
+/// 用法：
+/// ```typst
+/// #grid-slide(
+///   columns: (1fr, 1fr),
+///   rows: (auto, 1fr),
+///   gutter: gutter-primary,
+///   align: (left, top),
+///   [#image("assets/sample-scheme.svg", height: 3em)],
+///   [#keyline[核心特性] * 弹性伸缩\n  * 自动容错],
+///   grid.cell(colspan: 2)[
+///     #grid(columns: (1fr, 1fr, 1fr), gutter: gutter-tight,
+///       [图一], [图二], [图三]
+///     )
+///   ],
+/// )
+/// ```
+#let grid-slide(
+  columns: (1fr,),
+  rows: (auto, 1fr),
+  gutter: gutter-primary,
+  center: false,
+  ..cells,
+) = {
+  let arr = cells.pos()
+  let expect = columns.len() * rows.len()
+  assert(arr.len() <= expect,
+    message: "grid-slide: 内容格子数超过 grid 容量 (" + str(expect) + ")")
+  let g = grid(
+    columns: columns,
+    rows: rows,
+    column-gutter: gutter,
+    row-gutter: gutter,
+    ..arr,
+  )
+  if center {
+    [#v(1fr) #g #v(1fr)]
+  } else {
+    g
   }
 }
 

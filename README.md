@@ -1,17 +1,17 @@
 # Slide 模板画廊（slide-typst）
 
-Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 49 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
+Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 53 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
 
 ## 特性
 
-- **49 页全样例画廊**：十个家族（封面与开场 / 页面骨架 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 常规元素 / 示意图与公式 / 数据图表 / 表格与流程），每页都是一个可整页抄走的自包含样例。
+- **53 页全样例画廊**：十一个家族（封面与开场 / 页面骨架 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 常规元素 / 示意图与公式 / 数据图表 / 表格与流程 / 区域编排），每页都是一个可整页抄走的自包含样例。
 - **Frama 18 色设计系统**：8 种品牌原色 × 深浅两档（`framableu` ～ `framagris`）+ `framagrisdark` / `framagrisdarkest`，全部以 `#let` 导出、接入主题配色槽位。
 - **卡片与等高网格**：`boite` 浅色卡片 ×8 + `boitefilled` 实色白字；`stretch-grid` 自动测量自然高度、按行生成等高网格，无需手算 rows。
 - **CeTZ 示意图**：`cetz-canvas` 封装 touying 动画机制，示例含闭环架构图、ReAct 循环图。
 - **自动目录与页面 chrome**：`outline` 条目样式、页眉标题 + 细线、面包屑、页脚三格、进度条全套 recipe。
 - **工程化门禁**：编译零错误零警告、基线校验（页数 / 用法注释数 / 链接数 / API 清单）、CI 硬闸、本地 pre-commit 钩子、GitHub Pages 预览。
 
-> 基线数字（页数 49 / 用法注释 37 / 链接 55 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
+> 基线数字（页数 53 / 用法注释 38 / 链接 59 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
 
 ## 快速开始
 
@@ -30,7 +30,7 @@ typst watch main.typ     # 开发模式：保存即增量重编
 
 | 路径 | 职责 |
 |---|---|
-| `lib.typ` | **设计系统唯一 API 源**：49 个公开符号（配色 / 卡片 / 网格 / 页面骨架 / 数据元件 / 章节封面 / 表格替代语言 / CeTZ / 图表）。已解冻，改动需独立评审 |
+| `lib.typ` | **设计系统唯一 API 源**：50 个公开符号（配色 / 卡片 / 网格 / 页面骨架 / 数据元件 / 章节封面 / 表格替代语言 / 区域编排 / CeTZ / 图表）。已解冻，改动需独立评审 |
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（书名 / 作者 / 机构 / 日期）、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 `cover`（含参数变体）、开场页 `section-open`（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 `body-slide` 全套变体 + 间距体系（`gap-primary` / `gap-secondary`） |
@@ -42,13 +42,14 @@ typst watch main.typ     # 开发模式：保存即增量重编
 | `showcase/show.cetz.typ` | CeTZ 画布示例（闭环图 / ReAct 循环）+ 公式块 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot）：饼图 / 分组柱状 / 线性图 / 变体速查（环形·堆积·区域）+ numbly 格式化样板 |
 | `showcase/show.tables.typ` | 表格替代语言：`cmp-grid` 对比网格 / `term-rows` 术语行 / `flow-steps` 编号流程（横向+纵向）+ `body-slide(center: true)` 垂直居中变体 |
+| `showcase/show.grid.typ` | 区域编排（v2.0）：`grid-slide` 先定格局后填内容——行列网格定义位置，内容按行优先填入，支持 `grid.cell(colspan:)` 跨步，末行 1fr 底部锚定 |
 | `assets/` | 演示资产（`sample-scheme.svg` / `sample-chart.svg` / `sample-data.svg`），借页者按需替换 |
 | `gates.json` | **基线单一事实源**：页数 / 用法注释数 / 链接数 / API 清单 |
 | `scripts/verify.py` | 门禁唯一实现（本地 + CI + pre-commit 共用） |
 | `.github/workflows/` | `ci.yml` 门禁（ubuntu）+ `pages.yml` Pages 部署（macOS，strict 页数闸 + main.pdf 预览） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 时自动跳过，不阻塞提交） |
 
-十个家族的 `main.typ` include 顺序即画廊目录顺序。
+十一个家族的 `main.typ` include 顺序即画廊目录顺序。
 
 ## 如何使用（借页指南）
 

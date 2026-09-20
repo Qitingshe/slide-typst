@@ -29,6 +29,7 @@ typst compile main.typ
 | `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot 0.1.4）：饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 格式化样板；合计 4 页 |
 | `showcase/show.tables.typ` | 表格替代语言：cmp-grid（对比网格）/ term-rows（术语行）/ flow-steps（编号流程，横向+纵向）+ body-slide center 垂直居中变体；合计 4 页 |
+| `showcase/show.grid.typ` | 区域编排（v2.0）：grid-slide 先定格局后填内容，行列网格 + colspan/rowspan（colspan 跨步） + 末行 1fr 底部锚定；合计 2 页 |
 | `assets/` | 画廊演示资产（sample-scheme.svg / sample-chart.svg / sample-data.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
@@ -108,6 +109,7 @@ typst compile main.typ
 - **图注**：`figure-block(img, caption: none, width: 88%, gap: 0.12em, caption-size: 0.63em, caption-color: framagris)` —— 图与图注同宽同左缘，紧贴图下沿；和原生 figure（计数/进目录）是两条路。
 - **章节/封面**：`section-open(title(必), subtitle, index, color: auto)` 写入 accent-state + breadcrumb-state；`cover(title, subtitle, author, institution, date)`。
 - **CeTZ**：`cetz-canvas(...)` = touying-reducer + cetz.canvas；用于动态架构图。
+- **区域编排**（v2.0）：`grid-slide(columns, rows, gutter, center, ..cells)` —— 先定格局后填内容；行列网格定义位置，内容按行优先顺序填入；支持 grid.cell(colspan:, rowspan:)；末行默认 1fr 底部锚定。
 - 新页面先用现有元件组合，不要发明新容器/装饰语言。
 
 ## 协作契约

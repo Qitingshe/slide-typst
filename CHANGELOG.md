@@ -8,8 +8,6 @@
 ### Added
 - 新增「数据图表」家族（showcase/show.charts.typ，4 页）：根据数据绘制饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 0.1.0 首次落地为格式化样板（占比/工时/降幅）；目录 8 → 9 家族
 - 新增「表格与流程」家族（showcase/show.tables.typ，4 页）：表格替代语言三组件落地——cmp-grid 对比网格（左灰维度标签 + 双色值单元格）/ term-rows 术语行 / flow-steps 编号流程（横向步骤卡 + 纵向时间线，纵向行高受药丸+箭头字形度量锁死 ≈61.5pt/行，红线已注释）；`body-slide` 新增 `center: true` 垂直居中变体（双 `v(1fr)` 方案，规避 measure 对 outline 塌缩的陷阱）；目录 9 → 10 家族；lib.typ API 46 → 49 公开符号
-
-### Fixed
 - verify.py：移除以 rg/ripgrep 为依赖的链接/页数统计（GitHub 托管 runner 镜像不装 ripgrep，
   此前 CI 在 links 检查直接 FileNotFoundError 崩溃），改纯 Python 字节计数，语义逐字节等价；
   compile 检查对非 macOS 的 `unknown font family` 字型缺失 warning 降级 WARN（内容级仍硬闸）

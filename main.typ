@@ -81,7 +81,7 @@
       ],
     )
   ],
-  closing: note[十族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式 · 数据图表 · 表格与流程。],
+  closing: note[十一族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式 · 数据图表 · 表格与流程 · 区域编排。],
 )
 
 // ============ 目录 ============
@@ -116,11 +116,12 @@
 #body-slide(
   kicker: none,
   inner: [
-    #v(0.25em) // 页顶留白：收紧让 10 行清单 + 收尾回本页
+    #set par(leading: 0.01em) // 12 行目录：超紧行距防溢出孤页
+    #v(0.25em) // 页顶留白
     #outline(title: none, depth: 1)
   ],
-  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[十个家族 · 从封面门面到表格流程]]],
-  closing-gap: 0pt, // 10 行清单 + 收尾：0.6em→0.28em→0.2em→0.1em→0pt 逐档收紧，配合条目行距回本页
+  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[十一个家族 · 从封面门面到区域编排]]],
+  closing-gap: 0pt, // 配合 #set par 收紧行距，整页不翻票
 )
 
 // ============ 家族 ============
@@ -165,3 +166,7 @@
 = 表格与流程
 #section-open(title: [表格与流程], subtitle: [cmp-grid · term-rows · flow-steps · center 变体], color: framableu)
 #include "showcase/show.tables.typ"
+
+= 区域编排（v2.0）
+#section-open(title: [区域编排], subtitle: [grid-slide 先定格局后填内容], color: framableu)
+#include "showcase/show.grid.typ"
