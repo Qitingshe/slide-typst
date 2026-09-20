@@ -28,7 +28,7 @@
     it.element.location(),
     grid(
       columns: (1.6em, 1fr),
-      column-gutter: 1.4em,
+      column-gutter: 2.4em,
       align(right, text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()]),
       text(size: 1.02em, fill: framagrisdark)[#it.body()],
     ),
