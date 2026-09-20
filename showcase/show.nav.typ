@@ -36,7 +36,7 @@
 }
 
 #body-slide(
-  kicker: [把十一个家族再列一遍，演示 recipe 可整体搬走],
+  kicker: [把八族再列一遍，演示 recipe 可整体搬走],
   inner: [
     #v(0.2em) // 页顶留白：收紧给 10 行目录 + note 收尾腾位
     #outline(title: none, depth: 1)

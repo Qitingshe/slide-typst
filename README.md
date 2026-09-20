@@ -1,17 +1,17 @@
 # Slide 模板画廊（slide-typst）
 
-Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 53 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
+Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 49 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
 
 ## 特性
 
-- **53 页全样例画廊**：十一个家族（封面与开场 / 页面骨架 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 常规元素 / 示意图与公式 / 数据图表 / 表格与流程 / 区域编排），每页都是一个可整页抄走的自包含样例。
+- **49 页全样例画廊**：八族（页面体系 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 页面编排 / 示意图与公式 / 数据图表），每页都是一个可整页抄走的自包含样例。
 - **Frama 18 色设计系统**：8 种品牌原色 × 深浅两档（`framableu` ～ `framagris`）+ `framagrisdark` / `framagrisdarkest`，全部以 `#let` 导出、接入主题配色槽位。
 - **卡片与等高网格**：`boite` 浅色卡片 ×8 + `boitefilled` 实色白字；`stretch-grid` 自动测量自然高度、按行生成等高网格，无需手算 rows。
 - **CeTZ 示意图**：`cetz-canvas` 封装 touying 动画机制，示例含闭环架构图、ReAct 循环图。
 - **自动目录与页面 chrome**：`outline` 条目样式、页眉标题 + 细线、面包屑、页脚三格、进度条全套 recipe。
 - **工程化门禁**：编译零错误零警告、基线校验（页数 / 用法注释数 / 链接数 / API 清单）、CI 硬闸、本地 pre-commit 钩子、GitHub Pages 预览。
 
-> 基线数字（页数 53 / 用法注释 38 / 链接 59 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
+> 基线数字（页数 49 / 用法注释 38 / 链接 47 / API 清单）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
 
 ## 快速开始
 
@@ -49,7 +49,7 @@ typst watch main.typ     # 开发模式：保存即增量重编
 | `.github/workflows/` | `ci.yml` 门禁（ubuntu）+ `pages.yml` Pages 部署（macOS，strict 页数闸 + main.pdf 预览） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 时自动跳过，不阻塞提交） |
 
-十一个家族的 `main.typ` include 顺序即画廊目录顺序。
+八族的 `main.typ` include 顺序即画廊目录顺序。
 
 ## 如何使用（借页指南）
 

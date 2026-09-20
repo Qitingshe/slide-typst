@@ -81,7 +81,7 @@
       ],
     )
   ],
-  closing: note[十一族：封面与开场 · 页面骨架 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 常规元素 · 示意图与公式 · 数据图表 · 表格与流程 · 区域编排。],
+  closing: note[八族：页面体系 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 页面编排 · 示意图与公式 · 数据图表。],
 )
 
 // ============ 目录 ============
@@ -119,19 +119,18 @@
     #v(0.3em) // 目录页顶留白：参考 v1 风格
     #outline(title: none, depth: 1)
   ],
-  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[十一个家族 · 从封面门面到区域编排]]],
+  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[八族 · 从页面体系到数据图表]]],
   closing-gap: 0pt, // 配合 #set par 收紧行距，整页不翻票
 )
 
 // ============ 家族 ============
 // 每个 `=` 家族紧跟一张 section-open 开场页（换一次强调色），再 include 演示文件。
+// 八大族（2026-09 重组：页面体系/卡片与网格/数据元件/导航与目录/配色与强调/
+// 页面编排/示意图与公式/数据图表）；section-open 省 3 张，目录 9 项。
 
-= 封面与开场
-#section-open(title: [封面与开场], subtitle: [整份 deck 的头尾门面], color: framableu)
+= 页面体系
+#section-open(title: [页面体系], subtitle: [封面 · 开场 · body-slide 骨架], color: framableu)
 #include "showcase/show.cover.typ"
-
-= 页面骨架
-#section-open(title: [页面骨架], subtitle: [body-slide 与节奏间距], color: framableu)
 #include "showcase/show.skeleton.typ"
 
 = 卡片与网格
@@ -150,9 +149,11 @@
 #section-open(title: [配色与强调], subtitle: [frama 调色板与页级走位], color: framavert)
 #include "showcase/show.color.typ"
 
-= 常规元素
-#section-open(title: [常规元素], subtitle: [表格 · 图片 · 链接], color: framagris)
+= 页面编排
+#section-open(title: [页面编排], subtitle: [排版元件 · 表格替代语言 · grid-slide 区域网格], color: framagris)
 #include "showcase/show.basic.typ"
+#include "showcase/show.tables.typ"
+#include "showcase/show.grid.typ"
 
 = 示意图与公式
 #section-open(title: [示意图与公式], subtitle: [CeTZ 画布与数学块], color: framarouge)
@@ -161,11 +162,3 @@
 = 数据图表
 #section-open(title: [数据图表], subtitle: [饼图 · 柱状图 · 线性图], color: framaviolet)
 #include "showcase/show.charts.typ"
-
-= 表格与流程
-#section-open(title: [表格与流程], subtitle: [cmp-grid · term-rows · flow-steps · center 变体], color: framableu)
-#include "showcase/show.tables.typ"
-
-= 区域编排（v2.0）
-#section-open(title: [区域编排], subtitle: [grid-slide 先定格局后填内容], color: framableu)
-#include "showcase/show.grid.typ"
