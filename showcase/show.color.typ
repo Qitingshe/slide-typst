@@ -12,12 +12,16 @@
 #import "../lib.typ": *
 
 // 文件级局部 helper：单块色卡（名字 + 底色 + 文字色）。
-#let _swatch(name, c, fore: rgb("#FFFFFF")) = block(
+// 用 rect + 固定高度确保网格内所有色块等高对齐，不受名称换行影响。
+#let _swatch(name, c, fore: rgb("#FFFFFF")) = rect(
   width: 100%,
-  inset: (x: 0.5em, y: 0.42em),
+  height: 2.4em,
+  inset: (x: 0.5em, y: 0.3em),
   radius: 3pt,
   fill: c,
+  stroke: none,
 )[
+  #set align(center + horizon)
   #text(size: 0.6em, fill: fore, weight: "medium")[#name]
 ]
 
