@@ -24,7 +24,7 @@ open main.pdf            # 或直接用阅读器打开
 typst watch main.typ     # 开发模式：保存即增量重编
 ```
 
-中文主字体为 **Noto Sans CJK SC**（SIL OFL 开源，替代 New Computer Modern + Heiti SC 回退链）；Linux CI 现通过 apt 安装 fonts-noto-cjk 对齐，但字体版本/度量差异仍可能带来分页漂移，属已知现象（见下文"门禁分层"）。
+中文主字体为 **Noto Sans CJK SC**（SIL OFL 开源，替代 New Computer Modern + Heiti SC 回退链）；Linux CI 现通过 apt 安装 fonts-noto-cjk-extra 对齐字重覆盖（Thin…Black），但字体版本/度量差异仍可能带来分页漂移，属已知现象（见下文"门禁分层"）。
 
 ## 目录结构
 
@@ -128,7 +128,7 @@ python3 scripts/verify.py --strict-pages  # 页数升级为硬闸
 **门禁分层（按运行环境）**：
 
 - **macOS 本地**：`pages` 走硬闸（`mdls` 精确取页数；中文字体完整，页数稳定）。`pre-commit` 钩子默认以 `--strict-pages` 跑全量门禁；机器上没装 typst 时自动跳过、不阻塞提交。
-- **CI（ubuntu）**：页面检查降级为 warn —— ubuntu 经 apt 安装 fonts-noto-cjk，但字体版本/度量与 macOS 存在差异，分页漂移属预期，故不以 ubuntu 页数作硬闸；其余五项硬闸。
+- **CI（ubuntu）**：页面检查降级为 warn —— ubuntu 经 apt 安装 fonts-noto-cjk-extra（字重覆盖与 macOS 一致），但字体版本/度量与 macOS 存在差异，分页漂移属预期，故不以 ubuntu 页数作硬闸；其余五项硬闸。
 - **GitHub Pages**：`pages.yml` 在 macOS runner 上重新编译并跑 strict 门禁（runner 经 brew cask 安装 font-noto-sans-cjk-sc 提供 Noto Sans CJK SC），把 `main.pdf` 部署到 Pages 供预览/下载（需在仓库 Settings > Pages 选择 "GitHub Actions" 作为源）。
 
 **溢出是静默的**：Typst 不报溢出错，直接把内容压向页脚/截断。门禁只保证"编译零警告 + 页数对"，**每条改动都要人工逐页翻看确认布局与溢出**。

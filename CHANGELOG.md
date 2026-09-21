@@ -6,7 +6,7 @@
 ## [Unreleased]
 
 ### Changed（2026-09-21 字体重构）
-- 字体策略重构：默认字体从 `("New Computer Modern", "Heiti SC")` 替换为 `("Noto Sans CJK SC")`（SIL OFL 1.1 开源），跨平台一致，不再依赖 macOS 独占系统字体 Heiti SC；CI 同步安装 `fonts-noto-cjk`（apt）+ `typst fonts` 断言、Pages 安装 `font-noto-sans-cjk-sc`（brew cask，勿用 `font-noto-sans-cjk`——家族名无 SC 后缀不匹配）消除缺字 warning；分页与基线不变（54 页）
+- 字体策略重构：默认字体从 `("New Computer Modern", "Heiti SC")` 替换为 `("Noto Sans CJK SC")`（SIL OFL 1.1 开源），跨平台一致，不再依赖 macOS 独占系统字体 Heiti SC；CI 安装 `fonts-noto-cjk-extra`（apt，含 Thin..Black 全字重）、Pages 安装 `font-noto-sans-cjk-sc`（brew cask，勿用 `font-noto-sans-cjk`——家族名无 SC 后缀不匹配），两端均加字重覆盖断言（100/300/350/400/500/700/900）阻断缺字与 `weight: "medium"` 静默回退；分页与基线不变（54 页）
 - AGENTS.md 更新字体策略描述与文件地图
 
 ### Added（2026-09-21 重构轮）

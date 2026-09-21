@@ -37,7 +37,7 @@ typst compile main.typ
 | `typst.toml` | 项目元数据（compiler 钉 0.15.1） |
 | `gates.json` | 基线单一事实源（页数 / 用法 / 链接 / API 清单）——改基线只改这里 |
 | `scripts/verify.py` | 门禁唯一实现（compile 零警告 / 计数 / API / links / pages 分层）本地+CI 共用 |
-| `.github/workflows/ci.yml` | CI 门禁（ubuntu + apt fonts-noto-cjk，pages=warn 因字体版本差异） |
+| `.github/workflows/ci.yml` | CI 门禁（ubuntu + apt fonts-noto-cjk-extra 全字重，pages=warn 因字体版本差异） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
 
 ## 架构原理（2026-09 资深架构重构固化）
@@ -45,10 +45,11 @@ typst compile main.typ
 - **基线单一事实源**：页数 / 用法计数 / 链接数 / API 清单只写 gates.json，改基线只改它；
   `scripts/verify.py` 是门禁唯一实现（本地 + CI + pre-commit 共用），AGENTS.md 不复制数字。
 - **字体策略**：默认字体 Noto Sans CJK SC（SIL OFL 1.1 开源），跨平台一致，CI（ubuntu
-  `apt install fonts-noto-cjk` + macOS Homebrew `font-noto-sans-cjk-sc`）均可安装，无版权风险。
-  不再依赖 macOS 独占系统字体。
+  `apt install fonts-noto-cjk-extra` + macOS Homebrew `font-noto-sans-cjk-sc`）均可安装、字重
+  覆盖一致（Thin/Light/DemiLight/Regular/Medium/Bold/Black，即 100/300/350/400/500/700/900），
+  无版权风险。不再依赖 macOS 独占系统字体。
 - **门禁分层**：pages 仅在 macOS（`mdls`，字体完整）走 hard gate；CI（ubuntu 经 apt 安装
-  fonts-noto-cjk，但包版本/度量与 macOS 存在差异，分页漂移属预期）与其余场景
+  fonts-noto-cjk-extra，字重覆盖一致但包版本/度量与 macOS 存在差异，分页漂移属预期）与其余场景
   pages 为 warn——字体不捆绑入库，故不以 ubuntu 页数作硬闸。
   compile 检查同源豁免：非 macOS 上仅含 `unknown font family` 字型缺失 warning 时降级 WARN
   （内容级 warning 仍硬闸）。verify.py 不依赖 rg/ripgrep（GitHub 托管 runner 镜像无
