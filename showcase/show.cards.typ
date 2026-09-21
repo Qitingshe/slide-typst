@@ -27,14 +27,14 @@
 #stretch-grid(
   columns: 4,
   gutter: 0.6em,
-  boitebleue(stretch: true)[#align(center)[*bleue* \ #text(size: 0.72em)[主色 · 默认]]],
-  boiteverte(stretch: true)[#align(center)[*verte* \ #text(size: 0.72em)[辅助 · 成功]]],
-  boiterouge(stretch: true)[#align(center)[*rouge* \ #text(size: 0.72em)[警示 · 错误]]],
-  boiteorange(stretch: true)[#align(center)[*orange* \ #text(size: 0.72em)[强调 · 稀有]]],
-  boiteviolette(stretch: true)[#align(center)[*violette* \ #text(size: 0.72em)[次要 · 深色组]]],
-  boitejaune(stretch: true)[#align(center)[*jaune* \ #text(size: 0.72em)[提示 · 浅色]]],
-  boitemarron(stretch: true)[#align(center)[*marron* \ #text(size: 0.72em)[中性 · 柔和]]],
-  boitegrise(stretch: true)[#align(center)[*grise* \ #text(size: 0.72em)[弱化 · 置灰]]],
+  boitebleue(stretch: true)[#align(center)[*bleue* \ #text(size: 0.72em)[主色 · 默认] \ #text(size: 0.6em, fill: framagris)[设计系统核心组件库]]],
+  boiteverte(stretch: true)[#align(center)[*verte* \ #text(size: 0.72em)[辅助 · 成功] \ #text(size: 0.6em, fill: framagris)[数据同步与状态校验]]],
+  boiterouge(stretch: true)[#align(center)[*rouge* \ #text(size: 0.72em)[警示 · 错误] \ #text(size: 0.6em, fill: framagris)[异常触发告警与回滚]]],
+  boiteorange(stretch: true)[#align(center)[*orange* \ #text(size: 0.72em)[强调 · 稀有] \ #text(size: 0.6em, fill: framagris)[高优事项标记预警]]],
+  boiteviolette(stretch: true)[#align(center)[*violette* \ #text(size: 0.72em)[次要 · 深色组] \ #text(size: 0.6em, fill: framagris)[扩展策略配置面板]]],
+  boitejaune(stretch: true)[#align(center)[*jaune* \ #text(size: 0.72em)[提示 · 浅色] \ #text(size: 0.6em, fill: framagris)[表单输入实时校验提示]]],
+  boitemarron(stretch: true)[#align(center)[*marron* \ #text(size: 0.72em)[中性 · 柔和] \ #text(size: 0.6em, fill: framagris)[历史归档数据概览]]],
+  boitegrise(stretch: true)[#align(center)[*grise* \ #text(size: 0.72em)[弱化 · 置灰] \ #text(size: 0.6em, fill: framagris)[禁用或已完成项目]]],
 )
 
 // 用法: #quote(block: true)[引文] 装进 #boiteXXX —— 引用块卡片（观点/金句/原则）

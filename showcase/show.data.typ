@@ -44,7 +44,7 @@
       columns: 3,
       gutter: 1em,
       stat(stretch: true)[18][调色板色数],
-      stat(stretch: true, amount-size: 34pt, color: framaviolet)[8][卡片配色],
+      stat(stretch: true, amount-size: 30pt, color: framaviolet)[8][卡片配色],
       stat(stretch: true, amount-size: 30pt)[100%][覆盖率],
     )
     #v(gap-secondary)

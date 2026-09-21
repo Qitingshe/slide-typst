@@ -17,19 +17,20 @@ typst compile main.typ
 
 | 文件 | 职责 |
 |---|---|
-| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、section-open/cover、cetz-canvas、figure-block、chart/plot（cetz-plot 0.1.4）；已解冻，改动需独立评审 |
+| `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、leg-label（图例降档）、section-open/cover、cetz-canvas、figure-block、chart/plot（cetz-plot 0.1.4）；已解冻，改动需独立评审 |
 | `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 cover（含参数变体）、开场页 section-open（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
-| `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）+ 全要素样板页（末页） |
+| `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）+ 全要素样板页（末页）；八色卡每张带功能描述文案示例 |
 | `showcase/show.data.typ` | keyline（色/字号变体）、stat（默认/定制/stretch 行）、note、alert/frameEmph |
 | `showcase/show.nav.typ` | 自动目录 recipe（outline + entry 样式 + outlined:false 技巧）+ chrome（页眉标题+细线、面包屑、页脚三格 — 作者 / deck 标题 / 日期+页码、进度条） |
 | `showcase/show.color.typ` | frama 调色板总览 + slide-accent 色交接演示（节内页级走位仅此一处） |
 | `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
-| `showcase/show.cetz.typ` | CeTZ 画布（改编 core.typ 闭环图/ReAct 循环）+ 公式块；合计 ≤3 页 |
+| `showcase/show.cetz.typ` | CeTZ 画布（研发迭代闭环 5 节点 / PDCA 改进环 4 节点——中性通用示例）+ 公式块；合计 3 页 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot 0.1.4）：饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 格式化样板；合计 4 页 |
 | `showcase/show.tables.typ` | 表格替代语言：cmp-grid（对比网格）/ term-rows（术语行）/ flow-steps（编号流程，横向+纵向）+ body-slide center 垂直居中变体；合计 4 页 |
-| `showcase/show.grid.typ` | 区域编排（v2.0）：grid-slide 先定格局后填内容，行列网格 + colspan/rowspan（colspan 跨步） + 末行 1fr 底部锚定；合计 2 页 |
+| `showcase/show.grid.typ` | 区域编排（v2.0）：grid-slide 先定格局后填内容，行列网格 + colspan/rowspan（跨步 + 不等宽列）+ 末行 1fr 底部锚定；合计 3 页（左右分栏 / 复合网格仪表盘 / 感谢聆听·结尾页） |
+| `showcase/show.system.typ` | 设计系统速查：18 色 mini 色卡矩阵 / 间距 token / 字体层级 / 卡片构造 / 溢出边界；参考附录置末位 |
 | `assets/` | 画廊演示资产（sample-scheme.svg / sample-chart.svg / sample-data.svg）；借页者按需替换 |
 | `.slim/deepwork/template-gallery.md` | 重构计划与验收基线记录（含覆盖率清单），不在 git 中跟踪 |
 | `chapters/` | main 上已删除；仅存于 feature 分支 |
@@ -53,7 +54,7 @@ typst compile main.typ
 - **show 规则纪律**：show 规则从声明点起全局生效会覆盖先前样式——新家族页面必须先查全
   deck 是否已有同名规则；规则体尽量用代码上下文限定作用域（见 outline recipe）；
   删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
-- **防拆规则**：lib.typ 保持单体（当前 920 行）；只有当超过 ~1000 行、或出现「按节独立
+- **防拆规则**：lib.typ 保持单体（当前约 1035 行）；只有当超过 ~1000 行、或出现「按节独立
   分发」的真实需求时才评审拆分，不预设 facade。
 - **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.5.2 + cetz-plot 0.1.4 + numbly 0.1.0；
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
@@ -66,7 +67,7 @@ typst compile main.typ
   header 内 `layout(size => size.width)` 不恒等于 816.9pt，表达式方案不可行，命名常量
   保留原字面值、逐字节同渲染；注：B10 旧描述「body-slide 高度」失准，魔数实际是页眉
   **细线长度**）；framableulight 亮度断层已文档化（lib.typ:59）；图例字级独立降档
-  `leg-label` helper（show.charts.typ，0.7em×0.8em≈11.9pt，低于刻度档）。
+  `leg-label` helper（lib.typ，0.7em×0.8em≈11.9pt，低于刻度档；2026-09 从 show.charts.typ 迁入设计系统）。
 
 ## 结构约定
 
@@ -105,8 +106,9 @@ typst compile main.typ
 - **页面骨架**：`body-slide(kicker: none, inner: none, closing: none, gap: gap-primary, closing-gap: gap-primary)`；`gap-primary` = 0.3em（keyline 后/收尾前）；`gap-secondary` = 0.4em（主体内段间）。
 - **卡片**：`boitebleue` / `boiteverte` / `boiterouge` / `boiteorange` / `boiteviolette` / `boitejaune` / `boitemarron` / `boitegrise`；`boitefilled`（实色白字）；均支持 `stretch: true`（规格字典 → stretch-grid）。
 - **网格**：`stretch-grid(..cells, columns, row-gutter, column-gutter, gutter)` —— 自动等高；stat 行高按 `2·T − A` 锚定垂直中心；gutter 三档 token：`gutter-tight` 0.6em / `gutter-primary` 0.8em（默认）/ `gutter-loose` 1em。
-- **数据元件**：`keyline(body, color: auto, size: 24pt)`；`stat(amount, label, amount-size: 34pt, color: auto, stretch: false)`；`note(body, color: framagris)`。
+- **数据元件**：`keyline(body, color: auto, size: 24pt)`；`stat(amount, label, amount-size: 30pt, color: auto, stretch: false)`（30pt 低于 section-open 标题 32pt，层级有序）；`note(body, color: framagris)`。
 - **图注**：`figure-block(img, caption: none, width: 88%, gap: 0.12em, caption-size: 0.63em, caption-color: framagris)` —— 图与图注同宽同左缘，紧贴图下沿；和原生 figure（计数/进目录）是两条路。
+- **图例降档**：`leg-label(label)` —— 图例字级独立降档（0.7em×0.8em≈11.9pt，低于刻度档）；图表页借页必备。
 - **章节/封面**：`section-open(title(必), subtitle, index, color: auto)` 写入 accent-state + breadcrumb-state；`cover(title, subtitle, author, institution, date)`。
 - **CeTZ**：`cetz-canvas(...)` = touying-reducer + cetz.canvas；用于动态架构图。
 - **区域编排**（v2.0）：`grid-slide(columns, rows, gutter, center, ..cells)` —— 先定格局后填内容；行列网格定义位置，内容按行优先顺序填入；支持 grid.cell(colspan:, rowspan:)；末行默认 1fr 底部锚定。

@@ -24,20 +24,37 @@
       gutter: 0.6em,
       rows: (auto,),
 
-      // 栏 1 · 调色板概览
+      // 栏 1 · 调色板概览（mini 色卡矩阵：8 原色 + 8 浅色 + 2 深灰）
       block(inset: 0pt)[
-        #text(size: 0.65em, weight: "bold", fill: framableu)[调色板]
+        #text(size: 0.65em, weight: "bold", fill: framableu)[调色板 #text(size: 0.45em, fill: framagris)[18色]]
         #v(0.1em)
-        #grid(columns: 2, gutter: 0.2em,
-          block(fill: framableu, radius: 2pt, height: 0.6em, width: 100%)[],
-          text(size: 0.45em, fill: framagris)[8 原色],
-          block(fill: framableulight, radius: 2pt, height: 0.6em, width: 100%)[],
-          text(size: 0.45em, fill: framagris)[8 浅色],
-          block(fill: framagrisdark, radius: 2pt, height: 0.6em, width: 100%)[],
-          text(size: 0.45em, fill: framagris)[2 深灰],
+        #let _dot(name, c, fore: rgb("#FFFFFF")) = {
+          block(fill: c, radius: 2pt, height: 0.9em, width: 100%, inset: (x: 0.2em, y: 0.05em))[
+            #text(size: 0.4em, fill: fore, weight: "medium")[#name]
+          ]
+        }
+        #grid(columns: 2, gutter: 0.15em,
+          _dot("bleu", framableu),
+          _dot("bleuL", framableulight, fore: framagrisdark),
+          _dot("vert", framavert, fore: framagrisdark),
+          _dot("vertL", framavertlight, fore: framagrisdark),
+          _dot("rouge", framarouge),
+          _dot("rougeL", framarougelight, fore: framagrisdark),
+          _dot("violet", framaviolet),
+          _dot("violetL", framavioletlight, fore: framagrisdark),
+          _dot("orange", framaorange, fore: framagrisdark),
+          _dot("orangeL", framaorangelight, fore: framagrisdark),
+          _dot("jaune", framajaune, fore: framagrisdarkest),
+          _dot("jauneL", framajaunelight, fore: framagrisdark),
+          _dot("marron", framamarron, fore: framagrisdark),
+          _dot("marronL", framamarronlight, fore: framagrisdark),
+          _dot("gris", framagris),
+          _dot("grisL", framagrislight, fore: framagrisdark),
+          _dot("grisD", framagrisdark),
+          _dot("grisDE", framagrisdarkest),
         )
-        #v(0.1em)
-        #note[#text(size: 0.5em)[深底 → 白字 | 中明度底 → 深字]]
+        #v(0.08em)
+        #note[#text(size: 0.48em)[中明度底（vert/orange/jaune/marron）配深字]]
       ],
 
       // 栏 2 · 间距
@@ -57,7 +74,7 @@
         #text(size: 0.65em, weight: "bold", fill: framaviolet)[字体层级]
         #grid(columns: (auto, 1fr), gutter: 0.2em,
           block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[keyline]],   text(size: 0.5em)[24pt],
-          block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[stat]],      text(size: 0.5em)[34pt],
+          block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[stat]],      text(size: 0.5em)[30pt],
           block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[body]],      text(size: 0.5em)[0.85em],
           block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[note]],      text(size: 0.45em)[0.75em],
           block(width: auto, inset: (x: 3pt, y: 1.5pt), radius: 2pt, fill: framagrisdark)[#text(size: 0.5em, fill: rgb("#FFFFFF"), weight: "medium")[caption]],   text(size: 0.4em)[0.63em],

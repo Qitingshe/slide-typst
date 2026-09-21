@@ -40,7 +40,7 @@
   _swatch("framavioletlight", framavioletlight, fore: framagrisdark),
   _swatch("framaorange", framaorange, fore: framagrisdark),
   _swatch("framaorangelight", framaorangelight, fore: framagrisdark),
-  _swatch("framajaune", framajaune, fore: framagrisdark),
+  _swatch("framajaune", framajaune, fore: framagrisdarkest),
   _swatch("framajaunelight", framajaunelight, fore: framagrisdark),
   _swatch("framamarron", framamarron, fore: framagrisdark),
   _swatch("framamarronlight", framamarronlight, fore: framagrisdark),

@@ -2,8 +2,8 @@
 // 家族：示意图与公式 —— 图解逻辑与最后的数学收束。
 //
 // 演示两件事：
-//   · cetz-canvas({...})：touying-reducer 包装的 CeTZ 画布，画动态架构/闭环图。
-//     本家族两张示意图改编自 chapters/core.typ 的闭环图与 ReAct 循环。
+//   · cetz-canvas({...})：touying-reducer 包装的 CeTZ 画布，画闭环/循环架构图。
+//     本家族两张示意图：研发迭代闭环（五节点圆环）与 PDCA 质量改进环（四节点圆环）。
 //   · 数学公式：标准 Typst 数学语法，行内 $x$ 与块级 $ ... $（示例用全书主公式）。
 //
 // 交叉引用：封面的层叠圆也是 CeTZ 画的（见 lib.typ 的 cover）。
@@ -12,74 +12,83 @@
 
 // 用法: #cetz-canvas({ import cetz.draw: *; rect/circle/line/content(...) }) —— 坐标即厘米（1 单位 = 1cm）
 // 改这里: 箭头函数体内用 cetz.draw 原语作画；框内黑文字统一字号（正文 0.62em / 标题 0.78em）、
-//         行距统一 0.52、框内上下留白约 0.2~0.3；CJK 一字宽 ≈ 字号，框宽按最长行留够余量。
-// ⚠ 坑: 中明度底（vert/orange/jaune/marron）配深字，深底才配白字；文字按自然尺寸渲染不随
-//        坐标缩放，圆/框必须装得下文字（"Model"≈1.2cm 宽，圆半径给 0.8）；箭头标签放
-//        走廊空闲侧，别压线别压文字。
-== CeTZ · 闭环示意图
+//         行距统一 0.52，框内上下留白约 0.2~0.3；CJK 一字宽 ≈ 字号，框宽按最长行留够余量。
+// ⚠ 坑: ① 坐标单位是厘米，不是像素也不是 em——偏移 1 = 1cm，别拿 CSS 思维猜；
+//        ② text() 不随父坐标缩放，字号写多少就是多少——圆/框必须能装下文字，别靠"缩小坐标"压字；
+//        ③ 中明度底色（vert/orange/jaune/marron）配深字，深底才配白字；
+//        ④ 箭头标签落在箭头中点的空白侧，别压线别压文字；
+//        ⑤ 换内容时按坐标比例手动调框与文字位置——CeTZ 不做自动排版。
+== CeTZ · 研发迭代闭环
 
 #body-slide(
-  kicker: [观察进，行动出 —— 通道即边界],
+  kicker: [需求进，发布出 —— 闭环即迭代],
   inner: [
     #grid(
       columns: (1fr, 1fr),
       gutter: 1em,
       [
-        - Agent 与环境闭环交互：环境返回*观察*，Agent 选择*行动*，行动改变环境，产生下一次观察。
-        - 内层 Model–Harness：Model 做策略决策，Harness 构造上下文、暴露工具接口、维护循环与状态。
-        - 未进入上下文的观察对模型「不存在」——通道即边界。
+        - 研发团队的典型迭代闭环：*需求* → *设计* → *开发* → *测试* → *发布*，发布后产生新的需求，形成持续改进的飞轮。
+        - 每个阶段有明确的输入与输出：需求文档驱动设计稿，设计稿驱动代码，代码经过测试后才可发布。
+        - 闭环的价值在于反馈：线上数据、用户反馈回流为下一轮需求，推动产品持续演进。
         #v(gap-primary)
-        #note[示意图色值手动写死（framarouge / framableu），不随本页强调色自动变。]
+        #note[示意图色值手动写死（framavert / framableu），不随本页强调色自动变。]
       ],
       [
         #cetz-canvas({
           import cetz.draw: *
 
-          // 垂直堆叠布局：Environment 在上、Agent 在下。坐标单位 = 厘米。
-          // 宽 7.5cm 靠右居中（x 4.0→11.5），远离左侧文字。
+          // 五节点圆环布局：中心 (7.75, 5.5)，半径 2.8cm。
+          // 顶部为"需求"，顺时针排列。坐标单位 = 厘米。
+          // 保持与原始 Environment/Agent 矩形布局相近的垂直跨度。
 
-          // ── Environment（上）—— 浅蓝底 + 深蓝标题
-          rect((4.0, 0.3), (11.5, 3.2), fill: framableu.lighten(88%), stroke: framableu)
-          content((7.75, 2.8), text(size: 0.72em, weight: "bold", fill: framableu)[*Environment*])
-          content((7.75, 2.2), text(size: 0.58em, fill: framagrisdark)[文件 · 数据库 · 网页])
-          content((7.75, 1.7), text(size: 0.58em, fill: framagrisdark)[用户 · 其他 Agent])
-          content((7.75, 1.2), text(size: 0.58em, fill: framagrisdark)[物理 / 仿真世界])
+          // ── 五个阶段圆（深底白字）
+          // 需求（顶部）
+          circle((7.75, 8.3), radius: 0.95, fill: framavert, stroke: none)
+          content((7.75, 8.3), text(size: 0.65em, fill: white, weight: "bold")[需求])
 
-          // ── 间隙：观察↓ / 行动↑ 箭头
-          line((5.0, 3.2), (5.0, 3.9), mark: (end: "stealth"))
-          content((3.5, 3.55), text(size: 0.6em, fill: framagrisdark)[观察])
-          line((10.5, 3.9), (10.5, 3.2), mark: (end: "stealth"))
-          content((12.0, 3.55), text(size: 0.6em, fill: framagrisdark)[行动])
+          // 设计（右上）
+          circle((10.15, 6.6), radius: 0.95, fill: framableu, stroke: none)
+          content((10.15, 6.6), text(size: 0.65em, fill: white, weight: "bold")[设计])
 
-          // ── Agent（下）—— 浅红底 + 深红标题
-          rect((4.0, 3.9), (11.5, 11.5), fill: framarouge.lighten(80%), stroke: framarouge)
-          content((7.75, 4.2), text(size: 0.72em, weight: "bold", fill: framarouge)[*Agent*])
+          // 开发（右下）
+          circle((9.25, 3.8), radius: 0.95, fill: framaviolet, stroke: none)
+          content((9.25, 3.8), text(size: 0.65em, fill: white, weight: "bold")[开发])
 
-          // Model —— 深蓝圆角矩形 + 白字
-          rect((5.0, 4.6), (10.5, 6.4), fill: framableu, stroke: none)
-          content((7.75, 5.5), text(size: 0.8em, weight: "bold", fill: white)[*Model*])
+          // 测试（左下）
+          circle((6.25, 3.8), radius: 0.95, fill: framarouge, stroke: none)
+          content((6.25, 3.8), text(size: 0.65em, fill: white, weight: "bold")[测试])
 
-          // Harness —— 白底灰框；6 项内容 + 标题，行距 0.55cm
-          rect((5.0, 6.8), (10.5, 11.2), fill: white, stroke: framagris)
-          content((7.75, 10.85), text(size: 0.65em, weight: "bold", fill: framagrisdark)[*Harness*])
-          content((7.75, 10.3), text(size: 0.58em, fill: framagrisdark)[上下文构造])
-          content((7.75, 9.75), text(size: 0.58em, fill: framagrisdark)[工具接口])
-          content((7.75, 9.2), text(size: 0.58em, fill: framagrisdark)[状态维护])
-          content((7.75, 8.65), text(size: 0.58em, fill: framagrisdark)[约束检查])
-          content((7.75, 8.1), text(size: 0.58em, fill: framagrisdark)[验证 · 纠正])
-          content((7.75, 7.55), text(size: 0.58em, fill: framagrisdark)[循环控制])
+          // 发布（左上）
+          circle((5.35, 6.6), radius: 0.95, fill: framaorange, stroke: none)
+          content((5.35, 6.6), text(size: 0.65em, fill: white, weight: "bold")[发布])
+
+          // ── 顺时针循环箭头（首尾让出半径，箭头贴圆边）
+          // 需求 → 设计
+          line((8.4, 7.85), (9.55, 7.0), mark: (end: "stealth"))
+          // 设计 → 开发
+          line((10.55, 5.75), (9.65, 4.55), mark: (end: "stealth"))
+          // 开发 → 测试
+          line((8.4, 3.5), (7.1, 3.5), mark: (end: "stealth"))
+          // 测试 → 发布
+          line((5.85, 4.55), (5.35, 5.65), mark: (end: "stealth"))
+          // 发布 → 需求（回环）
+          line((5.6, 7.4), (7.15, 7.85), mark: (end: "stealth"))
+
+          // 中心标注
+          content((7.75, 5.8), text(size: 0.55em, fill: framagrisdark, weight: "bold")[持续迭代])
+          content((7.75, 5.25), text(size: 0.5em, fill: framagrisdark)[反馈驱动])
         })
       ],
     )
   ],
 )
 
-// 用法: #cetz-canvas({...}) 画三节点循环 —— 思考 → 行动 → 观察
-// 改这里: 三个圆分别定义为「思考 / 行动 / 观察」；箭头首尾让出半径，贴住圆边起止。
-// ⚠ 坑: ReAct 的「观察回传」走内层箭头（左下→顶部），不是逆时针绕行；
-//        观察底色 framavert 属中明度——配 framagrisdark 深字，不配白字；
-//        全图说明标签统一 0.66em，落在箭头中点的空白侧。
-== CeTZ · ReAct 循环
+// 用法: #cetz-canvas({...}) 画四节点循环 —— 计划 → 执行 → 检查 → 改进
+// 改这里: 四个圆分别定义为「计划 / 执行 / 检查 / 改进」；箭头首尾让出半径，贴住圆边起止。
+// ⚠ 坑: ① 四节点圆环的箭头角度须用三角函数算出圆边交点，手调容易压线；
+//        ② 底色 framavert 属中明度——配 framagrisdark 深字，不配白字；
+//        ③ 全图说明标签统一 0.6em，落在箭头中点的空白侧。
+== CeTZ · PDCA 改进环
 
 #grid(
   columns: (1fr, 1.1fr),
@@ -88,33 +97,55 @@
     #cetz-canvas({
       import cetz.draw: *
 
-      // 坐标与半径全部 2.2× 缩放以填满左栏（原 bounding box ~5.2cm → ~11.4cm）
-      // 思考（上，framarouge）+ 行动（右下，framableu）：深底白字
-      circle((5.28, 10.12), radius: 1.65, fill: framarouge, stroke: none)
-      content((5.28, 10.12), text(size: 0.85em, fill: white, weight: "bold")[*思考*])
+      // 四节点圆环：中心 (5.5, 5.5)，半径 3.6cm。
+      // 顶部"计划"，顺时针：执行 → 检查 → 改进。
+      // 坐标单位 = 厘米。
 
-      circle((10.12, 3.74), radius: 1.65, fill: framableu, stroke: none)
-      content((10.12, 3.74), text(size: 0.85em, fill: white, weight: "bold")[*行动*])
+      // ── 四个阶段圆（深底白字）
+      // 计划（顶部）
+      circle((5.5, 9.1), radius: 1.2, fill: framableu, stroke: none)
+      content((5.5, 9.1), text(size: 0.72em, fill: white, weight: "bold")[计划])
 
-      // 观察（左下，framavert）：中明度底 + 深字
-      circle((1.98, 3.74), radius: 1.65, fill: framavert, stroke: none)
-      content((1.98, 3.74), text(size: 0.85em, fill: framagrisdark, weight: "bold")[*观察*])
+      // 执行（右侧）
+      circle((9.1, 5.5), radius: 1.2, fill: framavert, stroke: none)
+      content((9.1, 5.5), text(size: 0.72em, fill: framagrisdark, weight: "bold")[执行])
 
-      // 循环箭头：首尾让出半径，标签锚在箭头中点旁的空白侧
-      line((6.27, 8.8), (9.13, 5.06), mark: (end: "stealth"))
-      content((9.24, 8.14), text(size: 0.66em)[推理下一步])
-      line((8.47, 3.74), (3.63, 3.74), mark: (end: "stealth"))
-      content((6.05, 2.464), text(size: 0.66em)[调用工具])
-      line((2.739, 5.214), (4.532, 8.646), mark: (end: "stealth"))
-      content((1.804, 7.7), text(size: 0.66em)[工具结果回传])
+      // 检查（底部）
+      circle((5.5, 1.9), radius: 1.2, fill: framarouge, stroke: none)
+      content((5.5, 1.9), text(size: 0.72em, fill: white, weight: "bold")[检查])
+
+      // 改进（左侧）
+      circle((1.9, 5.5), radius: 1.2, fill: framaorange, stroke: none)
+      content((1.9, 5.5), text(size: 0.72em, fill: white, weight: "bold")[改进])
+
+      // ── 顺时针循环箭头（首尾让出半径 1.2cm）
+      // 计划 → 执行
+      line((6.25, 8.35), (8.35, 6.25), mark: (end: "stealth"))
+      // 执行 → 检查
+      line((8.35, 4.75), (6.25, 2.65), mark: (end: "stealth"))
+      // 检查 → 改进
+      line((4.75, 2.65), (2.65, 4.75), mark: (end: "stealth"))
+      // 改进 → 计划
+      line((2.65, 6.25), (4.75, 8.35), mark: (end: "stealth"))
+
+      // 箭头中点标签（空白侧）
+      content((8.0, 8.2), text(size: 0.6em, fill: framagrisdark)[识别问题])
+      content((9.3, 3.5), text(size: 0.6em, fill: framagrisdark)[验证结果])
+      content((2.5, 3.2), text(size: 0.6em, fill: framagrisdark)[总结经验])
+      content((2.8, 8.1), text(size: 0.6em, fill: framagrisdark)[标准化])
+
+      // 中心标注
+      content((5.5, 5.5), text(size: 0.58em, fill: framagrisdark, weight: "bold")[PDCA])
+      content((5.5, 4.85), text(size: 0.52em, fill: framagrisdark)[质量改进])
     })
   ],
   [
-    #keyline(size: 21pt)[$"想" ⟶ "做" ⟶ "看"$]
+    #keyline(size: 21pt)[$"计划" ⟶ "执行" ⟶ "检查" ⟶ "改进"$]
     #v(gap-primary)
-    - *轨迹* = 用户消息 + 模型回复（思考 / 内容 / 工具调用）+ 工具执行结果
-    - *想 → 做 → 看*：思考该做什么 → 调用工具 → 观察结果，循环直至任务完成
-    - 轨迹可解释、可调试，还可沉淀为知识库或 RL 训练语料
+    - *计划*：定义目标与改进方案
+    - *执行*：小范围实施，收集数据
+    - *检查*：对比结果与目标，识别偏差
+    - *改进*：将有效方案标准化，纳入管理体系
   ],
 )
 

@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+### Added（2026-09-21 重构轮）
+- 画廊从九族扩为**十一族**：拆分「页面编排」→ 常规元素（show.basic）/ 表格与流程（show.tables）/ 区域编排（show.grid）；设计系统速查移至末位作参考附录
+- show.grid 新增「复合网格·仪表盘」样例（rowspan 跨行 + 不等宽列 + 末行 1fr 锚定）与「感谢聆听·结尾页」语义点破（可作 Q&A/联系页，附 body-slide(center: true) 等价说明）
+- lib.typ 新增公共导出 `leg-label`（图例字级降档 0.7em×0.8em≈11.9pt，自 show.charts.typ 迁入；API 清单 50 → 51）
+- 中性化通用案例（借页即用）：show.cetz 研发迭代闭环（5 节点）+ PDCA 改进环（4 节点）替代 Agent/ReAct；⚠坑 补 CeTZ 坐标 cm 单位 / text() 不随坐标缩放 / 换内容手动对齐
+
+### Changed（2026-09-21 重构轮）
+- show.charts 示例数据由「借页元话题」换为通用主题（预算分布 / 区域季度营收 / 月度访问量）；变体速查页改 2 行 grid 修复底部图注对齐；leg-label 调用改引 lib.typ
+- 设计系统：stat 默认 amount-size 34 → 30pt（低于 section-open 32pt，层级有序；show.data 显式传参同步）；section-open 左竖条 5 → 6pt（与卡片 3pt 形成粗细层级）；cover 标题 framableu → framableu.darken(4%)（与 header 同路径）；cmp-grid label-width 固定 5.2em → auto（measure 取最宽标签 + 1em padding，保留显式覆盖）；flow-steps 连接线 darken(15%) → `_connector-darken` 命名常量
+- 美学打磨：八色卡页每张补功能描述文案示例；show.color jaune 色卡前景 framagrisdark → framagrisdarkest（对比 3.8:1 → ≈12:1）；show.system 字体层级页 stat 标注 34pt → 30pt
+- 目录收紧：家族 9 → 11 使内容地图与 nav recipe 演示页的 11 行目录溢出，按文档化逐档技法（条目字号/竖条/行距/gutter）收回 1 页；页数基线 51 → 54，链接 51 → 59，用法注释 40 → 41
+
+### Fixed（2026-09-21 重构轮）
+- main.typ 家族计数注释三处自相矛盾（「十个家族」/「八族」/「八大族」）统一为十一族
+- show.cetz PDCA 页右栏补第四步「改进」bullet，与四步环信息对等
+
 ### Added
 - 新增「数据图表」家族（showcase/show.charts.typ，4 页）：根据数据绘制饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 0.1.0 首次落地为格式化样板（占比/工时/降幅）；目录 8 → 9 家族
 - 新增「表格与流程」家族（showcase/show.tables.typ，4 页）：表格替代语言三组件落地——cmp-grid 对比网格（左灰维度标签 + 双色值单元格）/ term-rows 术语行 / flow-steps 编号流程（横向步骤卡 + 纵向时间线，纵向行高受药丸+箭头字形度量锁死 ≈61.5pt/行，红线已注释）；`body-slide` 新增 `center: true` 垂直居中变体（双 `v(1fr)` 方案，规避 measure 对 outline 塌缩的陷阱）；目录 9 → 10 家族；lib.typ API 46 → 49 公开符号

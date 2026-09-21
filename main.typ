@@ -1,7 +1,9 @@
 // main.typ - Slide 模板画廊：用样例演示 lib.typ 设计系统的每个元件
 //
-// 结构：封面 → 快速开始 → 目录 → 十个家族。每个家族 = 一张 section-open 开场页
+// 结构：封面 → 快速开始 → 目录 → 十一族。每个家族 = 一张 section-open 开场页
 // + 若干演示页（`==`）。文档流顺序即目录顺序；include 列表显式列举，禁止 glob。
+// 2026-09 重组：将原「页面编排」拆为「常规元素」「表格与流程」「区域编排」三族，
+// 速查页移至末尾充当参考附录，共计十一族按使用频率排序。
 //
 // 借页：每个 showcase/*.typ 的每一页顶部都有「用法 / 改这里 / ⚠ 坑」三段注释，
 // 连同页面一起复制即可搬到自己的 deck。lib.typ 只提供通用元件，本 deck 的
@@ -76,12 +78,12 @@
         指出改哪儿；`// ⚠ 坑:` 列出一定会抄错的点。
       ],
       boiteorange[
-        *结构* —— 封面 → 快速开始 → 目录 → 十个家族。每个家族一张 `section-open`
+        *结构* —— 封面 → 快速开始 → 目录 → 十一族。每个家族一张 `section-open`
         开场页，后接若干 `==` 演示页。
       ],
     )
   ],
-  closing: note[八族：页面体系 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 页面编排 · 示意图与公式 · 数据图表。],
+  closing: note[十一族（按序）：页面体系 · 常规元素 · 卡片与网格 · 数据元件 · 导航与目录 · 配色与强调 · 表格与流程 · 区域编排 · 示意图与公式 · 数据图表 · 设计系统速查],
 )
 
 // ============ 目录 ============
@@ -103,35 +105,39 @@
   link(
     it.element.location(),
     grid(
-      columns: (0.55em, auto, 1fr, 1.6em),
-      column-gutter: (0.85em, 1.4em, 1.6em),
-      align(horizon + left)[#rect(width: 2.5pt, height: 1.05em, radius: 1.25pt, fill: framableu, stroke: none)],
-      text(size: 1.08em, weight: "bold", fill: framagrisdark)[#it.body()],
+      columns: (0.48em, auto, 1fr, 1.2em),
+      column-gutter: (0.65em, 1.0em, 1.0em),
+      align(horizon + left)[#rect(width: 2.5pt, height: 0.95em, radius: 1.25pt, fill: framableu, stroke: none)],
+      text(size: 1.02em, weight: "bold", fill: framagrisdark)[#it.body()],
       [],
-      align(right, text(size: 0.75em, fill: framagris)[#it.page()]),
+      align(right, text(size: 0.70em, fill: framagris)[#it.page()]),
     ),
-  ) + v(0pt) // 条目行距：在 outline 自带间距上已足以换行，不额外补间距；10 行目录收紧（原 0.35em→0.2em→0.13em→0.08em→0pt，逐档试到收尾行回本页）
+  ) + v(0pt) // 条目行距：在 outline 自带间距上已足以换行，不额外补间距；11 行目录再收紧（条目名 1.02em, gutter 再收）
 }
 
 #body-slide(
   kicker: none,
   inner: [
-    #v(0.3em) // 目录页顶留白：参考 v1 风格
+    #v(0.2em) // 目录页顶留白：收紧（原 0.3em→0.2em）给 11 行目录腾位
     #outline(title: none, depth: 1)
   ],
-  closing: [#align(center)[#text(size: 0.72em, fill: framagris)[八族 · 从页面体系到数据图表]]],
+  closing: [#align(center)[#text(size: 0.65em, fill: framagris)[十一族 · 从页面体系到设计系统速查]]],
   closing-gap: 0pt, // 配合 #set par 收紧行距，整页不翻票
 )
 
 // ============ 家族 ============
 // 每个 `=` 家族紧跟一张 section-open 开场页（换一次强调色），再 include 演示文件。
-// 八大族（2026-09 重组：页面体系/卡片与网格/数据元件/导航与目录/配色与强调/
-// 页面编排/示意图与公式/数据图表）；section-open 省 3 张，目录 9 项。
+// 十一族（2026-09 结构化重组：原「页面编排」拆为「常规元素」「表格与流程」
+// 「区域编排」三族，速查页移至末尾当参考附录）；section-open 省 5 张，目录 11 项。
 
 = 页面体系
 #section-open(title: [页面体系], subtitle: [封面 · 开场 · body-slide 骨架], color: framableu)
 #include "showcase/show.cover.typ"
 #include "showcase/show.skeleton.typ"
+
+= 常规元素
+#section-open(title: [常规元素], subtitle: [原生表格 · 图片 · 链接], color: framagris)
+#include "showcase/show.basic.typ"
 
 = 卡片与网格
 #section-open(title: [卡片与网格], subtitle: [boite 家族与 stretch-grid], color: framaviolet)
@@ -149,14 +155,12 @@
 #section-open(title: [配色与强调], subtitle: [frama 调色板与页级走位], color: framavert)
 #include "showcase/show.color.typ"
 
-= 设计系统速查
-#section-open(title: [设计系统速查], subtitle: [配色 · 间距 · 字体层级 · 卡片构造 · 溢出边界], color: framajaune)
-#include "showcase/show.system.typ"
-
-= 页面编排
-#section-open(title: [页面编排], subtitle: [排版元件 · 表格替代语言 · grid-slide 区域网格], color: framagris)
-#include "showcase/show.basic.typ"
+= 表格与流程
+#section-open(title: [表格与流程], subtitle: [对比网格 · 术语行 · 流程条], color: framamarron)
 #include "showcase/show.tables.typ"
+
+= 区域编排
+#section-open(title: [区域编排], subtitle: [grid-slide 区域网格], color: framagris)
 #include "showcase/show.grid.typ"
 
 = 示意图与公式
@@ -166,3 +170,7 @@
 = 数据图表
 #section-open(title: [数据图表], subtitle: [饼图 · 柱状图 · 线性图], color: framaviolet)
 #include "showcase/show.charts.typ"
+
+= 设计系统速查
+#section-open(title: [设计系统速查], subtitle: [配色 · 间距 · 字体层级 · 卡片构造 · 溢出边界], color: framajaune)
+#include "showcase/show.system.typ"

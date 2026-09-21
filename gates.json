@@ -1,6 +1,6 @@
 {
   "compiler": "0.15.1",
-  "baselines": { "pages": 51, "usage-comments": 40, "links": 51 },
+  "baselines": { "pages": 54, "usage-comments": 41, "links": 59 },
   "api": [
     "framableu", "framableulight", "framavert", "framavertlight", "framarouge", "framarougelight",
     "framaviolet", "framavioletlight", "framaorange", "framaorangelight", "framajaune", "framajaunelight",
@@ -8,7 +8,7 @@
     "frameEmph", "alert",
     "boitebleue", "boiteverte", "boiterouge", "boiteorange", "boiteviolette", "boitejaune", "boitemarron", "boitegrise",
     "accent-state", "slide-accent", "breadcrumb-state",
-    "keyline", "note", "figure-block",
+    "keyline", "note", "figure-block", "leg-label",
     "gap-primary", "gap-secondary",
     "body-slide", "stat", "boitefilled",
     "stretch-grid", "slide-theme", "cetz-canvas", "section-open", "cover",

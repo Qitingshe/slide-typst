@@ -27,18 +27,18 @@
   link(
     it.element.location(),
     grid(
-      columns: (1.6em, 1fr),
-      column-gutter: 2.4em,
-      align(right, text(size: 0.9em, weight: "bold", fill: framableu)[#it.page()]),
-      text(size: 1.02em, fill: framagrisdark)[#it.body()],
+      columns: (1.4em, 1fr),
+      column-gutter: 1.8em,
+      align(right, text(size: 0.82em, weight: "bold", fill: framableu)[#it.page()]),
+      text(size: 0.95em, fill: framagrisdark)[#it.body()],
     ),
-  ) + v(0.05em) // 条目间距：收紧（原 0.42em→0.28em→0.18em→0.05em）让 10 行目录 + note 收尾回本页
+  ) + v(0em) // 条目间距：收紧让 11 行目录 + note 收尾回本页
 }
 
 #body-slide(
   kicker: [把八族再列一遍，演示 recipe 可整体搬走],
   inner: [
-    #v(0.2em) // 页顶留白：收紧给 10 行目录 + note 收尾腾位
+    #v(0.1em) // 页顶留白：再收紧（原 0.2em→0.1em）给 11 行目录 + note 腾位
     #outline(title: none, depth: 1)
   ],
   closing: note[每行都可点击跳转；条目名来自各 `=` 分段标题。],

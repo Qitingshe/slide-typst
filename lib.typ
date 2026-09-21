@@ -51,6 +51,14 @@
 // cetz / numbly 的模块绑定经顶层 import 亦为公共导出（showcase 画布内
 // `#import cetz.draw: *` 依赖之）；刻意少一层封装、不设门禁；勿误删。
 
+/// leg-label —— 图例文字降档 helper。
+/// cetz-plot 无独立图例字号键，图例 label 是 Typst content；
+/// 用内嵌 set text 只缩图例（0.7em×0.7em≈11.9pt，低于刻度档）。
+/// 从画廊 show.charts.typ 迁移而来（原样保留），被所有用图表的 deck 需要。
+/// 用法：在 plot.add / labels 等位置用 `leg-label[文本]` 包裹图例文字。
+/// ⚠ 坑：0.6em 叠成 0.42×21.2≈8.9pt 被判过小，0.7em 是下探档不入此线。
+#let leg-label(label) = { set text(size: 0.7em); label }
+
 // ==== Framasoft 配色 ====
 // 浅色现代基调：每种「原色」都配有同族浅色。
 // 深色槽位：primary / secondary / tertiary / neutral / neutral-dark / neutral-darkest
@@ -280,7 +288,7 @@
 // ⚠ ① color 需已解析（调用方在 context 内处理 accent-state）——纯函数不能取 state；
 //   ② 测量用的 T/A 长度无法借 context/layout 表达式传出（它们只产出 content），
 //   故长度计算保留在调用方的 context 块内，_stat-box 只提供结构 dict。
-#let _stat-box(amount, label, color, amount-size: 34pt) = (
+#let _stat-box(amount, label, color, amount-size: 30pt) = (
   amt: text(size: amount-size, weight: "bold", fill: color)[#amount],
   stack-single: [
     #align(center)[
@@ -298,14 +306,14 @@
   ],
 )
 
-/// stat —— 大数字：超大强调色数字 + 灰色小标签。
+/// stat —— 大数字：强调色数字 + 灰色小标签。
 /// - amount (content): 大数字本体，可传字符串或数学内容。
 /// - label (content): 数字下方的灰色解释。
-/// - amount-size (length): 数字字号，默认 34pt。
+/// - amount-size (length): 数字字号，默认 30pt（低于 section-open 标题 32pt，层级有序）。
 /// - color (color, auto): 数字色；默认 auto = 跟随当前强调色。
 /// 示例：#stat[10][正文章节]
 /// 带定制：#stat(amount-size: 40pt, color: framaviolet, [10], [正文章节])
-#let stat(amount, label, amount-size: 34pt, color: auto, stretch: false) = {
+#let stat(amount, label, amount-size: 30pt, color: auto, stretch: false) = {
   if stretch {
     // 交给 stretch-grid 排版：返回规格字典（color 保留 auto，渲染时按强调色解析）
     (cell: "stat", amount-size: amount-size, color: color, amount: amount, label: label)
@@ -472,6 +480,11 @@
 // 内容节奏，不是信息卡；避免 5 行对比页堆高）；内容对齐规则见 _cmp-cell（单行
 // 居中 / 多行左对齐——修「左栏短值在宽格里右侧留白失衡」的模板级根治）。
 
+// 连接线加深常量：flow-steps 纵向竖线比当前色暗 15%，形成自然层次阶梯。
+// 与 boite 浅卡片的 lighten(93%) 构成明度操作词典的对偶项——同一色彩在
+// 实色填充、极浅底色、连接线三个档位各有一套调节系数，统一在此维护。
+#let _connector-darken = 15%
+
 // 纵向连接线（内部件）：2pt 粗短竖线，在两药丸之间居中显示。
 // 用法: #_connector-line(framableu)
 // ⚠ 坑: 内部组件，仅由 flow-steps 调用。
@@ -480,7 +493,7 @@
   align(center + horizon, rect(
     width: 2pt,
     height: 0.5em,
-    fill: col.darken(15%),
+    fill: col.darken(_connector-darken),
     stroke: none,
     radius: 1pt,
   ))
@@ -529,7 +542,8 @@
 /// cmp-grid —— 对比网格：左侧灰色维度标签列 + 双色值单元格，替代「维度×两侧」对比表。
 /// - lhs / rhs (dictionary): 左/右栏 (title: 栏标题, color: 强调色)；title 为 none 时省略表头行。
 /// - rows (array of dictionary): 每行 (label: 维度名, left: 左值, right: 右值)。
-/// - label-width (length): 维度标签列宽，默认 5.2em；标签长时按需加宽。
+/// - label-width (length, auto): 维度标签列宽；默认 auto 自动取最宽标签 + 1em padding，
+///   避免固定值导致中文长标签截断或短标签留白过大；传显式长度则跳过自动计算。
 /// - gutter (length): 列间距，默认 gutter-tight。
 /// - row-gap (length): 行间距，默认 0.25em。
 /// - header-gap (length): 表头↔首行间距，默认 0.4em。
@@ -545,7 +559,7 @@
   lhs: none,
   rhs: none,
   rows: (),
-  label-width: 5.2em,
+  label-width: auto,
   gutter: gutter-tight,
   row-gap: 0.25em,
   header-gap: 0.4em,
@@ -556,9 +570,23 @@
   let a = if lhs.at("color", default: auto) == auto { accent-state.get() } else { lhs.at("color", default: auto) }
   let b = if rhs.at("color", default: auto) == auto { accent-state.get() } else { rhs.at("color", default: auto) }
   let has-head = ltitle != none and rtitle != none
+  // 自动计算标签列宽：measure 所有 label 取最宽 + 1em padding。
+  // 固定值（如旧 5.2em）对中文长标签（如「系统架构模型」）可能截断，
+  // 对短标签（如「协」）又留白过大——自适应按内容宽度生长，语义刚好。
+  // 传显式 label-width 则跳过自动计算，与旧行为兼容。
+  let lw = if label-width == auto {
+    let max-w = 0pt
+    for row in rows {
+      let w = measure(text(size: 0.78em, weight: "bold", fill: framagris)[#row.at("label")]).width
+      if w > max-w { max-w = w }
+    }
+    max-w + 1em
+  } else {
+    label-width
+  }
   let head = if has-head {
     grid(
-      columns: (label-width, 1fr, 1fr),
+      columns: (lw, 1fr, 1fr),
       column-gutter: gutter,
       [],
       _filled-box(align(center)[#text(weight: "bold")[#ltitle]], a, width: 100%),
@@ -566,7 +594,7 @@
     )
   } else { [] }
   let body = grid(
-    columns: (label-width, 1fr, 1fr),
+    columns: (lw, 1fr, 1fr),
     column-gutter: gutter,
     row-gutter: row-gap,
     ..rows.map(row => (
@@ -835,7 +863,8 @@
     breadcrumb-state.update(crumb)
     [
       // 左侧强调竖条（贯穿内容区）
-      #place(left, block(width: 5pt, height: 100%, fill: c))
+      // 左侧强调竖条（贯穿内容区；6pt 宽度 > 卡片 3pt 竖条，形成粗细层级信号）
+      #place(left, block(width: 6pt, height: 100%, fill: c))
       // 顶部细线
       #place(top + left, dx: 0pt, dy: 0pt, line(length: 100%, stroke: (paint: c.lighten(68%), thickness: 0.8pt)))
       // 右下角装饰：章节用超淡大号序号；分段用超淡圆角色块 + 小实色方块
@@ -996,7 +1025,9 @@
   // 标题块下移（2.6em→5.2em）：标题上方留白与标题↔meta 间留白等高，
   // 封面右侧不再「头顶着、脚空着」（@150ppi 实测：顶 302px ≈ 中缝 301px）。
   #place(top + right, dx: -1.8em, dy: 5.2em, block(width: 55%)[
-    #_cover-title(title, subtitle, size: 30pt, color: framableu)
+    // cover 标题 fill 与 header 标题一致（header 用 c.darken(4%) 保证白底对比）；
+    // 确保封面标题与内页页眉标题视觉同源，不因色差产生"封面标题更亮"的跳跃感。
+    #_cover-title(title, subtitle, size: 30pt, color: framableu.darken(4%))
   ])
   #place(bottom + right, dx: -1.8em, dy: -2.4em, block(width: 55%)[
     #_cover-meta-block(author, institution, date)

@@ -10,17 +10,9 @@
 // 交叉引用：画布走 cetz-canvas（坐标即厘米）；图注手写 figure-block 同规格
 // （0.63em framagris 居中，image 宽度接管对画布无效）；numbly 由 lib 导入。
 // 版面纪律：整页一张画布 + 一手短注（长注进 closing）——grid 行高 = 左右最高列。
-// 图例字级独立降档：leg-label 只缩图例文字（0.7em×0.7em≈10.4pt），刻度/轴标原档不动。
+// 图例字级独立降档：leg-label 由 lib.typ 导出（0.7em×0.7em≈11.9pt），刻度/轴标原档不动。
 // ⚠ chart / plot 由 lib.typ 顶层导出直接可用；不要再 #import cetz / cetz-plot。
 #import "../lib.typ": *
-
-// 图例标签降档：cetz-plot 无独立图例字号键，图例 label 是 Typst content，
-// 用内嵌 set text 只缩图例（0.7em×0.7em≈10.4pt，低于刻度 14.9pt 与图注
-// 13.4pt 两档成梯次）。代码块末尾必须裸写 label 值（写成 [label] 会输出
-// 字面量文本 "label"）。
-// ⚠ 坑：0.6em 叠成 0.42×21.2≈8.9pt 被判过小，0.7em 是下探档不入此线；
-//       再嫌大须停手回报，勿私自落到 0.6em 以下。
-#let leg-label(label) = { set text(size: 0.7em); label }
 
 // 用法: #chart.piechart(data, value-key: 1, label-key: 0, radius: N, slice-style: 色板数组,
 //       outset: 下标, outer-label: (content: fn, radius: 比例), legend: (position, ..))
@@ -34,12 +26,12 @@
 == 图表 · 饼图
 
 #let pie-data = (
-  (leg-label[复制], 52),
-  (leg-label[换色], 40),
-  (leg-label[复用], 36),
-  (leg-label[重排], 30),
-  (leg-label[自绘], 26),
-  (leg-label[公式], 22),
+  (leg-label[研发], 30),
+  (leg-label[市场], 25),
+  (leg-label[运营], 20),
+  (leg-label[销售], 12),
+  (leg-label[行政], 8),
+  (leg-label[人力], 5),
 )
 #let pie-total = pie-data.map(t => t.at(1)).sum()
 #let pie-top-pct = calc.round(pie-data.at(0).at(1) / pie-total * 100)
@@ -86,7 +78,7 @@
           )
         })] // #align 收口：0.7em 只作用于画布
         #v(0.06em)
-        #align(center)[#text(size: 0.63em, fill: framagris)[图 1:借页六种用法占比（N=206）——numbly 模板]]
+        #align(center)[#text(size: 0.63em, fill: framagris)[图 1:项目预算分布（N=100）——numbly 模板]]
       ],
       [
         - 数据行 = ([标签], 数值)：喂给 `value-key` / `label-key`。
@@ -108,7 +100,7 @@
 //         legend / x-tick-step / x-min / x-max 之类轴参数全走 barchart 的 ..plot-args 透传。
 // ⚠ 坑: ① barchart 是「横向条」：行类别在 y 轴、数值沿 x 轴长条——要纵向柱状走
 //        columnchart；② x-min/x-max 建议显式给出：bar-position center × bar-width −0.8
-//        会让数值域从 0.4 起、刻度漂移（本页给 0..7）；③ plot 系（barchart/plot）的
+//        会让数值域从 0.4 起、刻度漂移；③ plot 系（barchart/plot）的
 //        legend 只收锚点字符串（"north-east" / "inner-north-east" 等预设），样式走
 //        set-style(legend: …)——把饼图那种 (position: …, fill: …) 字典传进来会直接
 //        panic；④ x-format 默认 float 保留两位小数（0.00/2.50 很丑），用
@@ -118,12 +110,10 @@
 == 图表 · 柱状图
 
 #let bar-data = (
-  ([封面], 0.5, 1.0, 4.0, 2.0),
-  ([开场], 0.5, 1.0, 3.0, 1.5),
-  ([骨架], 0.5, 0.5, 2.0, 1.0),
-  ([卡片], 1.0, 1.5, 3.5, 2.5),
-  ([数据], 1.0, 1.5, 4.0, 3.0),
-  ([示意], 2.0, 2.0, 6.0, 4.5),
+  ([华东], 1.2, 2.0, 3.5, 4.0),
+  ([华南], 1.0, 1.5, 3.0, 3.5),
+  ([华北], 0.8, 1.0, 2.0, 2.5),
+  ([西部], 0.5, 0.8, 1.5, 2.0),
 )
 
 #body-slide(
@@ -149,38 +139,38 @@
             size: (9, auto),
             label-key: 0,
             value-key: (..range(1, 5)),
-            x-tick-step: 2,
+            x-tick-step: 1,
             x-min: 0,
-            x-max: 7,
+            x-max: 5,
             x-format: plot.formats.decimal.with(digits: 0),
             bar-style: i => (fill: bar-colors.at(i), stroke: none),
             bar-data,
-            labels: (leg-label[整页复制], leg-label[换色], leg-label[换组件], leg-label[改写]),
+            labels: (leg-label[Q1], leg-label[Q2], leg-label[Q3], leg-label[Q4]),
             // 外部锚点 north-east：图例排在绘图区右上角外侧（spacing 0.4 留缝），
             // 不再压住绘图区内容（旧 inner-north-east 是绘图区内部预设）。
             legend: "north-east",
           )
         })] // #align 收口：0.7em 只作用于画布
           #v(0.12em)
-          #align(center)[#text(size: 0.63em, fill: framagris)[图 2:六类页面的四种改造路径（小时/页,clustered）]]
+          #align(center)[#text(size: 0.63em, fill: framagris)[图 2:区域季度营收对比（万,clustered）]]
       ],
       [
         - 行 = 类别（`label-key`），列 = 系列（`value-key` 取 1..4 列）。
         - `labels` 传系列名；`bar-style` 是 `i => (fill: 色, …)`，与 labels 对应。
         - `x-tick-step` / `x-min` / `x-max` / `x-format` 经 `..plot-args` 透传。
         #v(gap-primary)
-        #stat(color: framaorange)[#numbly("{1} 小时")(6)][单页最重改造 · numbly]
+        #stat(color: framaorange)[#numbly("{1} 万")(4)][单区域峰值 · numbly]
       ],
     )
   ],
-  closing: note[值域 0..7 小时、刻度每 2 小时一格；横向条按行读——示意页三档改造工时明显高于前五类。],
+  closing: note[值域 0..5 万、刻度每 1 万一格；横向条按行读——华东 Q4 营收领跑。],
 )
 
 // 用法: #plot.plot(size, x-tick-step, x-min/max, x-format, y-tick-step, y-min/max, y-format,
 //       x-grid/y-grid, legend, { #plot.add(数据, label, style, mark, mark-size, mark-style) … })
 // 改这里: plot.plot 管画布与坐标轴（axis 类参数直接挂具名参数）；每条曲线一个 plot.add：
 //         label 进图例、style 定线色/粗细/虚实、mark 用预置符号（"o" / "square" / "triangle"）。
-//         数据 = ((x, y), …) 元组序列；本页 3 条曲线共享 0..5 轮次。
+//         数据 = ((x, y), …) 元组序列；本页 3 条曲线共享 0..6 月份。
 // ⚠ 坑: ① mark-style 必须与 style 同色声明——散点走独立样式链，不继承线色，漏写会
 //        回落默认蓝红绿序列与线色失配；② legend 的外部锚点（"north-east" 等无
 //        inner- 前缀）把图例排在绘图区外，本页用 spacing: 0.4 留缝隙——旧 inner-*
@@ -189,8 +179,8 @@
 //        （"north-east"），不能用画布坐标；⑤ 图例 fill 同饼图坑：用 none。
 == 图表 · 线性图
 
-#let loss-train = ((0, 2.40), (1, 1.55), (2, 1.05), (3, 0.75), (4, 0.58), (5, 0.46))
-#let loss-drop = calc.round((1 - 0.46 / 2.40) * 100)
+#let traffic-home = ((0, 1.2), (1, 1.5), (2, 1.8), (3, 2.1), (4, 2.4), (5, 2.7), (6, 3.0))
+#let traffic-growth = calc.round((3.0 / 1.2 - 1) * 100)
 
 #body-slide(
   kicker: [plot.plot + plot.add —— 曲线、标记、图例皆可定制],
@@ -217,39 +207,39 @@
           )
           plot.plot(
             size: (9, 4.2),
-            x-tick-step: 1, x-min: 0, x-max: 5,
+            x-tick-step: 1, x-min: 0, x-max: 6,
             x-format: plot.formats.decimal.with(digits: 0),
-            y-tick-step: 0.5, y-min: 0, y-max: 2.6,
+            y-tick-step: 0.5, y-min: 0, y-max: 3.5,
             y-format: plot.formats.decimal.with(digits: 1),
             x-grid: true, y-grid: true,
             // 外部锚点 north-east：图例排在绘图区右上角外侧（spacing 0.4 留缝），
             // 不再压住绘图区内容（旧 inner-north-east 是绘图区内部预设）。
             legend: "north-east",
             {
-              plot.add(loss-train,
-                label: leg-label[训练], mark: "o", mark-size: 0.17,
+              plot.add(traffic-home,
+                label: leg-label[首页], mark: "o", mark-size: 0.17,
                 style: (stroke: (paint: framableu, thickness: 1.4pt), fill: none),
                 mark-style: (fill: framableu, stroke: none))
-              plot.add(((0, 2.42), (1, 1.75), (2, 1.35), (3, 1.12), (4, 1.01), (5, 0.96)),
-                label: leg-label[验证], mark: "square", mark-size: 0.16,
+              plot.add(((0, 0.8), (1, 1.0), (2, 1.1), (3, 1.3), (4, 1.5), (5, 1.7), (6, 1.9)),
+                label: leg-label[博客], mark: "square", mark-size: 0.16,
                 style: (stroke: (paint: framarouge, thickness: 1.4pt), fill: none),
                 mark-style: (fill: framarouge, stroke: none))
-              plot.add(((0, 2.45), (1, 1.80), (2, 1.38), (3, 1.10), (4, 0.94), (5, 0.86)),
-                label: leg-label[验证·正则], mark: "triangle", mark-size: 0.17,
+              plot.add(((0, 0.5), (1, 0.7), (2, 1.0), (3, 1.2), (4, 1.4), (5, 1.6), (6, 1.8)),
+                label: leg-label[产品], mark: "triangle", mark-size: 0.17,
                 style: (stroke: (paint: framaviolet, thickness: 1.4pt, dash: "dashed"), fill: none),
                 mark-style: (fill: framaviolet, stroke: none))
             },
           )
         })] // #align 收口：0.7em 只作用于画布
         #v(0.12em)
-        #align(center)[#text(size: 0.63em, fill: framagris)[图 3:训练 / 验证损失曲线（raw 折线 + 预置标记）]]
+        #align(center)[#text(size: 0.63em, fill: framagris)[图 3:月度访问量趋势（万,raw 折线 + 预置标记）]]
       ],
       [
         - 每条线独立 #plot.add：label / style / mark 按线声明。
         - 轴参数直接挂 #plot.plot：`x-tick-step` / `y-format` 等。
         - 图例锚点 `"north-east"` + `spacing: 0.4`，绘图区右外侧排图例。
         #v(gap-primary)
-        #stat(color: framableu)[#numbly("{1}%")(loss-drop)][训练损失降幅（5 轮）· numbly]
+        #stat(color: framableu)[#numbly("{1}%")(traffic-growth)][半年增幅 · numbly]
       ],
     )
   ],
@@ -264,25 +254,30 @@
 // ⚠ 坑: ① 环形图的 inner-label 若开启会往环心写字——本页关闭（label-key: none 连带
 //       图例消失），要图例就把 label-key 改回下标；② stacked 模式数值域 = 各列之和，
 //       本页给 x-max 显式上限，否则柱顶贴边；③ fill: true 会沿 y 轴基线铺一条
-//       不透明色带，第一眼只信曲线不置信封——颜色仍用 frama 主色半透即可。
+//       不透明色带，第一眼只信曲线不置信封——颜色仍用 frama 主色半透即可；
+//       ④ 三列底部图注须对齐：图表/画布分两行 grid（chart row + caption row），
+//       避免画布高度不等导致图注参差。
 == 图表 · 变体速查
 
 #body-slide(
   kicker: [一个家族三个变体 —— 环形 / 堆积 / 区域],
   inner: [
+    // 两行 grid：第一行放三个画布，第二行放三个图注。图注独占一行保证水平对齐，
+    // 不受画布高度差异（环形 radius vs 柱状/折线 size）影响。
     #grid(
       columns: (1fr, 1fr, 1fr),
       gutter: 0.8em,
+      row-gutter: 0.15em,
+      // ── Row 1: 画布 ──
       [
         #align(center)[
           // 图表区字级 0.7em（同饼图页）：cetz 文本继承上下文 → ≈14.8pt 助文档。
-          // 画布居中对齐底部图注，共竖直中线（同饼图页）。
           #set text(size: 0.7em)
           #cetz-canvas({
           import cetz.draw: *
 
           chart.piechart(
-            (([直接], 55), ([换皮], 30), ([自绘], 15)),
+            (([办公], 55), ([差旅], 30), ([培训], 15)),
             value-key: 1,
             label-key: none,
             radius: 1.6,
@@ -291,18 +286,15 @@
             stroke: none,
             slice-style: (framableu, framavert, framarouge),
             outer-label: (
-              content: (value, label) => numbly("{1}%")(calc.round(value / 100 * 100)),
+              content: (value, label) => numbly("{1}%")(value),
               radius: 115%,
             ),
           )
         })] // #align 收口：0.7em 只作用于画布
-        #v(0.1em)
-        #align(center)[#text(size: 0.63em, fill: framagris)[环形 · inner-radius + outset]]
       ],
       [
         #align(center)[
           // 图表区字级 0.7em（同饼图页）：cetz 文本继承上下文 → ≈14.8pt 助文档。
-          // 画布居中对齐底部图注，共竖直中线（同饼图页）。
           #set text(size: 0.7em)
           #cetz-canvas({
           import cetz.draw: *
@@ -313,21 +305,18 @@
             label-key: 0,
             value-key: (..range(1, 4)),
             x-min: 0,
-            x-max: 15,
+            x-max: 20,
             x-tick-step: 5,
             x-format: plot.formats.decimal.with(digits: 0),
             bar-style: i => (fill: (framableu, framarouge, framavert).at(i), stroke: none),
-            (([新版], 4, 3, 2), ([旧版], 3, 2, 1), ([对照], 1, 1, 1)),
+            (([Q1], 8, 5, 3), ([Q2], 10, 4, 2), ([Q3], 7, 6, 4)),
             legend: none,
           )
         })] // #align 收口：0.7em 只作用于画布
-        #v(0.1em)
-        #align(center)[#text(size: 0.63em, fill: framagris)[堆积 · mode: "stacked"]]
       ],
       [
         #align(center)[
           // 图表区字级 0.7em（同饼图页）：cetz 文本继承上下文 → ≈14.8pt 助文档。
-          // 画布居中对齐底部图注，共竖直中线（同饼图页）。
           #set text(size: 0.7em)
           #cetz-canvas({
           import cetz.draw: *
@@ -335,22 +324,24 @@
           set-style(axes: (grid: (stroke: (paint: framagris.lighten(55%), thickness: 0.25pt, dash: "dotted"))))
           plot.plot(
             size: (7, 3),
-            x-tick-step: 1, x-min: 0, x-max: 4,
+            x-tick-step: 1, x-min: 0, x-max: 6,
             x-format: plot.formats.decimal.with(digits: 0),
-            y-tick-step: 1, y-min: 0, y-max: 4.5,
+            y-tick-step: 1, y-min: 0, y-max: 4,
             y-format: plot.formats.decimal.with(digits: 0),
             {
-              plot.add(((0, 4.0), (1, 2.4), (2, 1.6), (3, 1.1), (4, 0.8)),
+              plot.add(((0, 1.0), (1, 1.8), (2, 2.5), (3, 3.0), (4, 3.3), (5, 3.5), (6, 3.7)),
                 fill: true, fill-type: "axis",
                 style: (stroke: (paint: framableu, thickness: 1.2pt), fill: framableu.lighten(55%)))
-              plot.add(((0, 3.6), (1, 2.8), (2, 2.2), (3, 1.9), (4, 1.7)),
+              plot.add(((0, 0.8), (1, 1.3), (2, 1.8), (3, 2.1), (4, 2.3), (5, 2.5), (6, 2.6)),
                 style: (stroke: (paint: framarouge, thickness: 1.2pt), fill: none))
             },
           )
         })] // #align 收口：0.7em 只作用于画布
-        #v(0.1em)
-        #align(center)[#text(size: 0.63em, fill: framagris)[区域 · fill + fill-type]]
       ],
+      // ── Row 2: 图注（独占一行，三列水平对齐）──
+      [#align(center)[#text(size: 0.63em, fill: framagris)[环形 · inner-radius + outset]]],
+      [#align(center)[#text(size: 0.63em, fill: framagris)[堆积 · mode: "stacked"]]],
+      [#align(center)[#text(size: 0.63em, fill: framagris)[区域 · fill + fill-type]]],
     )
   ],
   closing: note[变体即参数：环形 = inner-radius + outset，堆积 = mode: "stacked"（数值域 = 各列
