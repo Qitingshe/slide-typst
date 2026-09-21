@@ -23,9 +23,10 @@
   logo: none,
 ))
 
-// 中文字体回退：西文使用模板默认衬线，中文回退到系统字体 Heiti SC。
+// 全局字体 Noto Sans CJK SC（SIL OFL 开源协议）：中西文统一渲染，替代原有的
+// New Computer Modern（西文衬线）+ Heiti SC（中文回退）回退链。
 // 全局字号 0.85em：单帧高度内容纳更充分的内容（约 15-16 行容量）。
-#show: set text(font: ("New Computer Modern", "Heiti SC"), size: 0.85em, hyphenate: true)
+#show: set text(font: ("Noto Sans CJK SC"), size: 0.85em, hyphenate: true)
 
 // 全局字符级两端对齐（Typst 0.15 justify/justification-limits）：
 // justify: true 开两端对齐；justification-limits 是关键——`spacing` 控制词距自适应

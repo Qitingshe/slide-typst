@@ -1,4 +1,4 @@
-# Pages 部署：macOS runner（含 Heiti SC 字体）→ 编译 + 六项门禁（pages 走 strict
+# Pages 部署：macOS runner（brew cask 安装 Noto Sans CJK SC）→ 编译 + 六项门禁（pages 走 strict
 # 硬闸）→ main.pdf 上传 Pages 供预览/下载。需用户先在仓库 Settings > Pages 选择
 # "GitHub Actions" 作为源（fire-and-forget：未开启时本工作流不运行，不阻塞 CI）。
 name: Pages
@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: typst-community/setup-typst@v5
         with: { typst-version: "0.15.1" }
+      - name: Install Noto Sans CJK SC
+        run: brew install --cask font-noto-sans-cjk-sc
       - name: Compile and verify gates (strict-pages on macOS)
         run: python3 scripts/verify.py --strict-pages
       - name: Stage PDF for Pages

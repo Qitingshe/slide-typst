@@ -18,7 +18,7 @@ typst compile main.typ
 | 文件 | 职责 |
 |---|---|
 | `lib.typ` | 设计系统（唯一 API 源）：配色 frama* 18 色、boite*×8 + boitefilled、stretch-grid、body-slide、keyline/stat/note、leg-label（图例降档）、section-open/cover、cetz-canvas、figure-block、chart/plot（cetz-plot 0.1.4）；已解冻，改动需独立评审 |
-| `main.typ` | 入口：字体配置、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
+| `main.typ` | 入口：字体配置（Noto Sans CJK SC，SIL OFL 开源）、slide-theme、deck 身份元数据（config-info）、封面、快速开始、自动目录、`#include` 显式列举 showcase/* |
 | `showcase/show.cover.typ` | 封面 cover（含参数变体）、开场页 section-open（index 有/无、自定义色） |
 | `showcase/show.skeleton.typ` | 正文页骨架 body-slide 全套变体 + gap 体系（gap-primary/secondary/0pt/closing-gap） |
 | `showcase/show.cards.typ` | boite×8 + boitefilled + stretch-grid 网格（2/3/5 列、gutter）+ 引用块卡片 + 竖向文本（rotate 侧标 / stack-ttb 中文竖列）+ 全要素样板页（末页）；八色卡每张带功能描述文案示例 |
@@ -37,15 +37,19 @@ typst compile main.typ
 | `typst.toml` | 项目元数据（compiler 钉 0.15.1） |
 | `gates.json` | 基线单一事实源（页数 / 用法 / 链接 / API 清单）——改基线只改这里 |
 | `scripts/verify.py` | 门禁唯一实现（compile 零警告 / 计数 / API / links / pages 分层）本地+CI 共用 |
-| `.github/workflows/ci.yml` | CI 门禁（ubuntu，pages=warn 因字体差异） |
+| `.github/workflows/ci.yml` | CI 门禁（ubuntu + apt fonts-noto-cjk，pages=warn 因字体版本差异） |
 | `.pre-commit-config.yaml` | 本地 quick 钩子（无 typst 跳过，exclude lib.typ） |
 
 ## 架构原理（2026-09 资深架构重构固化）
 
 - **基线单一事实源**：页数 / 用法计数 / 链接数 / API 清单只写 gates.json，改基线只改它；
   `scripts/verify.py` 是门禁唯一实现（本地 + CI + pre-commit 共用），AGENTS.md 不复制数字。
-- **门禁分层**：pages 仅在 macOS（`mdls`，字体完整）走 hard gate；CI（ubuntu 无 Heiti SC，
-  分页漂移属预期）与其余场景 pages 为 warn——字体不可捆绑入库，故不以 ubuntu 页数作硬闸。
+- **字体策略**：默认字体 Noto Sans CJK SC（SIL OFL 1.1 开源），跨平台一致，CI（ubuntu
+  `apt install fonts-noto-cjk` + macOS Homebrew `font-noto-sans-cjk-sc`）均可安装，无版权风险。
+  不再依赖 macOS 独占系统字体。
+- **门禁分层**：pages 仅在 macOS（`mdls`，字体完整）走 hard gate；CI（ubuntu 经 apt 安装
+  fonts-noto-cjk，但包版本/度量与 macOS 存在差异，分页漂移属预期）与其余场景
+  pages 为 warn——字体不捆绑入库，故不以 ubuntu 页数作硬闸。
   compile 检查同源豁免：非 macOS 上仅含 `unknown font family` 字型缺失 warning 时降级 WARN
   （内容级 warning 仍硬闸）。verify.py 不依赖 rg/ripgrep（GitHub 托管 runner 镜像无
   ripgrep，链接与页数全走纯 Python 字节计数；本机开发可再用 rg 手动统计）。

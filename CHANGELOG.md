@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Changed（2026-09-21 字体重构）
+- 字体策略重构：默认字体从 `("New Computer Modern", "Heiti SC")` 替换为 `("Noto Sans CJK SC")`（SIL OFL 1.1 开源），跨平台一致，不再依赖 macOS 独占系统字体 Heiti SC；CI 同步安装 `fonts-noto-cjk`（apt）+ `typst fonts` 断言、Pages 安装 `font-noto-sans-cjk-sc`（brew cask，勿用 `font-noto-sans-cjk`——家族名无 SC 后缀不匹配）消除缺字 warning；分页与基线不变（54 页）
+- AGENTS.md 更新字体策略描述与文件地图
+
 ### Added（2026-09-21 重构轮）
 - 画廊从九族扩为**十一族**：拆分「页面编排」→ 常规元素（show.basic）/ 表格与流程（show.tables）/ 区域编排（show.grid）；设计系统速查移至末位作参考附录
 - show.grid 新增「复合网格·仪表盘」样例（rowspan 跨行 + 不等宽列 + 末行 1fr 锚定）与「感谢聆听·结尾页」语义点破（可作 Q&A/联系页，附 body-slide(center: true) 等价说明）

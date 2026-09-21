@@ -42,9 +42,10 @@ def main():
     # ---- 1. compile：typst 必须零错误零警告（硬闸） ----
     proc = run(["typst", "compile", "main.typ", "--diagnostic-format=short"])
     merged = proc.stdout + proc.stderr
-    # 门禁分层补全：CI（非 macOS）缺系统字体（Heiti SC / New Computer Modern 未捆绑入库）
-    # 时 typst 仅输出字型缺失 warning，属预期差异，此场景豁免 FAIL；其余任何 error/warning
-    # （内容级）仍按硬闸 FAIL。macOS 本地与 Pages runner 字体完整，不受影响。
+    # 门禁分层补全：CI（非 macOS）字体未捆绑入库（现 CI 经 apt 安装 fonts-noto-cjk，但包
+    # 版本/度量仍可能与 macOS 不同）时 typst 仅输出字型缺失 warning，属预期差异，此场景
+    # 豁免 FAIL；其余任何 error/warning（内容级）仍按硬闸 FAIL。macOS 本地与 Pages runner
+    # 字体完整，不受影响。
     font_only = (
         sys.platform != "darwin"
         and bool(merged.strip())
