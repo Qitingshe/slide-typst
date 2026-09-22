@@ -15,17 +15,18 @@
 // ⚠ 坑: grid-slide 与 body-slide 平级可混用；末行 1fr 自动撑满底部，不需要 center:true；
 //       center:true 只在你需要整页垂直居中（如签名收尾页）时使用；
 //       figure-block 图宽随列宽放大（set image(width:100%)），横图高宽比约 1.5:1，
-//       底行用 1fr 时图片会撑满剩余空间挤占顶行——底行改用百分比（如 55%）可约束高度。
+//       底行用 1fr 时图片会撑满剩余空间挤占顶行——顶行用 1fr、底行 auto 并给
+//       底部 cell 加 align: center + bottom 可让图锚定页面底部。
 == 左右分栏 · grid-slide
 
 #grid-slide(
   columns: (1fr, 1fr),
-  rows: (auto, 55%),
+  rows: (1fr, auto),
   gutter: gutter-primary,
   align: (left, top),
   // cell(1,1)：左上
   [
-    #image("../assets/sample-scheme.svg", height: 3em)
+    #image("../assets/sample-scheme.svg", height: 5em)
     #v(0.2em)
     #text(size: 0.74em, fill: framagris)[
     系统架构概览 —— 弹性伸缩微服务拓扑。
@@ -40,8 +41,8 @@
       [声明式 API],
     )
   ],
-  // cell(2,1-2)：下通栏，colspan: 2 跨整行
-  grid.cell(colspan: 2)[
+  // cell(2,1-2)：下通栏，colspan: 2 跨整行，底部锚定
+  grid.cell(colspan: 2, align: center + bottom)[
     #grid(columns: (1fr, 1fr, 1fr), gutter: gutter-tight,
       figure-block(image("../assets/sample-chart.svg"), caption: [吞吐量监控]),
       figure-block(image("../assets/sample-chart.svg"), caption: [错误率跟踪]),

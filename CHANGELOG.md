@@ -10,7 +10,7 @@
 - show.cards 实色卡片页新增 4 列变体行：framaviolet / framagrisdark 裸色直用（白字 AA 过闸）+ color: auto 跟随强调色（_mid-tone-darken 同步生效）+ stat(stretch: true) 混排等高——演示真实内容页起手式；页内丰富不翻页，基线 usage 42 / api 51 / links 59 全不动
 
 ### Changed（2026-09-22 grid-slide 左右分栏页修版面）
-- show.grid 左右分栏页 `rows: (auto, 1fr)` → `rows: (auto, 55%)`：底行 1fr 会撑满剩余高度，figure-block 图高随列宽等比放大（内部 `set image(width: 100%)`，lib.typ:226），三图过高挤占顶行 scheme 图与 keyline/列表空间；固定底行 55% 占比后顶行恢复应有存在感、底行三图紧凑带注；⚠坑 补注「底行图高随列宽放大，1fr 会撑满剩余空间——底行用百分比约束」；页数 55 / usage 42 / api 51 / links 59 全不动
+- show.grid 左右分栏页底行锚定重排：`rows: (1fr, auto)` + 底部 cell 显式 `align: center + bottom` + scheme 图 `height: 3em → 5em`——原底行 1fr 撑满剩余高度、figure-block 图高随列宽等比放大（内部 `set image(width: 100%)`，lib.typ:226）挤占顶行；现顶行弹性撑满、底图贴页脚、左上图恢复存在感，三区均衡不悬空；⚠坑 补注「顶行用 1fr、底行 auto 并给底部 cell 加 align: center + bottom 可让图锚定页面底部」；页数 55 / usage 42 / api 51 / links 59 全不动
 
 ### Added（2026-09-22 DES-6 收口：GLM 二次审核 1–4 项落地）
 - scripts/verify.py 新增第 5 项「section-open 区域」检查（硬闸、零基线）：main.typ 内每个 `#section-open(` 到下一个 `=`/`==`/`#heading(` 之间仅允许注释/空行/`#include`，否则 FAIL 报行号——section-open 自成 slide（touying-slide），其后挂任何内容（slide-accent/卡片/正文）都会凭空多插一页；只扫 main.typ，show.cover.typ 连续全页元件演示为故意例外
