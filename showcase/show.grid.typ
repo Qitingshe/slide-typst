@@ -13,12 +13,14 @@
 // 用法: grid-slide(columns:, rows:, gutter:, ..cells) 替代 body-slide 线性流。
 // 改这里: columns/rows 定义网格维度；cells 按行优先顺序填内容；跨步用 grid.cell(colspan:)。
 // ⚠ 坑: grid-slide 与 body-slide 平级可混用；末行 1fr 自动撑满底部，不需要 center:true；
-//       center:true 只在你需要整页垂直居中（如签名收尾页）时使用。
+//       center:true 只在你需要整页垂直居中（如签名收尾页）时使用；
+//       figure-block 图宽随列宽放大（set image(width:100%)），横图高宽比约 1.5:1，
+//       底行用 1fr 时图片会撑满剩余空间挤占顶行——底行改用百分比（如 55%）可约束高度。
 == 左右分栏 · grid-slide
 
 #grid-slide(
   columns: (1fr, 1fr),
-  rows: (auto, 1fr),
+  rows: (auto, 55%),
   gutter: gutter-primary,
   align: (left, top),
   // cell(1,1)：左上
