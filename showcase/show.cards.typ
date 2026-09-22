@@ -68,9 +68,13 @@
 // 用法: #boitefilled(color: X, stretch: true) 交给 stretch-grid —— 实色卡片（色底 + 白字）
 // 改这里: 并排时每张加 stretch: true 让三栏等高（内容一行两行不齐，等高补齐底边）；
 //         color 只传真正够深的底色：framableu / framarouge / framaviolet 直接可用，
-//         framaorange 这类中明度色须 darken(25~30%) 垫深后再配白字。
+//         framaorange 这类中明度色须 darken(25~30%) 垫深后再配白字；
+//         color: auto（默认值）渲染时按当前 section 强调色解析（见 auto 色卡片）；
+//         stat(stretch: true) 与 boitefilled(stretch: true) 可混排同一 stretch-grid。
 // ⚠ 坑: 白字对比由底色的明度决定，与饱和度无关——framavert / framaorange /
-//        framajaune / framamarron 裸用会发虚，务必 darken 或换深原色。
+//        framajaune / framamarron 裸用会发虚，务必 darken 或换深原色；
+//        _mid-tone-darken 守卫：对比度 < 4.5:1 的中明度色自动 darken(28%)，
+//        传已垫深色（如 .darken(28%)）可绕过守卫。
 == 实色卡片 · boitefilled
 
 #stretch-grid(
@@ -81,27 +85,54 @@
   boitefilled(color: framaorange.darken(28%), stretch: true)[*橙底结论* 垫深后才配白字],
 )
 
-// 用法: #rotate(90deg, reflow: true) 西文侧标 / #stack(dir: ttb, spacing: …) 中文竖列
-// 改这里: 侧标文本写 rotate 里（短词 + tracking 拉开）；竖排逐字传 #stack 的子元素。
+// 用法: #boitefilled(color: X) + stack-ttb 中文竖排（借页即用形态）——实色卡竖排组合
+//        #rotate(90deg, reflow: true) 西文侧标 / #stack(dir: ttb, spacing: …) 灰字中文竖列
+// 改这里: boitefilled 换色即换气氛（framaviolet / framableu 裸用即可）；竖排逐字传 #stack；
+//         侧标文本写 rotate 里（短词 + tracking 拉开）；SIDEBAR 可选配或省略。
 // ⚠ 坑: typst 无 #text(dir: ttb)——中文竖排必须显式 #stack(dir: ttb)；
-//        rotate 务必带 reflow: true，否则旋转后不参与布局、会叠到隔壁内容上。
-#v(0.4em)
+//        rotate 务必带 reflow: true，否则旋转后不参与布局、会叠到隔壁内容上；
+//        实色竖块与灰字竖排并排，形成「色块 vs 文字」对照层次。
+#v(0.15em)
 #grid(
-  columns: (auto, auto, 1fr),
-  column-gutter: 0.5em,
-  [
+  columns: (auto, auto, auto, 1fr),
+  column-gutter: 0.6em,
+  align(horizon)[
+    #boitefilled(color: framaviolet)[
+      #align(center)[
+        #stack(dir: ttb, spacing: 0.2em,
+          text(size: 1em)[借],
+          text(size: 1em)[页],
+          text(size: 1em)[即],
+          text(size: 1em)[用])
+      ]
+    ]
+  ],
+  align(horizon)[
     #rotate(90deg, reflow: true)[
       #text(size: 7.5pt, fill: framagris, tracking: 0.3em)[SIDEBAR]
     ]
   ],
-  [
+  align(horizon)[
     #stack(dir: ttb, spacing: 0.15em,
       text(size: 0.72em, fill: framagris)[借],
       text(size: 0.72em, fill: framagris)[页])
   ],
-  [
+  align(horizon)[
     #text(size: 0.6em, fill: framagris)[rotate + stack-ttb：竖排侧标与中文竖列的紧凑形态]
   ],
+)
+
+// 裸色直用 / auto跟随强调色 / stat+boitefilled 混排等高——更多实色卡变体演示
+// auto 省略 color 参数，渲染时按当前 section 强调色解析（_mid-tone-darken 同步生效）；
+// stat(stretch: true) 大数字锚定行垂直中心，boitefilled 补齐右侧，演示真实内容页起手式。
+#v(0.2em)
+#stretch-grid(
+  columns: 4,
+  gutter: 0.5em,
+  boitefilled(color: framaviolet, stretch: true)[*violet* 深原色直用 6.38],
+  boitefilled(color: framagrisdark, stretch: true)[*gris dark* 深灰收束],
+  boitefilled(stretch: true)[*auto* 跟随 violet],
+  stat(stretch: true)[3][裸色直用],
 )
 
 // 用法: #stretch-grid(columns: 3, gutter: 1em, boiteXXX(stretch: true)[...], ...)
