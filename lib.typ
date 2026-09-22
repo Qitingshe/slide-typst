@@ -953,6 +953,7 @@
 // ---- 区域编排 grid-slide（v2.0）----
 // 先定格局后填内容：行列网格定义位置，内容按行优先顺序填入格子。
 // 支持原生 grid.cell(colspan:, rowspan:) 声明跨步，末行默认 1fr 撑满底部。
+// 网格撑满正文区（block height 100%）：fr 行按正文区高度分配，不再塌缩为内容高。
 
 /// grid-slide —— 区域编排页骨架（v2.0）。
 ///
@@ -963,10 +964,14 @@
 /// - columns (list of relative/length): 列宽，如 `(1fr, 1fr)` 均分两列；
 ///   默认 `(1fr)`。
 /// - rows (list of relative/length): 行高，默认 `(auto, 1fr)` 末行撑到底部。
+///   `fr` 行按正文区高度分配（网格撑满页面正文区，不塌缩为内容高）；
+///   `auto` 行取内容高。要让某格内容贴行底/居中，在该格上覆盖
+///   `grid.cell(align: ...)`（cell-align 默认 `(center, top)`）。
 /// - gutter (length): 区域间距，默认 `gutter-primary`。
 /// - cell-align (tuple): 格内内容默认对齐，默认 `(center, top)`。
 /// - center (bool): `true` 时整张网格在页面正文区内垂直居中（双 v(1fr)，
-///   同 body-slide center 方案）。默认 `false`。
+///   同 body-slide center 方案；此时网格按内容自然高度，fr 行失效）。
+///   默认 `false`。
 /// - ..cells (positional, content): 按行优先顺序填入格子的内容。
 ///   格子数不得超过 `columns × rows`，不足时剩余格子留空。
 /// 用法：
@@ -1006,9 +1011,13 @@
     ..arr,
   )
   if center {
+    // 居中模式：网格按内容自然高度，双 v(1fr) 页内居中（同 body-slide center）。
     [#v(1fr) #g #v(1fr)]
   } else {
-    g
+    // 常规模式：block(width: 100%, height: 100%) 给 grid 一个固定页高参照系——
+    // fr 行按正文区剩余高度分配，末行 1fr 真正锚定底部而非塌缩为内容高；
+    // 内容总高超出正文区时溢出仍静默（Typst 不报错），与 body-slide 同责。
+    block(width: 100%, height: 100%, g)
   }
 }
 

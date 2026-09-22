@@ -12,37 +12,48 @@
 
 // 用法: grid-slide(columns:, rows:, gutter:, ..cells) 替代 body-slide 线性流。
 // 改这里: columns/rows 定义网格维度；cells 按行优先顺序填内容；跨步用 grid.cell(colspan:)。
-// ⚠ 坑: grid-slide 与 body-slide 平级可混用；末行 1fr 自动撑满底部，不需要 center:true；
-//       center:true 只在你需要整页垂直居中（如签名收尾页）时使用；
-//       figure-block 图宽随列宽放大（set image(width:100%)），横图高宽比约 1.5:1，
-//       底行用 1fr 时图片会撑满剩余空间挤占顶行——用比例行如 (3fr, 2fr) 分配
-//       内容区与图带；图带内 figure-block 收窄 width 防溢出，bottom 锚定贴底。
+// ⚠ 坑: grid-slide 与 body-slide 平级可混用；网格撑满正文区（block height 100%），
+//       fr 行按正文区高度真实分配——末行 1fr 真正锚定底部，auto 行取内容自然高。
+//       本页 rows (auto, 1fr)：顶行贴内容（keyline 与左图顶对齐），剩余页高全落
+//       1fr 行，多余空白沉底给页脚留净空；比例行 (3fr, 2fr) 经 lib 修复后行高被
+//       页高真实撑满，horizon 对齐会让文字/图带在大行内悬浮过低——本页不再用。
+//       格级对齐参数名是 cell-align——写成 align: 会被 ..cells 尾参静默吞掉
+//       （不报错、不生效，照默认 (center, top) 渲染，本页曾踩此坑）；单格覆盖用
+//       grid.cell(align: top)（+ 组合双轴如 left + bottom；数组仅 grid 级 align 专用）。
+//       center:true 时网格改为内容自然高度 + 双 v(1fr) 页内居中，fr 行失效——
+//       「锚底布局」与「居中布局」二选一，不要同时开。
+//       figure-block 图宽随列宽放大（set image(width:100%)），横图高宽比约 1.5:1；
+//       内容超高溢出静默（Typst 不报错），须逐页目视。
 == 左右分栏 · grid-slide
 
 #grid-slide(
   columns: (1fr, 1fr),
-  rows: (3fr, 2fr),
+  rows: (auto, 1fr),
   gutter: gutter-primary,
-  align: (left, top),
-  // cell(1,1)：左上 —— 架构图 + 图注
+  // cell(1,1)：左上 —— 主视觉图走 figure-block（图注同宽同左缘，与底行图注同一规格）。
+  // 图宽 65%：auto 顶行随图高收缩，行高即内容高——图大行高、图小行矮，不悬浮
   [
-    #image("../assets/sample-scheme.svg", height: 4.5em)
-    #v(0.2em)
-    #text(size: 0.74em, fill: framagris)[
-    系统架构概览 —— 弹性伸缩微服务拓扑。
-    ]
+    #figure-block(
+      image("../assets/sample-scheme.svg"),
+      caption: [系统架构概览 —— 弹性伸缩微服务拓扑],
+      width: 65%,
+    )
   ],
-  // cell(1,2)：右上 —— keyline + 列表，horizon 对齐与左图视觉对位
-  grid.cell(align: horizon)[
+  // cell(1,2)：右上 —— keyline + 几何 marker 列表；align: top 与左图顶对齐
+  grid.cell(align: top)[
     #keyline[核心特性]
+    #v(gap-secondary)
     #list(
+      marker: text(fill: framagrisdark, size: 0.6em)[■],
+      spacing: 0.55em,
       [弹性伸缩],
       [自动容错],
       [声明式 API],
     )
   ],
-  // cell(2,1-2)：底部通栏图带，bottom 锚定 + 收窄图宽防溢出
-  grid.cell(colspan: 2, align: center + bottom)[
+  // cell(2,1-2)：底部通栏图带——align: top 上抬贴顶行下沿，剩余空白沉底（页脚净空）；
+  // 图宽 80% 收窄防溢出（超高溢出静默不报错）
+  grid.cell(colspan: 2, align: top)[
     #grid(columns: (1fr, 1fr, 1fr), gutter: gutter-tight,
       figure-block(image("../assets/sample-chart.svg"), caption: [吞吐量监控], width: 80%),
       figure-block(image("../assets/sample-chart.svg"), caption: [错误率跟踪], width: 80%),
@@ -54,7 +65,9 @@
 // 用法: grid-slide 复合网格——rowspan 跨行 + 不等宽列 + 末行 1fr 底部锚定
 // 改这里: 调整 columns / rows 定义布局骨架；替换各面板内文案或元件。
 // ⚠ 坑: rowspan 单元格占用后续行的同一列位置，后续格子按行优先顺序填入剩余位置；
-//       末行 1fr 自动撑到底部，无需 center: true（两者同时使用会冲突）；
+//       底栏贴底需单格覆盖 grid.cell(align: left + bottom)——cell-align 默认 (left, top)，
+//       不覆盖则底栏悬在 1fr 行顶部（+ 组合双轴；数组写法会报错）；
+//       末行 1fr 自动撑到底部，无需 center: true（锚底与居中二选一，同开冲突）；
 //       grid-slide 的行列 gutter 使用同一个值（column-gutter == row-gutter），
 //       如需不同 gutter，可降级使用原生 #grid(column-gutter:, row-gutter:) + body-slide；
 //       内容格子数 ≤ 列数×行数（含 rowspan 占位后的剩余格子），否则 assert 报错。
@@ -118,8 +131,10 @@
       )
     ]
   ],
-  // cell(3,1-2)：底通栏，colspan: 2 跨整行 + 1fr 自动锚定底部
-  grid.cell(colspan: 2)[
+  // cell(3,1-2)：底通栏，colspan: 2 跨整行 + 1fr 行锚底；
+  // align 覆盖 left + bottom 让色条贴 1fr 行底（即正文区底缘）——
+  // grid.cell 的 align 只收单一 alignment（+ 组合双轴），不收数组
+  grid.cell(colspan: 2, align: left + bottom)[
     #block(
       fill: framableu,
       inset: (x: 14pt, y: 10pt),
@@ -139,15 +154,15 @@
 //         （body-slide 更简单，适合纯文本结尾页；grid-slide 适合需要网格布局的复杂结尾页）。
 // ⚠ 坑: 居中模式优于手工 v(1fr)/v(1fr) 布局；同 body-slide center 的双 fr 论证。
 //       结尾页放在 deck 最后，前面加 #v(closing-gap)（如适用）或直接跟在末页正文后。
+//       曾误写 align: (center, center) 死参数（被 ..cells 静默吞掉，不生效）——
+//       格级对齐参数名是 cell-align；默认 (center, top) 已满足本页，无需覆盖。
 //       本页不设 closing，故最后一个 section 后面不需要 closing-gap——结尾页本身就是收束。
 //       如要更简单的无网格结尾，用 body-slide(inner: [...], center: true) 替代。
 == 感谢聆听 · 结尾页
 
 #grid-slide(
   columns: (1fr,),
-  rows: (auto, auto),
   gutter: gutter-primary,
-  align: (center, center),
   center: true,
   [
     #text(size: 22pt, weight: "bold", fill: framableu)[感谢聆听]
