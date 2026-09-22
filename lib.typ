@@ -163,9 +163,10 @@
 // stat、boitefilled 会自动沿用该色，也可用 color: 参数逐处覆盖。
 //
 // ⚠ 放置位置（Touying 分页注意）：请把 #slide-accent(...) 写在「上一页内容的
-//   末尾」作为收尾声明。若把它放在某页 `==` 标题之前（包括 section 标题之后），
-//   Touying 会在两页之间凭空多插一页空页。每章第一页可省略声明——直接沿用
-//   上一章末尾留下的颜色（全书默认 framableu）。
+//   末尾」作为收尾声明。多余页的真机制：`section-open` 自成一张 slide（_full-page），
+//   其后到该段首个 `==` 之间挂任何内容都会凭空多插一页——与 slide-accent
+//   放在 `==` 前无关。每章第一页可省略声明——直接沿用上一章末尾留下的颜色
+//   （全书默认 framableu）。
 
 /// 全局强调色状态（默认 framableu）。
 /// 仅供内部使用；页面请调用 slide-accent 声明强调色。
@@ -174,7 +175,8 @@
 /// 设置当前页/当前章强调色。
 /// - color (color): 强调色色值，如 framaorange / framaviolet。
 ///   声明后，后续 keyline、stat、boitefilled 与二级标题自动采用该色。
-/// ⚠ 请写在「上一页末尾」；写在 `==` 标题前会多出一页空页。
+/// ⚠ 请写在「上一页末尾」；`section-open` 之后、段内首个 `==` 之前不挂内容
+/// （否则凭空多插一页——真机制见 slide-accent 说明块）。
 #let slide-accent(color) = accent-state.update(color)
 
 /// 面包屑状态：内页右上角显示的「当前章 / 分段」短标签。
@@ -332,12 +334,30 @@
   }
 }
 
-// 中明度裸色发虚守卫：framajaune / framavert / framaorange / framamarron 底色配白字
-// 对比不足，自动垫深 28%；其余颜色（深色原色、已显式垫深、auto 解析色）原样不动。
-#let _mid-tone-darken(c) = if c == framajaune or c == framavert or c == framaorange or c == framamarron {
-  c.darken(28%)
-} else {
-  c
+// 中明度裸色发虚守卫（开放原则）：白字对比度（WCAG 2.0 相对亮度）< 4.5 判发虚，
+// 自动垫深 28%；深色原色、已显式垫深、auto 解析色原样不动。
+// 阈值 4.5 验算：framarouge 5.31 / framaviolet 6.38 / framableu 7.52 / framagris
+// 6.19 跳过，framajaune 2.34 / framavert 3.00 / framaorange 3.00 / framamarron
+// 3.31 垫深——与旧名单逐色一致，画廊渲染不变；借页者自定义色不再漏网。
+// ⚠ 边界：framajaune.darken(28%) 实测仅 ≈4.3（仍 < 4.5，AA large-text 3.0 已过）——
+//   借页者若坚持用 framajaune 作 boitefilled 底色且要 AA normal，应自行再传预垫深版。
+// ⚠ 非 color 类型（如 gradient）无 components()，跳过守卫原样渲染。
+#let _contrast-against-white(c) = {
+  let comp = c.components()
+  let lin(v) = {
+    let v = v / 100%
+    if v <= 0.03928 { v / 12.92 } else { calc.pow((v + 0.055) / 1.055, 2.4) }
+  }
+  let r = lin(comp.at(0))
+  let g = lin(comp.at(1))
+  let b = lin(comp.at(2))
+  let l = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  1.05 / (l + 0.05)
+}
+
+#let _mid-tone-darken(c) = {
+  if type(c) != color { return c }
+  if _contrast-against-white(c) < 4.5 { c.darken(28%) } else { c }
 }
 
 // 实色卡片视觉盒（boitefilled 非 stretch 路径、stretch-grid 渲染与测量共用）：
@@ -373,8 +393,8 @@
 
 /// boitefilled —— 实色填充卡片（boite 系列的对偶变体）：
 /// 底色为强调色、内容为白字，适合放「结论 / 高反差」信息。
-/// 中明度裸色（framajaune / framavert / framaorange / framamarron）自动垫深
-/// 28%（_mid-tone-darken 发虚守卫）；若想硬控，直接传已垫深色（如 framaorange.darken(28%)）。
+/// 中明度裸色（白字对比度 < 4.5:1）自动垫深 28%（_mid-tone-darken 发虚守卫）；
+/// 若想硬控，直接传已垫深色（如 framaorange.darken(28%)）。
 /// - content (content): 卡片内容。
 /// - color (color, auto): 填充色；默认 auto = 跟随当前强调色。
 /// 示例：#boitefilled[*结论* 缺工具定义 → 行动归零]
@@ -995,12 +1015,15 @@
 // ---- cover：分栏色块（层叠大图形左面板）----
 // 左面板：横向渐变底色；浅蓝大圆 / 圆弧 / 细圆环层叠出抽象编辑海报感；
 // 超淡大号年份数字作背景字；唯一强调是一个 Framaorange 小方块。
+// year: none —— 左面板背景年份大字；传历史 date 时可一并传 year 使年份随
+// date 一致；缺省取今年（默认路径渲染不变，lib 零 deck 身份边界）。
 #let cover(
   title: [Title],
   subtitle: none,
   author: none,
   institution: none,
   date: none,
+  year: none,
 ) = _full-page([
   #place(left, block(
     width: 38%,
@@ -1010,7 +1033,7 @@
     #place(top + left, dx: 1.2em, dy: 1em, cetz.canvas({
       import cetz.draw: *
 
-      let year = datetime.today().display("[year]")
+      let year-label = if year == none { datetime.today().display("[year]") } else { year }
 
       // 层叠大圆（浅蓝，高透明）
       circle((2.1, 5.2), radius: 2.2, fill: framableu.lighten(22%).transparentize(86%), stroke: none)
@@ -1020,7 +1043,7 @@
       circle((6.0, 6.0), radius: 2.3, stroke: white.transparentize(90%), fill: none)
       circle((3.3, 3.4), radius: 2.9, stroke: white.transparentize(93%), fill: none)
       // 超淡大号年份（背景字）
-      content((2.6, 5.2), text(size: 84pt, weight: "bold", fill: framableu.lighten(50%).transparentize(78%))[#year])
+      content((2.6, 5.2), text(size: 84pt, weight: "bold", fill: framableu.lighten(50%).transparentize(78%))[#year-label])
       // 唯一橙色小方块
       /// 小暖色块平衡左面渐变蓝的视觉重心（对角线重量配平）。
       rect((5.4, 0.7), (6.1, 1.4), fill: framaorange, stroke: none)

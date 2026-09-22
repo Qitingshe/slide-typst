@@ -10,6 +10,7 @@ typst compile main.typ
 
 - 必须**零错误、零警告**。
 - **页数以基线为准**：基线（页数/用法计数/链接数）单一事实源在 gates.json，改动只改它；变更日志在 CHANGELOG.md，历史变更记录在 `.slim/deepwork/template-gallery.md`；增删页后必须复核并更新基线（内容增加时优先收紧间距，不要翻页）。
+- **links 联动**：新增 `=` 家族 → 两处 `depth:1` outline 各 +1 目录条目 → links +2；新增 `==` 演示页 → links 不变；links 基线变更一律以**本机（已装 Noto）**`verify.py` 实测为准——缺字体回退环境会出现假性计数（DES-5 60 号假计教训）。
 - **内容溢出是静默的**（Typst 把溢出内容压到页脚/截断，不报错、不加页）——每条改动必须人工逐页翻看；agent 只保证编译与页数，视觉与溢出核验归用户。
 - 探针文件：自检渲染一律走 /tmp；仓库内不得遗留 `_*.typ` / `_*.pdf` / png / svg 等探针文件。
 
@@ -59,8 +60,7 @@ typst compile main.typ
 - **show 规则纪律**：show 规则从声明点起全局生效会覆盖先前样式——新家族页面必须先查全
   deck 是否已有同名规则；规则体尽量用代码上下文限定作用域（见 outline recipe）；
   删除 show 规则前统计引用计数（零引用即死规则，删除并同步 lib 注释）。
-- **防拆规则**：lib.typ 保持单体（当前约 1035 行）；只有当超过 ~1000 行、或出现「按节独立
-  分发」的真实需求时才评审拆分，不预设 facade。
+- **防拆规则**：lib.typ 保持单体（当前 1041 行，已过 ~1000 线但无「按节独立分发」需求——记录在案不拆分）；拆分触发 = 过线**且**出现真实分发需求，或行数再破 ~1300。
 - **升级协议（锁步）**：维持 typst 0.15.1 + touying 0.7.4 + cetz 0.5.2 + cetz-plot 0.1.4 + numbly 0.1.0；
   升级必须：① 改 typst.toml compiler 与 CI setup-typst 版本；② 跑 `verify.py --strict-pages`
   全绿；③ 新 PDF 与旧 PDF **逐页对照核验**（视觉/溢出归用户）；④ 更新 CHANGELOG。
@@ -86,7 +86,7 @@ typst compile main.typ
 
 ### 色与强调
 - 全书默认 framableu；各家族 section 通过 section-open 的 color 参数换一次色（演示节级换色）。
-- 页级换色用 `#slide-accent(色)`，**必须放上一页末尾**；放 `==` 标题前会凭空多插一页。画廊仅 show.color 演示一次页级走位（只注释不渲染错误示例）。
+- 页级换色用 `#slide-accent(色)`，**必须放上一页末尾**；`section-open` 自成一张 slide，其后到该段首个 `==` 之间不得挂任何内容（含 slide-accent），否则凭空多插一页。画廊仅 show.color 演示一次页级走位（只注释不渲染错误示例）。
 
 ## 注释契约（借页是画廊核心价值）
 

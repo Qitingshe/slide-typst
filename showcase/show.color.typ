@@ -59,12 +59,13 @@
 #note[深色原色配白字，浅色与中明度色（vert / orange / jaune / marron）配深字；颜色关系优先靠明度，不靠饱和度。]
 
 // ⚠ 走位声明：写在本页「末尾」，下一页整体接管 framaviolet。
-// 若把它放在下一页 `==` 之前，Touying 会在两页之间凭空多插一页空页。
+// （多插页的真机制：section-open 自成 slide，其后到该段首个 `==` 之间挂任何
+//   内容都会凭空多插一页——这里写页末、紧邻下一页 `==`，是安全姿势。）
 #slide-accent(framaviolet)
 
 // 用法: #slide-accent(色值) 写在「上一页末尾」，本页标题/keyline/stat/boitefilled 全部跟随
 // 改这里: 换 framaXXX 色值；每章第一页可省略声明（沿用上一章遗留色，全书默认 framableu）。
-// ⚠ 坑: 放 `==` 标题前会多插一页空页；本页收尾再 #slide-accent(framableu) 复位。
+// ⚠ 坑: accent 须写上一页末尾；section-open 之后、段内首个 == 之前不挂内容。本页收尾再 #slide-accent(framableu) 复位。
 == slide-accent · 页级换色
 
 #body-slide(

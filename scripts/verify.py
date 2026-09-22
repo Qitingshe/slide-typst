@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """这是门禁唯一实现：CI / 本地 / pre-commit 共用；改基线只改 gates.json。
 
-6 项检查：compile / usage-comments / api / links / pages / version。
+7 项检查：compile / usage-comments / api / links / section-open 区域 / pages / version。
 默认模式 pages 的偏差为 WARN；--strict-pages 时 pages 偏差升级为 FAIL。
 任一 FAIL -> exit 1；纯 WARN 或全 PASS -> exit 0。
 运行位置不限：仓库根目录由本文件位置推导。
@@ -99,7 +99,34 @@ def main():
             print(f"[FAIL] links ({count} != {baselines['links']})")
             failed = True
 
-    # ---- 5. pages：macOS 优先 mdls，其余用字节计数取数，取不到 WARN ----
+    # ---- 5. section-open 区域：section-open 自成一张 slide（touying-slide），
+    # 其后到段内首个 `=`/`==`/`#heading` 之间只允许注释/空行/#include —— 挂任何
+    # 内容（slide-accent、卡片、正文）都会凭空多插一页（Touying 分页机制，探针
+    # 实证）。只扫 main.typ：家族 section-open 都在这里；show.cover.typ 的连续
+    # 全页演示（cover×2 + section-open×2 互不夹内容）是故意例外，不在扫描范围。
+    violations = []
+    main_lines = open(os.path.join(ROOT, "main.typ"), encoding="utf-8").read().splitlines()
+    i = 0
+    while i < len(main_lines):
+        if main_lines[i].strip().startswith("#section-open("):
+            j = i + 1
+            while j < len(main_lines):
+                s = main_lines[j].strip()
+                if s.startswith("=") or s.startswith("#heading("):
+                    break
+                if s and not s.startswith("//") and not s.startswith("#include "):
+                    violations.append(f"{j + 1}: {s[:60]}")
+                j += 1
+            i = j
+        else:
+            i += 1
+    if violations:
+        print(f"[FAIL] section-open 区域 (section-open 后挂了 {len(violations)} 处内容，如 {violations[:2]})")
+        failed = True
+    else:
+        print("[PASS] section-open 区域")
+
+    # ---- 6. pages：macOS 优先 mdls，其余用字节计数取数，取不到 WARN ----
     def pages_macos():
         try:
             p = run(["mdls", "-name", "kMDItemNumberOfPages", "-raw", "main.pdf"])
@@ -137,7 +164,7 @@ def main():
     else:
         print(f"[WARN] pages ({n} != {baselines['pages']})")
 
-    # ---- 6. version：typst 主次版本与 compiler 基线（默认 0.15.1）不一致 WARN ----
+    # ---- 7. version：typst 主次版本与 compiler 基线（默认 0.15.1）不一致 WARN ----
     try:
         p = run(["typst", "--version"])
         m = re.search(r"(\d+)\.(\d+)", p.stdout or "")

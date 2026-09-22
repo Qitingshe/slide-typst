@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+### Added（2026-09-22 DES-6 收口：GLM 二次审核 1–4 项落地）
+- scripts/verify.py 新增第 5 项「section-open 区域」检查（硬闸、零基线）：main.typ 内每个 `#section-open(` 到下一个 `=`/`==`/`#heading(` 之间仅允许注释/空行/`#include`，否则 FAIL 报行号——section-open 自成 slide（touying-slide），其后挂任何内容（slide-accent/卡片/正文）都会凭空多插一页；只扫 main.typ，show.cover.typ 连续全页元件演示为故意例外
+
+### Changed（2026-09-22 DES-6 收口：GLM 二次审核 1–4 项落地）
+- lib.typ `_mid-tone-darken` 名单制 → WCAG 开放谓词：新增私有 `_contrast-against-white`（`components()` 三通道 sRGB 线性化自算 WCAG 2.0 白字对比度），对比 < 4.5 自动垫深 28%；8 色分区与旧名单逐色一致（jaune 2.34 / vert 3.00 / orange 3.00 / marron 3.31 垫深，rouge 5.31 / violet 6.38 / bleu 7.52 / gris 6.19 不动），借页者自定义色不再漏网，画廊渲染逐字节不变（before/after PDF 对照实证）；非 color 类型（gradient）跳过守卫
+- lib.typ `cover` 新增 `year: none` 参数：传历史 date 时可一并传 year 使背景年份大字随 date 一致，缺省取今年（默认路径渲染不变，lib 零 deck 身份边界）
+- AGENTS.md：links 联动规则（新增 `=` 家族 → 两处 depth:1 outline 各 +1 → links +2；`==` 演示页不变；links 基线以本机已装 Noto 实测为准）；防拆规则记录 lib.typ 1041 行已过 ~1000 线但无分发需求、维持单体
+- lib.typ / show.color.typ 失准注释校正：「放 `==` 标题前会多插一页」→「`section-open` 之后、段内首个 `==` 之前不得挂任何内容」
+
 ### Added（2026-09-22 DES-5 美学评审落地）
 - show.basic 新增「代码块 · raw」页：framagrislight 浅底 + accent 顶线 1.5pt（与 boite 卡片 3pt 左竖条方向/粗细双差异）、块级 0.78em、行内不加底色不换字号、不加行号；等宽回退链 DejaVu Sans Mono（Typst 内嵌，零新增依赖）→ Noto Sans CJK SC；页数基线 54 → 55，用法注释 41 → 42，链接 59 不变（新增代码块页是 `==` 二级标题，deck 两处 `#outline` 均 `depth: 1` 只收录 `=` 家族标题、不增收二级条目；新页内无 `#link` 调用——本机 Noto 环境实测链接增量为零）
 - show.basic 图片页新增图文叠加样例：外层 block + #place 半透明白文字条（⚠坑 ④ 已注明叠加层不进 figure-block——体内 set image(width: 100%) 只管图，叠加物会被当正文排在图下方）
