@@ -1,7 +1,7 @@
 // showcase/show.basic.typ
-// 家族：常规元素 —— 不画新容器，用 Typst 原生能力补齐三类内容。
+// 家族：常规元素 —— 不画新容器，用 Typst 原生能力补齐四类内容。
 //
-// 演示三个元件：
+// 演示四个元件：
 //   · #table(...)：原生表格，深底白字表头＋斑马纹＋末行强调；表头示范「多级分组」
 //     写法——table.header(level: 1, …分组行…) + table.header(level: 2, …子列行…)，
 //     覆盖「收入/成本/利润 → 子列」这类高频借页场景。
@@ -11,6 +11,9 @@
 //     多子图用 figure-block + grid 的「三图一线」排法。
 //   · #link(...)：外链（完整 URL）与内链（#label + <标签>）双向跳转，页面级
 //     #show link 规则统一上主题色＋下划线。
+//   · raw 代码块：行内 #raw(...) 不加底色不换字号（与正文同行高才安静）；
+//     块级走「framagrislight 浅底 + accent 顶线 1.5pt」容器（与 boite 卡片的
+//     3pt 左竖条方向/粗细双差异，不撞视觉语言），不加行号。
 //
 // 交叉引用：表头/链接配色沿用「配色与强调」家族的明度对比原则——
 //   表格走「深底白字」路线（framableu 实底表头 + 白字），斑马纹 lighten(93%)，
@@ -92,15 +95,21 @@
 )
 
 // 用法: #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 88%)
-//        + 调用点自排居中图注 —— #block(width: 88%)[#align(center)[#text(size, fill)[图 1：…]]]
+//        + 图文叠加（外层 block + #place 半透明白文字条）+ 调用点自排居中图注
+//        —— #block(width: 88%)[#align(center)[#text(size, fill)[图 1：…]]]
 // 改这里: img 传 `image(...)` 调用（路径相对本文件，showcase/ 下写 ../assets/）；width 为图
 //         与图注共享宽度；要居中图注时 caption 传 none，自排那行的 size / fill 沿
 //         lib 默认（0.63em / framagris）；想保留左对齐就直接用 caption 参数（默认路线）。
+//         叠加条文案改 #place 里那行 text；底色浓度改 8 位十六进制的透明度两位。
 // ⚠ 坑: ① `image(...)` 调用处**不要写 width**——块内 #set image(width: 100%) 接管，
 //        显式 width 会覆盖它导致溢出；② caption 内嵌 #align(center) 不可行（text 内
 //        不能放 block 级元素），居中必须走 caption: none + 容器内 align；③ 原生 `figure`
 //        （自动编号、进目录，走 main.typ 的 figure.caption 规则）与 `figure-block`
-//        （手写"图 1："、不编号）是两条 caption 路径，借页时按需选一条，勿混用。
+//        （手写"图 1："、不编号）是两条 caption 路径，借页时按需选一条，勿混用；
+//        ④ 图文叠加层必须与图**同住一个外层 block**（#place 锚定该块的左上角），
+//        不能塞进 figure-block——它体内的 set image(width: 100%) 只管图，叠加物
+//        进去会被当正文排在图下方；半透明白底用 8 位十六进制（rgb("#FFFFFFD9")，
+//        末两位是 alpha）。
 == 图片 · image
 
 #body-slide(
@@ -110,16 +119,26 @@
       columns: (1fr, 1fr),
       gutter: 1em,
       [
-        #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 88%)
+        // 图文叠加：叠加条与 figure-block 同住一个 88% 外层 block，
+        // #place(top + left) 锚定块左上角压在图上（place 不占文档流，
+        // 不改变整页高度）；figure-block 的 width 相应改为 100% 占满外层。
+        #block(width: 88%)[
+          #place(top + left, dx: 0.6em, dy: 0.6em)[
+            #block(radius: 3pt, fill: rgb("#FFFFFFD9"), inset: (x: 0.55em, y: 0.35em))[
+              #text(size: 0.72em, fill: framagrisdark)[*图文叠加* · 半透明白底压图]
+            ]
+          ]
+          #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 100%)
+        ]
         #v(0.1em)
         #block(width: 88%)[#align(center)[#text(size: 0.63em, fill: framagris)[图 1：样例示意图（assets/sample-scheme.svg）]]]
       ],
       [
         #boitebleue[
           *放图要点*
-          - 先给 image() 一个 width，别让图以原始尺寸顶破页面。
-          - 图注交给 #raw("#figure-block") 模版元件：图与图注同宽同左缘，间距/字号由 gap、caption-size 参数接管。
-          - 一套 deck 的示意图统一放 assets/，路径从仓库根写起。
+          - 图用 #raw("#image(width, path)") 约束宽度，#raw("#figure-block") 接管图注（同宽同左缘、间距/字号参数化）。
+          - 示意图统一放 assets/，路径从仓库根写起。
+          - 图文叠加走「外层 block + #place」，别把叠加物塞进 figure-block。
         ]
       ],
     )
@@ -162,8 +181,8 @@
 // 改这里: 样式规则写在 #show link 里，用 underline(text(fill: 主题色, it)) 包住整个
 //         link 元素——最外层是 underline 不是 link，不递归、链接可点性保留；
 //         换色改两处：text 的 fill 与 underline 的 stroke（0.5pt 细线即可）。
-// ⚠ 坑: show 规则自声明点起对文档后续链接全局生效——本 deck 之后只有「示意图与
-//        公式」家族（无链接），安全；若后续某页要恢复默认样式，写
+// ⚠ 坑: show 规则自声明点起对文档后续链接全局生效——本 deck 之后只有同族代码块页
+//        （无链接）与「示意图与公式」家族（无链接），安全；若后续某页要恢复默认样式，写
 //        #show link: it => it 重置。内链目标 <tbl-anchor> 挂在表格页的 `==` 标题上，
 //        body-slide 的 inner 里放 #label(...) 会被 Touying 丢弃，别放那儿。
 #show link: it => underline(stroke: 0.5pt + framableu, text(fill: framableu, it))
@@ -194,4 +213,51 @@
     )
   ],
   closing: note[#raw("#show link") 规则自声明点起接管文档后续全部链接；借页时连同规则一起复制。],
+)
+
+// 用法: #show raw: set text(font: (…)) + 浅底顶线 block 包 ```typst 围栏 —— 代码块页
+//        （行内 #raw() 不加底色不换字号；块级 raw 走 0.78em）
+// 改这里: 代码写在 ```typst 围栏里（样例即最小可用样例，可直接替换）；容器参数——
+//         fill: framagrislight / 顶线 1.5pt 取当页 accent（context 里读
+//         accent-state）/ radius 4pt / inset (x: 0.9em, y: 0.65em)；等宽回退链
+//         改 show raw 的 font 元组（Typst 内嵌 DejaVu Sans Mono 零新增依赖，
+//         CJK 注释落 deck 主字体）。
+// ⚠ 坑: ① 顶线是 1.5pt 横线，与 boite 卡片的 3pt 左竖条「方向/粗细」双差异，
+//        别改成左竖线——会和卡片视觉语言撞车；② 演示代码里别出现本画廊入口
+//        注释的字样（门禁按行子串计数会把样例代码误计入用法基线）；③ 代码页
+//        零链接：围栏里的 URL 只是文本，但也别写 #link；④ 行内 raw 不加底色
+//        不换字号——与正文同行高才安静；要行号借页时给围栏自行加参数。
+== 代码块 · raw
+
+#body-slide(
+  kicker: [行内不抢戏，块级浅底顶线],
+  inner: [
+    #show raw: set text(font: ("DejaVu Sans Mono", "Noto Sans CJK SC"))
+    #show raw.where(block: true): set text(size: 0.78em)
+    行内代码 #raw("#boitebleue") 与正文同基线、不加底色——读起来不割裂。
+    #v(gap-secondary)
+    #context {
+      let c = accent-state.get()
+      block(
+        radius: 4pt,
+        fill: framagrislight,
+        stroke: (top: (paint: c, thickness: 1.5pt)),
+        inset: (x: 0.9em, y: 0.65em),
+      )[
+        ```typst
+        // 代码示例：三卡等高网格（show.cards 的最简调用）
+        #stretch-grid(
+          columns: 3,
+          gutter: gutter-tight,
+          boitebleue(stretch: true)[短卡],
+          boiteverte(stretch: true)[中等长度的卡],
+          boiteorange(stretch: true)[内容不齐也会拉成等高],
+        )
+        ```
+      ]
+    }
+    #v(gap-primary)
+    #note[不加行号：幻灯片里的代码是「证据」不是「讲稿」，短段落更安静；要行号借页时给围栏自行加参数。]
+  ],
+  closing: note[等宽回退链：DejaVu Sans Mono（Typst 内嵌，零新增依赖）→ Noto Sans CJK SC（deck 主字体兜住 CJK 注释）；换品牌字体改 show raw 的 font 元组第一位。],
 )

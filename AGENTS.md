@@ -25,7 +25,7 @@ typst compile main.typ
 | `showcase/show.data.typ` | keyline（色/字号变体）、stat（默认/定制/stretch 行）、note、alert/frameEmph |
 | `showcase/show.nav.typ` | 自动目录 recipe（outline + entry 样式 + outlined:false 技巧）+ chrome（页眉标题+细线、面包屑、页脚三格 — 作者 / deck 标题 / 日期+页码、进度条） |
 | `showcase/show.color.typ` | frama 调色板总览 + slide-accent 色交接演示（节内页级走位仅此一处） |
-| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链） |
+| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（assets/ 样例图 + 图文叠加 + 多子图三图一线）、`link` 超链接（外链 + `<label>` 内链）、`raw` 代码块（浅底 + accent 顶线 1.5pt） |
 | `showcase/show.cetz.typ` | CeTZ 画布（研发迭代闭环 5 节点 / PDCA 改进环 4 节点——中性通用示例）+ 公式块；合计 3 页 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot 0.1.4）：饼图 chart.piechart / 分组柱状 chart.barchart / 线性图 plot.plot+plot.add / 变体速查（环形·堆积·区域）；numbly 格式化样板；合计 4 页 |
 | `showcase/show.tables.typ` | 表格替代语言：cmp-grid（对比网格）/ term-rows（术语行）/ flow-steps（编号流程，横向+纵向）+ body-slide center 垂直居中变体；合计 4 页 |

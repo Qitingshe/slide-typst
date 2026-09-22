@@ -1,17 +1,17 @@
 # Slide 模板画廊（slide-typst）
 
-Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 54 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
+Frama 品牌风格的 Typst 幻灯片模板画廊：`lib.typ` 提供完整设计系统（版式元件 + 配色），`main.typ` + `showcase/` 用 55 页样例把每个元件演示一遍 —— 看到想要的页，连同注释一起整页复制到自己的 deck 即可（"借页"）。
 
 ## 特性
 
-- **54 页全样例画廊**：十一族（页面体系 / 常规元素 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 表格与流程 / 区域编排 / 示意图与公式 / 数据图表 / 设计系统速查），每页都是一个可整页抄走的自包含样例。
+- **55 页全样例画廊**：十一族（页面体系 / 常规元素 / 卡片与网格 / 数据元件 / 导航与目录 / 配色与强调 / 表格与流程 / 区域编排 / 示意图与公式 / 数据图表 / 设计系统速查），每页都是一个可整页抄走的自包含样例。
 - **Frama 18 色设计系统**：8 种品牌原色 × 深浅两档（`framableu` ～ `framagris`）+ `framagrisdark` / `framagrisdarkest`，全部以 `#let` 导出、接入主题配色槽位。
 - **卡片与等高网格**：`boite` 浅色卡片 ×8 + `boitefilled` 实色白字；`stretch-grid` 自动测量自然高度、按行生成等高网格，无需手算 rows。
-- **CeTZ 示意图**：`cetz-canvas` 封装 touying 动画机制，示例含研发迭代闭环、PDCA 改进环（中性通用案例，借页即用）。
+- **CeTZ 示意图**：`cetz-canvas` 封装 touying 动画机制，示例含研发迭代闭环、PDCA 改进环（中性通用案例，借页即用）。要逐帧动画时，在页面内容里用 Touying 的 `#pause` / `#uncover` 编排（`cetz-canvas` 已绑 touying-reducer）；画廊自身保持静态单帧。
 - **自动目录与页面 chrome**：`outline` 条目样式、页眉标题 + 细线、面包屑、页脚三格、进度条全套 recipe。
 - **工程化门禁**：编译零错误零警告、基线校验（页数 / 用法注释数 / 链接数 / API 清单）、CI 硬闸、本地 pre-commit 钩子、GitHub Pages 预览。
 
-> 基线数字（页数 54 / 用法注释 41 / 链接 59 / API 清单 51 项）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
+> 基线数字（页数 55 / 用法注释 42 / 链接 59 / API 清单 51 项）以 `gates.json` 为**单一事实源**，改动只改它；本 README 中的数字只是快照。
 
 ## 快速开始
 
@@ -38,7 +38,7 @@ typst watch main.typ     # 开发模式：保存即增量重编
 | `showcase/show.data.typ` | `keyline`（色/字号变体）、`stat`（默认/定制/stretch 行）、`note`、强调文本 |
 | `showcase/show.nav.typ` | 自动目录 recipe（`outline` + 条目样式）+ 页眉 / 面包屑 / 页脚 / 进度条 |
 | `showcase/show.color.typ` | frama 调色板总览 + `slide-accent` 页级换色演示 |
-| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（含多子图三图一线）、`link` 外链与内链 |
+| `showcase/show.basic.typ` | 常规元素：原生 `table` 表格（深底白字表头/斑马纹/末行强调）、`image` 图片（图文叠加 + 多子图三图一线）、`link` 外链与内链、`raw` 代码块（浅底 + accent 顶线） |
 | `showcase/show.cetz.typ` | CeTZ 画布示例（研发迭代闭环 5 节点 / PDCA 改进环 4 节点）+ 公式块 |
 | `showcase/show.charts.typ` | 数据图表（cetz-plot）：饼图 / 分组柱状 / 线性图 / 变体速查（环形·堆积·区域）+ numbly 格式化样板 |
 | `showcase/show.tables.typ` | 表格替代语言：`cmp-grid` 对比网格 / `term-rows` 术语行 / `flow-steps` 编号流程（横向+纵向）+ `body-slide(center: true)` 垂直居中变体 |
@@ -66,6 +66,14 @@ typst watch main.typ     # 开发模式：保存即增量重编
    - deck 身份（书名 / 作者 / 机构 / 日期）只改 `main.typ` 的 `slide-theme.with(config-info(...))`；
    - 换强调色用 `section-open(title, subtitle, color: ...)`（每节一次）；页内临时走位用 `#slide-accent(色)`，**必须放在上一页末尾**，放标题前会凭空多插一页；
    - 全局字体与正文字号在 `main.typ`（默认 0.85em；Noto Sans CJK SC 中西文统一）。
+
+### 换肤（换品牌色）
+
+`framableu` 在仓库里的引用分两类，换品牌色时区别对待：
+
+- **语义性默认强调色**：已收敛到 `lib.typ` 的私有 token `_semantic-default-accent`（下划线前缀，不在 API 清单）——`accent-state` 初值、主题 `config-colors` 的 primary 槽、`_boite` 兜底默认三处引用它。**换品牌色只改这一行**，全 deck 的页眉标题、keyline、stat、`boitefilled` 默认色随之联动。
+- **封面固有设计蓝**：`lib.typ` 封面 `cover` 内部约 6 处直接引用 `framableu`，是封面海报的配色设计、不随品牌色联动；要封面同色需另行手改。
+- **按节/按页强调色**：各 `section-open(color: …)` 与 `#slide-accent(色)` 本就是可替换的用法演示，借页时按需替换任意 frama 色；`boitebleue` 等八色卡片函数是「颜色即身份」，不在换肤范围。
 
 ### 应该用哪个元件
 
@@ -117,10 +125,10 @@ python3 scripts/verify.py --strict-pages  # 页数升级为硬闸
 | 检查 | 含义 |
 |---|---|
 | compile | `typst compile main.typ` 零错误零警告 |
-| usage-comments | showcase 各页 `// 用法:` 注释总数 == 基线（41） |
+| usage-comments | showcase 各页 `// 用法:` 注释总数 == 基线（42） |
 | api | `gates.json` API 清单每项都必须是 `lib.typ` 的 `#let` 导出 |
 | links | main.pdf 中链接数 == 基线（59） |
-| pages | 页数 == 基线（54） |
+| pages | 页数 == 基线（55） |
 | version | typst 主次版本与钉版本（0.15.1）一致，偏离只告警 |
 
 **改基线（如增删页）只改 `gates.json`**，并同步 CHANGELOG —— `verify.py` 全绿即可，其它文件不复制数字。

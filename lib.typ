@@ -87,6 +87,12 @@
 #let framagrisdark = rgb("#3E3E3E")
 #let framagrisdarkest = rgb("#000000")
 
+// 语义默认强调色（私有 token，下划线不入 API 清单）：accent-state 初值、主题
+// config-colors 的 primary 槽、_boite 兜底默认三处共用。换品牌色只改这一行，
+// 全 deck 默认强调随之联动（换肤指南见 README「换肤（换品牌色）」）。
+// 注意：封面 cover 内 6 处 framableu 是海报固有设计蓝，不属此语义、不随之联动。
+#let _semantic-default-accent = framableu
+
 // ==== 强调文本（Framaorange 加粗；刻意保持「稀有、可选」）====
 // alert = frameEmph 同义转发（单实现源）：frameEmph 供正文使用，alert 供 config-methods 绑定。
 #let frameEmph(body) = text(fill: framaorange, weight: "bold", body)
@@ -127,7 +133,7 @@
   }
 }
 
-#let _boite(content, color: framableu, stretch: false) = {
+#let _boite(content, color: _semantic-default-accent, stretch: false) = {
   if stretch {
     // 交给 stretch-grid 排版：返回规格字典
     (cell: "boite", color: color, content: content)
@@ -163,7 +169,7 @@
 
 /// 全局强调色状态（默认 framableu）。
 /// 仅供内部使用；页面请调用 slide-accent 声明强调色。
-#let accent-state = state("slide-accent", framableu)
+#let accent-state = state("slide-accent", _semantic-default-accent)
 
 /// 设置当前页/当前章强调色。
 /// - color (color): 强调色色值，如 framaorange / framaviolet。
@@ -795,7 +801,7 @@
     }
   },
   config-colors(
-    primary: framableu,
+    primary: _semantic-default-accent,
     primary-light: framableulight,
     secondary: framavert,
     secondary-light: framavertlight,

@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+### Added（2026-09-22 DES-5 美学评审落地）
+- show.basic 新增「代码块 · raw」页：framagrislight 浅底 + accent 顶线 1.5pt（与 boite 卡片 3pt 左竖条方向/粗细双差异）、块级 0.78em、行内不加底色不换字号、不加行号；等宽回退链 DejaVu Sans Mono（Typst 内嵌，零新增依赖）→ Noto Sans CJK SC；页数基线 54 → 55，用法注释 41 → 42，链接 59 不变（新增代码块页是 `==` 二级标题，deck 两处 `#outline` 均 `depth: 1` 只收录 `=` 家族标题、不增收二级条目；新页内无 `#link` 调用——本机 Noto 环境实测链接增量为零）
+- show.basic 图片页新增图文叠加样例：外层 block + #place 半透明白文字条（⚠坑 ④ 已注明叠加层不进 figure-block——体内 set image(width: 100%) 只管图，叠加物会被当正文排在图下方）
+- show.cards 八色卡新增几何角标（色盲冗余：形状×颜色双编码，8 个互异保守码位 ●■▲◆★▼◎◇，0.55em framagrisdark，不独占新行）
+- README 新增「换肤（换品牌色）」指南：framableu 引用点语义分类（语义性默认强调色 / 封面固有设计蓝 / 按节强调色）
+- show.cetz ⚠坑 补 Touying #pause / #uncover 逐帧动画提示；README CeTZ 特性补一句 slider 定向（画廊保持静态单帧）
+
+### Changed（2026-09-22 DES-5 美学评审落地）
+- lib.typ 语义色别名（裁剪版）：新增私有 token `_semantic-default-accent`（下划线前缀，不入 API 清单），收敛 3 处语义引用——`_boite` 兜底默认 / `accent-state` 初值 / `config-colors` primary 槽；封面 6 处 framableu 为固有设计蓝不动、`boitebleue` 的 framableu 是颜色即身份不动；数值等价平移（API 清单 51 不变）
+
 ### Changed（2026-09-22 DES-4 美学评审落地）
 - 美学 A 组（designer）：仪表盘右上面板 8.5pt→9pt（收紧内侧间距补偿）；调色板 `_swatch` 加 0.4pt 浅灰描边（浅色卡白底可辨）；页 20 引用块压缩为一行金句（出处行移除）；页 21 竖向文本与实色卡整合为紧凑三格条（不拆页）；页 23 五列卡补 0.5em 功能小字
 - 美学 B 组：速查族 section-open framajaune→framamarron（白底对比 2.3:1→3.3:1）；页 4 内容地图 closing 精简为"十一族"；表格页 closing 精简（57→25 字）；变体速查 closing 精简（55→26 字）；stat 分段说明样式统一（0.78em + framagrisdark bold）；nav recipe closing 追加 show 规则全局生效警告

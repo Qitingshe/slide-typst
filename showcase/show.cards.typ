@@ -22,19 +22,22 @@
 // 改这里: 直接把内容写进方括号；颜色语义自定（蓝/绿/红/橙/紫/黄/棕/灰）。
 // ⚠ 坑: 并排展示时用 stretch: true + stretch-grid —— 自动等高同宽，
 //        不会被最长/最宽的文字拉扯；单元格里卡片外面不要再包 []。
+//        色名右侧的几何角标是色盲冗余（形状×颜色双编码，8 个互异保守码位
+//        ●■▲◆★▼◎◇，取自 Noto CJK 高覆盖集合）；换演示内容时保住「一色一形」
+//        即可，0.55em 深灰字级——只做冗余标记，不抢卡片正文的戏。
 == 八色卡片 · boite 系列
 
 #stretch-grid(
   columns: 4,
   gutter: 0.6em,
-  boitebleue(stretch: true)[#align(center)[*bleue* \ #text(size: 0.72em)[主色 · 默认] \ #text(size: 0.6em, fill: framagris)[设计系统核心组件库]]],
-  boiteverte(stretch: true)[#align(center)[*verte* \ #text(size: 0.72em)[辅助 · 成功] \ #text(size: 0.6em, fill: framagris)[数据同步与状态校验]]],
-  boiterouge(stretch: true)[#align(center)[*rouge* \ #text(size: 0.72em)[警示 · 错误] \ #text(size: 0.6em, fill: framagris)[异常触发告警与回滚]]],
-  boiteorange(stretch: true)[#align(center)[*orange* \ #text(size: 0.72em)[强调 · 稀有] \ #text(size: 0.6em, fill: framagris)[高优事项标记预警]]],
-  boiteviolette(stretch: true)[#align(center)[*violette* \ #text(size: 0.72em)[次要 · 深色组] \ #text(size: 0.6em, fill: framagris)[扩展策略配置面板]]],
-  boitejaune(stretch: true)[#align(center)[*jaune* \ #text(size: 0.72em)[提示 · 浅色] \ #text(size: 0.6em, fill: framagris)[表单输入实时校验提示]]],
-  boitemarron(stretch: true)[#align(center)[*marron* \ #text(size: 0.72em)[中性 · 柔和] \ #text(size: 0.6em, fill: framagris)[历史归档数据概览]]],
-  boitegrise(stretch: true)[#align(center)[*grise* \ #text(size: 0.72em)[弱化 · 置灰] \ #text(size: 0.6em, fill: framagris)[禁用或已完成项目]]],
+  boitebleue(stretch: true)[#align(center)[*bleue* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[●] \ #text(size: 0.72em)[主色 · 默认] \ #text(size: 0.6em, fill: framagris)[设计系统核心组件库]]],
+  boiteverte(stretch: true)[#align(center)[*verte* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[■] \ #text(size: 0.72em)[辅助 · 成功] \ #text(size: 0.6em, fill: framagris)[数据同步与状态校验]]],
+  boiterouge(stretch: true)[#align(center)[*rouge* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[▲] \ #text(size: 0.72em)[警示 · 错误] \ #text(size: 0.6em, fill: framagris)[异常触发告警与回滚]]],
+  boiteorange(stretch: true)[#align(center)[*orange* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[◆] \ #text(size: 0.72em)[强调 · 稀有] \ #text(size: 0.6em, fill: framagris)[高优事项标记预警]]],
+  boiteviolette(stretch: true)[#align(center)[*violette* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[★] \ #text(size: 0.72em)[次要 · 深色组] \ #text(size: 0.6em, fill: framagris)[扩展策略配置面板]]],
+  boitejaune(stretch: true)[#align(center)[*jaune* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[▼] \ #text(size: 0.72em)[提示 · 浅色] \ #text(size: 0.6em, fill: framagris)[表单输入实时校验提示]]],
+  boitemarron(stretch: true)[#align(center)[*marron* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[◎] \ #text(size: 0.72em)[中性 · 柔和] \ #text(size: 0.6em, fill: framagris)[历史归档数据概览]]],
+  boitegrise(stretch: true)[#align(center)[*grise* #h(0.3em) #text(size: 0.55em, fill: framagrisdark)[◇] \ #text(size: 0.72em)[弱化 · 置灰] \ #text(size: 0.6em, fill: framagris)[禁用或已完成项目]]],
 )
 
 // 用法: #quote(block: true)[引文] 装进 #boiteXXX —— 引用块卡片（观点/金句/原则）
