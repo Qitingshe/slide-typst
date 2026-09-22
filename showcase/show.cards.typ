@@ -49,9 +49,6 @@
     #boitebleue[
       #quote(block: true)[
         设计系统是收敛的选择，不是自由的匮乏。
-        #v(0.2em)
-        #h(1fr)
-        #text(size: 0.72em, fill: framagris)[— 画廊第一原则]
       ]
     ]
   ],
@@ -85,23 +82,22 @@
 // 改这里: 侧标文本写 rotate 里（短词 + tracking 拉开）；竖排逐字传 #stack 的子元素。
 // ⚠ 坑: typst 无 #text(dir: ttb)——中文竖排必须显式 #stack(dir: ttb)；
 //        rotate 务必带 reflow: true，否则旋转后不参与布局、会叠到隔壁内容上。
-#v(gap-secondary)
+#v(0.4em)
 #grid(
-  columns: (auto, 1fr),
-  column-gutter: 0.6em,
+  columns: (auto, auto, 1fr),
+  column-gutter: 0.5em,
   [
     #rotate(90deg, reflow: true)[
-      #text(size: 9pt, fill: framagris, tracking: 0.3em)[SIDEBAR]
+      #text(size: 7.5pt, fill: framagris, tracking: 0.3em)[SIDEBAR]
     ]
   ],
   [
-    #boitefilled(color: framableu)[
-      #align(center)[
-        #stack(dir: ttb, spacing: 0.35em,
-          text(size: 1.2em)[借], text(size: 1.2em)[页],
-          text(size: 1.2em)[即], text(size: 1.2em)[用])
-      ]
-    ]
+    #stack(dir: ttb, spacing: 0.15em,
+      text(size: 0.72em, fill: framagris)[借],
+      text(size: 0.72em, fill: framagris)[页])
+  ],
+  [
+    #text(size: 0.6em, fill: framagris)[rotate + stack-ttb：竖排侧标与中文竖列的紧凑形态]
   ],
 )
 
@@ -133,11 +129,11 @@
   columns: 5,
   row-gutter: 0.5em,
   column-gutter: 0.6em,
-  boitebleue(stretch: true)[*一*],
-  boiteverte(stretch: true)[*二*],
-  boiteorange(stretch: true)[*三*],
-  boiteviolette(stretch: true)[*四*],
-  boitegrise(stretch: true)[*五*],
+  boitebleue(stretch: true)[*一* \ #text(size: 0.5em, fill: framagris)[紧凑]],
+  boiteverte(stretch: true)[*二* \ #text(size: 0.5em, fill: framagris)[适中]],
+  boiteorange(stretch: true)[*三* \ #text(size: 0.5em, fill: framagris)[宽松]],
+  boiteviolette(stretch: true)[*四* \ #text(size: 0.5em, fill: framagris)[列距]],
+  boitegrise(stretch: true)[*五* \ #text(size: 0.5em, fill: framagris)[行距]],
 )
 
 // 用法: body-slide + stretch-grid(boite + stat) + boitefilled + note 的完整组合

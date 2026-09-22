@@ -88,7 +88,7 @@
     #v(gap-primary)
     #note[列宽单位：1fr 按比例分剩余宽度、auto 按内容、也可传绝对长度（如 4cm）。]
   ],
-  closing: note[多级表头按 level 分层写进 table.header：跨页默认两行一起重复；分组行加了 repeat: false，跨页时只续子列行（低层替高层）。],
+  closing: note[多级表头跨页：默认两行重复；分组行加 repeat: false 只续子列行。],
 )
 
 // 用法: #figure-block(image("../assets/sample-scheme.svg"), caption: none, width: 88%)

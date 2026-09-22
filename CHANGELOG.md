@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+### Changed（2026-09-22 DES-4 美学评审落地）
+- 美学 A 组（designer）：仪表盘右上面板 8.5pt→9pt（收紧内侧间距补偿）；调色板 `_swatch` 加 0.4pt 浅灰描边（浅色卡白底可辨）；页 20 引用块压缩为一行金句（出处行移除）；页 21 竖向文本与实色卡整合为紧凑三格条（不拆页）；页 23 五列卡补 0.5em 功能小字
+- 美学 B 组：速查族 section-open framajaune→framamarron（白底对比 2.3:1→3.3:1）；页 4 内容地图 closing 精简为"十一族"；表格页 closing 精简（57→25 字）；变体速查 closing 精简（55→26 字）；stat 分段说明样式统一（0.78em + framagrisdark bold）；nav recipe closing 追加 show 规则全局生效警告
+- lib.typ（oracle 独立评审通过）：页眉细线 lighten(65%)→lighten(50%)（非 framableu 家族页细线恢复可辨）；section-open 无序号装饰矩形 lighten(87%)→lighten(75%)（恢复柔和可见）
+- 链接基线复核 59 不变（先前一度误读为 60——本机缺 Noto 字体时回退渲染的假性计数，字体齐装后复测 lib.typst.app 仍 2 个标注；无基线变更）
+
 ### Changed（2026-09-21 字体重构）
 - 字体策略重构：默认字体从 `("New Computer Modern", "Heiti SC")` 替换为 `("Noto Sans CJK SC")`（SIL OFL 1.1 开源），跨平台一致，不再依赖 macOS 独占系统字体 Heiti SC；CI 安装 `fonts-noto-cjk-extra`（apt，含 Thin..Black 全字重）、Pages 安装 `font-noto-sans-cjk-sc`（brew cask，勿用 `font-noto-sans-cjk`——家族名无 SC 后缀不匹配），两端均加字重覆盖断言（100/300/350/400/500/700/900）阻断缺字与 `weight: "medium"` 静默回退；分页与基线不变（54 页）
 - AGENTS.md 更新字体策略描述与文件地图

@@ -19,7 +19,7 @@
   inset: (x: 0.5em, y: 0.3em),
   radius: 3pt,
   fill: c,
-  stroke: none,
+  stroke: 0.4pt + rgb("#E0E0E0"),
 )[
   #set align(center + horizon)
   #text(size: 0.6em, fill: fore, weight: "medium")[#name]

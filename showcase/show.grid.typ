@@ -93,8 +93,8 @@
       radius: 4pt,
     )[
       #text(size: 11pt, weight: "bold", fill: framavert)[最近警报]
-      #v(0.15em)
-      #text(size: 8.5pt)[
+      #v(0.1em)
+      #text(size: 9pt)[
         · 22:14 CPU 超限 → 已自动扩缩容\
         · 21:53 内存预警 → 已恢复\
       ]

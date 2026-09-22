@@ -780,7 +780,7 @@
         // 「标题+面包屑」之下，二者不再重叠。
         block(breakable: false)[
           #text(size: 1.1em, weight: "bold", fill: c-head)[#current-heading.body]
-          #place(bottom + left, dy: 0.4em, line(length: _header-line-width, stroke: (paint: c.lighten(65%), thickness: 0.8pt)))
+          #place(bottom + left, dy: 0.4em, line(length: _header-line-width, stroke: (paint: c.lighten(50%), thickness: 0.8pt)))
         ]
       }
     },
@@ -873,7 +873,7 @@
           text(size: 170pt, weight: "bold", fill: c.lighten(80%))[#index])
       } else {
         place(bottom + right, dx: 0.2em, dy: 0.3em,
-          rect(width: 4.6em, height: 4.6em, radius: 0.5em, fill: c.lighten(87%), stroke: none))
+          rect(width: 4.6em, height: 4.6em, radius: 0.5em, fill: c.lighten(75%), stroke: none))
         place(bottom + right, dx: 1.5em, dy: 1.6em,
           rect(width: 0.7em, height: 0.7em, radius: 1pt, fill: c, stroke: none))
       }

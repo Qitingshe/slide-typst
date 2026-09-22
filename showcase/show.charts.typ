@@ -344,6 +344,5 @@
       [#align(center)[#text(size: 0.63em, fill: framagris)[区域 · fill + fill-type]]],
     )
   ],
-  closing: note[变体即参数：环形 = inner-radius + outset，堆积 = mode: "stacked"（数值域 = 各列
-  之和），区域 = 曲线 fill: true 沿轴基线铺色带。抄页时对照本页与前三页的 ⚠ 坑即可。],
+  closing: note[变体即参数：环形 = inner-radius，堆积 = stacked，区域 = fill+fill-type。],
 )

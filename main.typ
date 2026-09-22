@@ -122,7 +122,7 @@
     #v(0.2em) // 目录页顶留白：收紧（原 0.3em→0.2em）给 11 行目录腾位
     #outline(title: none, depth: 1)
   ],
-  closing: [#align(center)[#text(size: 0.65em, fill: framagris)[十一族 · 从页面体系到设计系统速查]]],
+  closing: [#align(center)[#text(size: 0.65em, fill: framagris)[十一族]]],
   closing-gap: 0pt, // 配合 #set par 收紧行距，整页不翻票
 )
 
@@ -173,5 +173,5 @@
 #include "showcase/show.charts.typ"
 
 = 设计系统速查
-#section-open(title: [设计系统速查], subtitle: [配色 · 间距 · 字体层级 · 卡片构造 · 溢出边界], color: framajaune)
+#section-open(title: [设计系统速查], subtitle: [配色 · 间距 · 字体层级 · 卡片构造 · 溢出边界], color: framamarron)
 #include "showcase/show.system.typ"

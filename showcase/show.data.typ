@@ -48,7 +48,7 @@
       stat(stretch: true, amount-size: 30pt)[100%][覆盖率],
     )
     #v(gap-secondary)
-    #text(size: 0.8em, weight: "bold")[单独摆放的 plain stat（未 stretch）：]
+    #text(size: 0.78em, weight: "bold", fill: framagrisdark)[单独摆放的 plain stat（未 stretch）：]
     #grid(
       columns: (1fr, 1.6fr),
       gutter: 1em,
